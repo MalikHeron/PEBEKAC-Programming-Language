@@ -1,37 +1,155 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
+Unused terminals:
+
+    APOSTROPHE
+    ARROW
+    AT
+    BACKSLASH
+    CLASS
+    COLON
+    COMMA
+    DIVIDEASSIGN
+    DOT
+    DOUBLEQUOTE
+    ELSE
+    FALSE
+    FOR
+    FUNCTION
+    HASH
+    IF
+    INPUT
+    LBRACE
+    LBRACKET
+    MINUSASSIGN
+    MODASSIGN
+    NEW
+    NULL
+    PIPE
+    PLUSASSIGN
+    POW
+    PRINT
+    RBRACE
+    RBRACKET
+    RETURN
+    SEMICOLON
+    SLASH
+    TIMESASSIGN
+    TRUE
+    UNDERSCORE
+    WHILE
+
 Grammar
 
 Rule 0     S' -> expression
 Rule 1     expression -> term PLUS term
 Rule 2     expression -> term MINUS term
-Rule 3     expression -> term
-Rule 4     term -> factor TIMES factor
-Rule 5     term -> factor DIVIDE factor
-Rule 6     term -> factor
-Rule 7     factor -> NUMBER
-Rule 8     factor -> NAME
-Rule 9     factor -> PLUS factor
-Rule 10    factor -> MINUS factor
-Rule 11    factor -> LPAREN expression RPAREN
+Rule 3     expression -> term EQUAL term
+Rule 4     expression -> term NOTEQUAL term
+Rule 5     expression -> term LESSTHAN term
+Rule 6     expression -> term GREATERTHAN term
+Rule 7     expression -> term LESSTHANEQUAL term
+Rule 8     expression -> term GREATERTHANEQUAL term
+Rule 9     expression -> term AND term
+Rule 10    expression -> term OR term
+Rule 11    expression -> term
+Rule 12    term -> factor TIMES factor
+Rule 13    term -> factor DIVIDE factor
+Rule 14    term -> factor MOD factor
+Rule 15    term -> factor ASSIGN factor
+Rule 16    term -> factor EQUAL factor
+Rule 17    term -> factor NOTEQUAL factor
+Rule 18    term -> factor LESSTHAN factor
+Rule 19    term -> factor GREATERTHAN factor
+Rule 20    term -> factor LESSTHANEQUAL factor
+Rule 21    term -> factor GREATERTHANEQUAL factor
+Rule 22    term -> factor AND factor
+Rule 23    term -> factor OR factor
+Rule 24    term -> factor
+Rule 25    factor -> NUMBER
+Rule 26    factor -> NAME
+Rule 27    factor -> PLUS factor
+Rule 28    factor -> MINUS factor
+Rule 29    factor -> NOT factor
+Rule 30    factor -> ASSIGN factor
+Rule 31    factor -> INCREMENT factor
+Rule 32    factor -> DECREMENT factor
+Rule 33    factor -> EQUAL factor
+Rule 34    factor -> NOTEQUAL factor
+Rule 35    factor -> LESSTHAN factor
+Rule 36    factor -> GREATERTHAN factor
+Rule 37    factor -> LESSTHANEQUAL factor
+Rule 38    factor -> GREATERTHANEQUAL factor
+Rule 39    factor -> AND factor
+Rule 40    factor -> OR factor
+Rule 41    factor -> LPAREN expression RPAREN
 
 Terminals, with rules where they appear
 
-DIVIDE               : 5
-LPAREN               : 11
-MINUS                : 2 10
-NAME                 : 8
-NUMBER               : 7
-PLUS                 : 1 9
-RPAREN               : 11
-TIMES                : 4
+AND                  : 9 22 39
+APOSTROPHE           : 
+ARROW                : 
+ASSIGN               : 15 30
+AT                   : 
+BACKSLASH            : 
+CLASS                : 
+COLON                : 
+COMMA                : 
+DECREMENT            : 32
+DIVIDE               : 13
+DIVIDEASSIGN         : 
+DOT                  : 
+DOUBLEQUOTE          : 
+ELSE                 : 
+EQUAL                : 3 16 33
+FALSE                : 
+FOR                  : 
+FUNCTION             : 
+GREATERTHAN          : 6 19 36
+GREATERTHANEQUAL     : 8 21 38
+HASH                 : 
+IF                   : 
+INCREMENT            : 31
+INPUT                : 
+LBRACE               : 
+LBRACKET             : 
+LESSTHAN             : 5 18 35
+LESSTHANEQUAL        : 7 20 37
+LPAREN               : 41
+MINUS                : 2 28
+MINUSASSIGN          : 
+MOD                  : 14
+MODASSIGN            : 
+NAME                 : 26
+NEW                  : 
+NOT                  : 29
+NOTEQUAL             : 4 17 34
+NULL                 : 
+NUMBER               : 25
+OR                   : 10 23 40
+PIPE                 : 
+PLUS                 : 1 27
+PLUSASSIGN           : 
+POW                  : 
+PRINT                : 
+RBRACE               : 
+RBRACKET             : 
+RETURN               : 
+RPAREN               : 41
+SEMICOLON            : 
+SLASH                : 
+TIMES                : 12
+TIMESASSIGN          : 
+TRUE                 : 
+UNDERSCORE           : 
+WHILE                : 
 error                : 
 
 Nonterminals, with rules where they appear
 
-expression           : 11 0
-factor               : 4 4 5 5 6 9 10
-term                 : 1 1 2 2 3
+expression           : 41 0
+factor               : 12 12 13 13 14 14 15 15 16 16 17 17 18 18 19 19 20 20 21 21 22 22 23 23 24 27 28 29 30 31 32 33 34 35 36 37 38 39 40
+term                 : 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 8 9 9 10 10 11
 
 Parsing method: LALR
 
@@ -40,25 +158,67 @@ state 0
     (0) S' -> . expression
     (1) expression -> . term PLUS term
     (2) expression -> . term MINUS term
-    (3) expression -> . term
-    (4) term -> . factor TIMES factor
-    (5) term -> . factor DIVIDE factor
-    (6) term -> . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (3) expression -> . term EQUAL term
+    (4) expression -> . term NOTEQUAL term
+    (5) expression -> . term LESSTHAN term
+    (6) expression -> . term GREATERTHAN term
+    (7) expression -> . term LESSTHANEQUAL term
+    (8) expression -> . term GREATERTHANEQUAL term
+    (9) expression -> . term AND term
+    (10) expression -> . term OR term
+    (11) expression -> . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
     expression                     shift and go to state 1
     term                           shift and go to state 2
-    factor                         shift and go to state 5
+    factor                         shift and go to state 13
 
 state 1
 
@@ -70,219 +230,2124 @@ state 2
 
     (1) expression -> term . PLUS term
     (2) expression -> term . MINUS term
-    (3) expression -> term .
+    (3) expression -> term . EQUAL term
+    (4) expression -> term . NOTEQUAL term
+    (5) expression -> term . LESSTHAN term
+    (6) expression -> term . GREATERTHAN term
+    (7) expression -> term . LESSTHANEQUAL term
+    (8) expression -> term . GREATERTHANEQUAL term
+    (9) expression -> term . AND term
+    (10) expression -> term . OR term
+    (11) expression -> term .
 
-    PLUS            shift and go to state 9
-    MINUS           shift and go to state 10
-    $end            reduce using rule 3 (expression -> term .)
-    RPAREN          reduce using rule 3 (expression -> term .)
+    PLUS            shift and go to state 21
+    MINUS           shift and go to state 22
+    EQUAL           shift and go to state 23
+    NOTEQUAL        shift and go to state 24
+    LESSTHAN        shift and go to state 25
+    GREATERTHAN     shift and go to state 26
+    LESSTHANEQUAL   shift and go to state 27
+    GREATERTHANEQUAL shift and go to state 28
+    AND             shift and go to state 29
+    OR              shift and go to state 30
+    $end            reduce using rule 11 (expression -> term .)
+    RPAREN          reduce using rule 11 (expression -> term .)
 
 
 state 3
 
-    (9) factor -> PLUS . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (27) factor -> PLUS . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    factor                         shift and go to state 11
+    factor                         shift and go to state 31
 
 state 4
 
-    (10) factor -> MINUS . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (28) factor -> MINUS . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    factor                         shift and go to state 12
+    factor                         shift and go to state 32
 
 state 5
 
-    (4) term -> factor . TIMES factor
-    (5) term -> factor . DIVIDE factor
-    (6) term -> factor .
+    (33) factor -> EQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    TIMES           shift and go to state 13
-    DIVIDE          shift and go to state 14
-    PLUS            reduce using rule 6 (term -> factor .)
-    MINUS           reduce using rule 6 (term -> factor .)
-    $end            reduce using rule 6 (term -> factor .)
-    RPAREN          reduce using rule 6 (term -> factor .)
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
+    factor                         shift and go to state 33
 
 state 6
 
-    (7) factor -> NUMBER .
+    (34) factor -> NOTEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    TIMES           reduce using rule 7 (factor -> NUMBER .)
-    DIVIDE          reduce using rule 7 (factor -> NUMBER .)
-    PLUS            reduce using rule 7 (factor -> NUMBER .)
-    MINUS           reduce using rule 7 (factor -> NUMBER .)
-    $end            reduce using rule 7 (factor -> NUMBER .)
-    RPAREN          reduce using rule 7 (factor -> NUMBER .)
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
+    factor                         shift and go to state 34
 
 state 7
 
-    (8) factor -> NAME .
+    (35) factor -> LESSTHAN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    TIMES           reduce using rule 8 (factor -> NAME .)
-    DIVIDE          reduce using rule 8 (factor -> NAME .)
-    PLUS            reduce using rule 8 (factor -> NAME .)
-    MINUS           reduce using rule 8 (factor -> NAME .)
-    $end            reduce using rule 8 (factor -> NAME .)
-    RPAREN          reduce using rule 8 (factor -> NAME .)
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
+    factor                         shift and go to state 35
 
 state 8
 
-    (11) factor -> LPAREN . expression RPAREN
-    (1) expression -> . term PLUS term
-    (2) expression -> . term MINUS term
-    (3) expression -> . term
-    (4) term -> . factor TIMES factor
-    (5) term -> . factor DIVIDE factor
-    (6) term -> . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (36) factor -> GREATERTHAN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    expression                     shift and go to state 15
-    term                           shift and go to state 2
-    factor                         shift and go to state 5
+    factor                         shift and go to state 36
 
 state 9
 
-    (1) expression -> term PLUS . term
-    (4) term -> . factor TIMES factor
-    (5) term -> . factor DIVIDE factor
-    (6) term -> . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (37) factor -> LESSTHANEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    term                           shift and go to state 16
-    factor                         shift and go to state 5
+    factor                         shift and go to state 37
 
 state 10
 
-    (2) expression -> term MINUS . term
-    (4) term -> . factor TIMES factor
-    (5) term -> . factor DIVIDE factor
-    (6) term -> . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (38) factor -> GREATERTHANEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    term                           shift and go to state 17
-    factor                         shift and go to state 5
+    factor                         shift and go to state 38
 
 state 11
 
-    (9) factor -> PLUS factor .
+    (39) factor -> AND . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    TIMES           reduce using rule 9 (factor -> PLUS factor .)
-    DIVIDE          reduce using rule 9 (factor -> PLUS factor .)
-    PLUS            reduce using rule 9 (factor -> PLUS factor .)
-    MINUS           reduce using rule 9 (factor -> PLUS factor .)
-    $end            reduce using rule 9 (factor -> PLUS factor .)
-    RPAREN          reduce using rule 9 (factor -> PLUS factor .)
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
+    factor                         shift and go to state 39
 
 state 12
 
-    (10) factor -> MINUS factor .
+    (40) factor -> OR . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    TIMES           reduce using rule 10 (factor -> MINUS factor .)
-    DIVIDE          reduce using rule 10 (factor -> MINUS factor .)
-    PLUS            reduce using rule 10 (factor -> MINUS factor .)
-    MINUS           reduce using rule 10 (factor -> MINUS factor .)
-    $end            reduce using rule 10 (factor -> MINUS factor .)
-    RPAREN          reduce using rule 10 (factor -> MINUS factor .)
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
+    factor                         shift and go to state 40
 
 state 13
 
-    (4) term -> factor TIMES . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (12) term -> factor . TIMES factor
+    (13) term -> factor . DIVIDE factor
+    (14) term -> factor . MOD factor
+    (15) term -> factor . ASSIGN factor
+    (16) term -> factor . EQUAL factor
+    (17) term -> factor . NOTEQUAL factor
+    (18) term -> factor . LESSTHAN factor
+    (19) term -> factor . GREATERTHAN factor
+    (20) term -> factor . LESSTHANEQUAL factor
+    (21) term -> factor . GREATERTHANEQUAL factor
+    (22) term -> factor . AND factor
+    (23) term -> factor . OR factor
+    (24) term -> factor .
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
-    PLUS            shift and go to state 3
-    MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+  ! shift/reduce conflict for EQUAL resolved as shift
+  ! shift/reduce conflict for NOTEQUAL resolved as shift
+  ! shift/reduce conflict for LESSTHAN resolved as shift
+  ! shift/reduce conflict for GREATERTHAN resolved as shift
+  ! shift/reduce conflict for LESSTHANEQUAL resolved as shift
+  ! shift/reduce conflict for GREATERTHANEQUAL resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+    TIMES           shift and go to state 41
+    DIVIDE          shift and go to state 42
+    MOD             shift and go to state 43
+    ASSIGN          shift and go to state 44
+    EQUAL           shift and go to state 45
+    NOTEQUAL        shift and go to state 46
+    LESSTHAN        shift and go to state 47
+    GREATERTHAN     shift and go to state 48
+    LESSTHANEQUAL   shift and go to state 49
+    GREATERTHANEQUAL shift and go to state 50
+    AND             shift and go to state 51
+    OR              shift and go to state 52
+    PLUS            reduce using rule 24 (term -> factor .)
+    MINUS           reduce using rule 24 (term -> factor .)
+    $end            reduce using rule 24 (term -> factor .)
+    RPAREN          reduce using rule 24 (term -> factor .)
 
-    factor                         shift and go to state 18
+  ! EQUAL           [ reduce using rule 24 (term -> factor .) ]
+  ! NOTEQUAL        [ reduce using rule 24 (term -> factor .) ]
+  ! LESSTHAN        [ reduce using rule 24 (term -> factor .) ]
+  ! GREATERTHAN     [ reduce using rule 24 (term -> factor .) ]
+  ! LESSTHANEQUAL   [ reduce using rule 24 (term -> factor .) ]
+  ! GREATERTHANEQUAL [ reduce using rule 24 (term -> factor .) ]
+  ! AND             [ reduce using rule 24 (term -> factor .) ]
+  ! OR              [ reduce using rule 24 (term -> factor .) ]
+
 
 state 14
 
-    (5) term -> factor DIVIDE . factor
-    (7) factor -> . NUMBER
-    (8) factor -> . NAME
-    (9) factor -> . PLUS factor
-    (10) factor -> . MINUS factor
-    (11) factor -> . LPAREN expression RPAREN
+    (30) factor -> ASSIGN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
 
-    NUMBER          shift and go to state 6
-    NAME            shift and go to state 7
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
     PLUS            shift and go to state 3
     MINUS           shift and go to state 4
-    LPAREN          shift and go to state 8
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
 
-    factor                         shift and go to state 19
+    factor                         shift and go to state 53
 
 state 15
 
-    (11) factor -> LPAREN expression . RPAREN
+    (25) factor -> NUMBER .
 
-    RPAREN          shift and go to state 20
+    TIMES           reduce using rule 25 (factor -> NUMBER .)
+    DIVIDE          reduce using rule 25 (factor -> NUMBER .)
+    MOD             reduce using rule 25 (factor -> NUMBER .)
+    ASSIGN          reduce using rule 25 (factor -> NUMBER .)
+    EQUAL           reduce using rule 25 (factor -> NUMBER .)
+    NOTEQUAL        reduce using rule 25 (factor -> NUMBER .)
+    LESSTHAN        reduce using rule 25 (factor -> NUMBER .)
+    GREATERTHAN     reduce using rule 25 (factor -> NUMBER .)
+    LESSTHANEQUAL   reduce using rule 25 (factor -> NUMBER .)
+    GREATERTHANEQUAL reduce using rule 25 (factor -> NUMBER .)
+    AND             reduce using rule 25 (factor -> NUMBER .)
+    OR              reduce using rule 25 (factor -> NUMBER .)
+    PLUS            reduce using rule 25 (factor -> NUMBER .)
+    MINUS           reduce using rule 25 (factor -> NUMBER .)
+    $end            reduce using rule 25 (factor -> NUMBER .)
+    RPAREN          reduce using rule 25 (factor -> NUMBER .)
 
 
 state 16
+
+    (26) factor -> NAME .
+
+    TIMES           reduce using rule 26 (factor -> NAME .)
+    DIVIDE          reduce using rule 26 (factor -> NAME .)
+    MOD             reduce using rule 26 (factor -> NAME .)
+    ASSIGN          reduce using rule 26 (factor -> NAME .)
+    EQUAL           reduce using rule 26 (factor -> NAME .)
+    NOTEQUAL        reduce using rule 26 (factor -> NAME .)
+    LESSTHAN        reduce using rule 26 (factor -> NAME .)
+    GREATERTHAN     reduce using rule 26 (factor -> NAME .)
+    LESSTHANEQUAL   reduce using rule 26 (factor -> NAME .)
+    GREATERTHANEQUAL reduce using rule 26 (factor -> NAME .)
+    AND             reduce using rule 26 (factor -> NAME .)
+    OR              reduce using rule 26 (factor -> NAME .)
+    PLUS            reduce using rule 26 (factor -> NAME .)
+    MINUS           reduce using rule 26 (factor -> NAME .)
+    $end            reduce using rule 26 (factor -> NAME .)
+    RPAREN          reduce using rule 26 (factor -> NAME .)
+
+
+state 17
+
+    (29) factor -> NOT . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 54
+
+state 18
+
+    (31) factor -> INCREMENT . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 55
+
+state 19
+
+    (32) factor -> DECREMENT . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 56
+
+state 20
+
+    (41) factor -> LPAREN . expression RPAREN
+    (1) expression -> . term PLUS term
+    (2) expression -> . term MINUS term
+    (3) expression -> . term EQUAL term
+    (4) expression -> . term NOTEQUAL term
+    (5) expression -> . term LESSTHAN term
+    (6) expression -> . term GREATERTHAN term
+    (7) expression -> . term LESSTHANEQUAL term
+    (8) expression -> . term GREATERTHANEQUAL term
+    (9) expression -> . term AND term
+    (10) expression -> . term OR term
+    (11) expression -> . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    expression                     shift and go to state 57
+    term                           shift and go to state 2
+    factor                         shift and go to state 13
+
+state 21
+
+    (1) expression -> term PLUS . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 58
+    factor                         shift and go to state 13
+
+state 22
+
+    (2) expression -> term MINUS . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 59
+    factor                         shift and go to state 13
+
+state 23
+
+    (3) expression -> term EQUAL . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 60
+    factor                         shift and go to state 13
+
+state 24
+
+    (4) expression -> term NOTEQUAL . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 61
+    factor                         shift and go to state 13
+
+state 25
+
+    (5) expression -> term LESSTHAN . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 62
+    factor                         shift and go to state 13
+
+state 26
+
+    (6) expression -> term GREATERTHAN . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 63
+    factor                         shift and go to state 13
+
+state 27
+
+    (7) expression -> term LESSTHANEQUAL . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 64
+    factor                         shift and go to state 13
+
+state 28
+
+    (8) expression -> term GREATERTHANEQUAL . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 65
+    factor                         shift and go to state 13
+
+state 29
+
+    (9) expression -> term AND . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 66
+    factor                         shift and go to state 13
+
+state 30
+
+    (10) expression -> term OR . term
+    (12) term -> . factor TIMES factor
+    (13) term -> . factor DIVIDE factor
+    (14) term -> . factor MOD factor
+    (15) term -> . factor ASSIGN factor
+    (16) term -> . factor EQUAL factor
+    (17) term -> . factor NOTEQUAL factor
+    (18) term -> . factor LESSTHAN factor
+    (19) term -> . factor GREATERTHAN factor
+    (20) term -> . factor LESSTHANEQUAL factor
+    (21) term -> . factor GREATERTHANEQUAL factor
+    (22) term -> . factor AND factor
+    (23) term -> . factor OR factor
+    (24) term -> . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    term                           shift and go to state 67
+    factor                         shift and go to state 13
+
+state 31
+
+    (27) factor -> PLUS factor .
+
+    TIMES           reduce using rule 27 (factor -> PLUS factor .)
+    DIVIDE          reduce using rule 27 (factor -> PLUS factor .)
+    MOD             reduce using rule 27 (factor -> PLUS factor .)
+    ASSIGN          reduce using rule 27 (factor -> PLUS factor .)
+    EQUAL           reduce using rule 27 (factor -> PLUS factor .)
+    NOTEQUAL        reduce using rule 27 (factor -> PLUS factor .)
+    LESSTHAN        reduce using rule 27 (factor -> PLUS factor .)
+    GREATERTHAN     reduce using rule 27 (factor -> PLUS factor .)
+    LESSTHANEQUAL   reduce using rule 27 (factor -> PLUS factor .)
+    GREATERTHANEQUAL reduce using rule 27 (factor -> PLUS factor .)
+    AND             reduce using rule 27 (factor -> PLUS factor .)
+    OR              reduce using rule 27 (factor -> PLUS factor .)
+    PLUS            reduce using rule 27 (factor -> PLUS factor .)
+    MINUS           reduce using rule 27 (factor -> PLUS factor .)
+    $end            reduce using rule 27 (factor -> PLUS factor .)
+    RPAREN          reduce using rule 27 (factor -> PLUS factor .)
+
+
+state 32
+
+    (28) factor -> MINUS factor .
+
+    TIMES           reduce using rule 28 (factor -> MINUS factor .)
+    DIVIDE          reduce using rule 28 (factor -> MINUS factor .)
+    MOD             reduce using rule 28 (factor -> MINUS factor .)
+    ASSIGN          reduce using rule 28 (factor -> MINUS factor .)
+    EQUAL           reduce using rule 28 (factor -> MINUS factor .)
+    NOTEQUAL        reduce using rule 28 (factor -> MINUS factor .)
+    LESSTHAN        reduce using rule 28 (factor -> MINUS factor .)
+    GREATERTHAN     reduce using rule 28 (factor -> MINUS factor .)
+    LESSTHANEQUAL   reduce using rule 28 (factor -> MINUS factor .)
+    GREATERTHANEQUAL reduce using rule 28 (factor -> MINUS factor .)
+    AND             reduce using rule 28 (factor -> MINUS factor .)
+    OR              reduce using rule 28 (factor -> MINUS factor .)
+    PLUS            reduce using rule 28 (factor -> MINUS factor .)
+    MINUS           reduce using rule 28 (factor -> MINUS factor .)
+    $end            reduce using rule 28 (factor -> MINUS factor .)
+    RPAREN          reduce using rule 28 (factor -> MINUS factor .)
+
+
+state 33
+
+    (33) factor -> EQUAL factor .
+
+    TIMES           reduce using rule 33 (factor -> EQUAL factor .)
+    DIVIDE          reduce using rule 33 (factor -> EQUAL factor .)
+    MOD             reduce using rule 33 (factor -> EQUAL factor .)
+    ASSIGN          reduce using rule 33 (factor -> EQUAL factor .)
+    EQUAL           reduce using rule 33 (factor -> EQUAL factor .)
+    NOTEQUAL        reduce using rule 33 (factor -> EQUAL factor .)
+    LESSTHAN        reduce using rule 33 (factor -> EQUAL factor .)
+    GREATERTHAN     reduce using rule 33 (factor -> EQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 33 (factor -> EQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 33 (factor -> EQUAL factor .)
+    AND             reduce using rule 33 (factor -> EQUAL factor .)
+    OR              reduce using rule 33 (factor -> EQUAL factor .)
+    PLUS            reduce using rule 33 (factor -> EQUAL factor .)
+    MINUS           reduce using rule 33 (factor -> EQUAL factor .)
+    $end            reduce using rule 33 (factor -> EQUAL factor .)
+    RPAREN          reduce using rule 33 (factor -> EQUAL factor .)
+
+
+state 34
+
+    (34) factor -> NOTEQUAL factor .
+
+    TIMES           reduce using rule 34 (factor -> NOTEQUAL factor .)
+    DIVIDE          reduce using rule 34 (factor -> NOTEQUAL factor .)
+    MOD             reduce using rule 34 (factor -> NOTEQUAL factor .)
+    ASSIGN          reduce using rule 34 (factor -> NOTEQUAL factor .)
+    EQUAL           reduce using rule 34 (factor -> NOTEQUAL factor .)
+    NOTEQUAL        reduce using rule 34 (factor -> NOTEQUAL factor .)
+    LESSTHAN        reduce using rule 34 (factor -> NOTEQUAL factor .)
+    GREATERTHAN     reduce using rule 34 (factor -> NOTEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 34 (factor -> NOTEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 34 (factor -> NOTEQUAL factor .)
+    AND             reduce using rule 34 (factor -> NOTEQUAL factor .)
+    OR              reduce using rule 34 (factor -> NOTEQUAL factor .)
+    PLUS            reduce using rule 34 (factor -> NOTEQUAL factor .)
+    MINUS           reduce using rule 34 (factor -> NOTEQUAL factor .)
+    $end            reduce using rule 34 (factor -> NOTEQUAL factor .)
+    RPAREN          reduce using rule 34 (factor -> NOTEQUAL factor .)
+
+
+state 35
+
+    (35) factor -> LESSTHAN factor .
+
+    TIMES           reduce using rule 35 (factor -> LESSTHAN factor .)
+    DIVIDE          reduce using rule 35 (factor -> LESSTHAN factor .)
+    MOD             reduce using rule 35 (factor -> LESSTHAN factor .)
+    ASSIGN          reduce using rule 35 (factor -> LESSTHAN factor .)
+    EQUAL           reduce using rule 35 (factor -> LESSTHAN factor .)
+    NOTEQUAL        reduce using rule 35 (factor -> LESSTHAN factor .)
+    LESSTHAN        reduce using rule 35 (factor -> LESSTHAN factor .)
+    GREATERTHAN     reduce using rule 35 (factor -> LESSTHAN factor .)
+    LESSTHANEQUAL   reduce using rule 35 (factor -> LESSTHAN factor .)
+    GREATERTHANEQUAL reduce using rule 35 (factor -> LESSTHAN factor .)
+    AND             reduce using rule 35 (factor -> LESSTHAN factor .)
+    OR              reduce using rule 35 (factor -> LESSTHAN factor .)
+    PLUS            reduce using rule 35 (factor -> LESSTHAN factor .)
+    MINUS           reduce using rule 35 (factor -> LESSTHAN factor .)
+    $end            reduce using rule 35 (factor -> LESSTHAN factor .)
+    RPAREN          reduce using rule 35 (factor -> LESSTHAN factor .)
+
+
+state 36
+
+    (36) factor -> GREATERTHAN factor .
+
+    TIMES           reduce using rule 36 (factor -> GREATERTHAN factor .)
+    DIVIDE          reduce using rule 36 (factor -> GREATERTHAN factor .)
+    MOD             reduce using rule 36 (factor -> GREATERTHAN factor .)
+    ASSIGN          reduce using rule 36 (factor -> GREATERTHAN factor .)
+    EQUAL           reduce using rule 36 (factor -> GREATERTHAN factor .)
+    NOTEQUAL        reduce using rule 36 (factor -> GREATERTHAN factor .)
+    LESSTHAN        reduce using rule 36 (factor -> GREATERTHAN factor .)
+    GREATERTHAN     reduce using rule 36 (factor -> GREATERTHAN factor .)
+    LESSTHANEQUAL   reduce using rule 36 (factor -> GREATERTHAN factor .)
+    GREATERTHANEQUAL reduce using rule 36 (factor -> GREATERTHAN factor .)
+    AND             reduce using rule 36 (factor -> GREATERTHAN factor .)
+    OR              reduce using rule 36 (factor -> GREATERTHAN factor .)
+    PLUS            reduce using rule 36 (factor -> GREATERTHAN factor .)
+    MINUS           reduce using rule 36 (factor -> GREATERTHAN factor .)
+    $end            reduce using rule 36 (factor -> GREATERTHAN factor .)
+    RPAREN          reduce using rule 36 (factor -> GREATERTHAN factor .)
+
+
+state 37
+
+    (37) factor -> LESSTHANEQUAL factor .
+
+    TIMES           reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    DIVIDE          reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    MOD             reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    ASSIGN          reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    EQUAL           reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    NOTEQUAL        reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    LESSTHAN        reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    GREATERTHAN     reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    AND             reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    OR              reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    PLUS            reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    MINUS           reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    $end            reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+    RPAREN          reduce using rule 37 (factor -> LESSTHANEQUAL factor .)
+
+
+state 38
+
+    (38) factor -> GREATERTHANEQUAL factor .
+
+    TIMES           reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    DIVIDE          reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    MOD             reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    ASSIGN          reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    EQUAL           reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    NOTEQUAL        reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    LESSTHAN        reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    GREATERTHAN     reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    AND             reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    OR              reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    PLUS            reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    MINUS           reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    $end            reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+    RPAREN          reduce using rule 38 (factor -> GREATERTHANEQUAL factor .)
+
+
+state 39
+
+    (39) factor -> AND factor .
+
+    TIMES           reduce using rule 39 (factor -> AND factor .)
+    DIVIDE          reduce using rule 39 (factor -> AND factor .)
+    MOD             reduce using rule 39 (factor -> AND factor .)
+    ASSIGN          reduce using rule 39 (factor -> AND factor .)
+    EQUAL           reduce using rule 39 (factor -> AND factor .)
+    NOTEQUAL        reduce using rule 39 (factor -> AND factor .)
+    LESSTHAN        reduce using rule 39 (factor -> AND factor .)
+    GREATERTHAN     reduce using rule 39 (factor -> AND factor .)
+    LESSTHANEQUAL   reduce using rule 39 (factor -> AND factor .)
+    GREATERTHANEQUAL reduce using rule 39 (factor -> AND factor .)
+    AND             reduce using rule 39 (factor -> AND factor .)
+    OR              reduce using rule 39 (factor -> AND factor .)
+    PLUS            reduce using rule 39 (factor -> AND factor .)
+    MINUS           reduce using rule 39 (factor -> AND factor .)
+    $end            reduce using rule 39 (factor -> AND factor .)
+    RPAREN          reduce using rule 39 (factor -> AND factor .)
+
+
+state 40
+
+    (40) factor -> OR factor .
+
+    TIMES           reduce using rule 40 (factor -> OR factor .)
+    DIVIDE          reduce using rule 40 (factor -> OR factor .)
+    MOD             reduce using rule 40 (factor -> OR factor .)
+    ASSIGN          reduce using rule 40 (factor -> OR factor .)
+    EQUAL           reduce using rule 40 (factor -> OR factor .)
+    NOTEQUAL        reduce using rule 40 (factor -> OR factor .)
+    LESSTHAN        reduce using rule 40 (factor -> OR factor .)
+    GREATERTHAN     reduce using rule 40 (factor -> OR factor .)
+    LESSTHANEQUAL   reduce using rule 40 (factor -> OR factor .)
+    GREATERTHANEQUAL reduce using rule 40 (factor -> OR factor .)
+    AND             reduce using rule 40 (factor -> OR factor .)
+    OR              reduce using rule 40 (factor -> OR factor .)
+    PLUS            reduce using rule 40 (factor -> OR factor .)
+    MINUS           reduce using rule 40 (factor -> OR factor .)
+    $end            reduce using rule 40 (factor -> OR factor .)
+    RPAREN          reduce using rule 40 (factor -> OR factor .)
+
+
+state 41
+
+    (12) term -> factor TIMES . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 68
+
+state 42
+
+    (13) term -> factor DIVIDE . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 69
+
+state 43
+
+    (14) term -> factor MOD . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 70
+
+state 44
+
+    (15) term -> factor ASSIGN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 71
+
+state 45
+
+    (16) term -> factor EQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 72
+
+state 46
+
+    (17) term -> factor NOTEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 73
+
+state 47
+
+    (18) term -> factor LESSTHAN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 74
+
+state 48
+
+    (19) term -> factor GREATERTHAN . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 75
+
+state 49
+
+    (20) term -> factor LESSTHANEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 76
+
+state 50
+
+    (21) term -> factor GREATERTHANEQUAL . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 77
+
+state 51
+
+    (22) term -> factor AND . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 78
+
+state 52
+
+    (23) term -> factor OR . factor
+    (25) factor -> . NUMBER
+    (26) factor -> . NAME
+    (27) factor -> . PLUS factor
+    (28) factor -> . MINUS factor
+    (29) factor -> . NOT factor
+    (30) factor -> . ASSIGN factor
+    (31) factor -> . INCREMENT factor
+    (32) factor -> . DECREMENT factor
+    (33) factor -> . EQUAL factor
+    (34) factor -> . NOTEQUAL factor
+    (35) factor -> . LESSTHAN factor
+    (36) factor -> . GREATERTHAN factor
+    (37) factor -> . LESSTHANEQUAL factor
+    (38) factor -> . GREATERTHANEQUAL factor
+    (39) factor -> . AND factor
+    (40) factor -> . OR factor
+    (41) factor -> . LPAREN expression RPAREN
+
+    NUMBER          shift and go to state 15
+    NAME            shift and go to state 16
+    PLUS            shift and go to state 3
+    MINUS           shift and go to state 4
+    NOT             shift and go to state 17
+    ASSIGN          shift and go to state 14
+    INCREMENT       shift and go to state 18
+    DECREMENT       shift and go to state 19
+    EQUAL           shift and go to state 5
+    NOTEQUAL        shift and go to state 6
+    LESSTHAN        shift and go to state 7
+    GREATERTHAN     shift and go to state 8
+    LESSTHANEQUAL   shift and go to state 9
+    GREATERTHANEQUAL shift and go to state 10
+    AND             shift and go to state 11
+    OR              shift and go to state 12
+    LPAREN          shift and go to state 20
+
+    factor                         shift and go to state 79
+
+state 53
+
+    (30) factor -> ASSIGN factor .
+
+    TIMES           reduce using rule 30 (factor -> ASSIGN factor .)
+    DIVIDE          reduce using rule 30 (factor -> ASSIGN factor .)
+    MOD             reduce using rule 30 (factor -> ASSIGN factor .)
+    ASSIGN          reduce using rule 30 (factor -> ASSIGN factor .)
+    EQUAL           reduce using rule 30 (factor -> ASSIGN factor .)
+    NOTEQUAL        reduce using rule 30 (factor -> ASSIGN factor .)
+    LESSTHAN        reduce using rule 30 (factor -> ASSIGN factor .)
+    GREATERTHAN     reduce using rule 30 (factor -> ASSIGN factor .)
+    LESSTHANEQUAL   reduce using rule 30 (factor -> ASSIGN factor .)
+    GREATERTHANEQUAL reduce using rule 30 (factor -> ASSIGN factor .)
+    AND             reduce using rule 30 (factor -> ASSIGN factor .)
+    OR              reduce using rule 30 (factor -> ASSIGN factor .)
+    PLUS            reduce using rule 30 (factor -> ASSIGN factor .)
+    MINUS           reduce using rule 30 (factor -> ASSIGN factor .)
+    $end            reduce using rule 30 (factor -> ASSIGN factor .)
+    RPAREN          reduce using rule 30 (factor -> ASSIGN factor .)
+
+
+state 54
+
+    (29) factor -> NOT factor .
+
+    TIMES           reduce using rule 29 (factor -> NOT factor .)
+    DIVIDE          reduce using rule 29 (factor -> NOT factor .)
+    MOD             reduce using rule 29 (factor -> NOT factor .)
+    ASSIGN          reduce using rule 29 (factor -> NOT factor .)
+    EQUAL           reduce using rule 29 (factor -> NOT factor .)
+    NOTEQUAL        reduce using rule 29 (factor -> NOT factor .)
+    LESSTHAN        reduce using rule 29 (factor -> NOT factor .)
+    GREATERTHAN     reduce using rule 29 (factor -> NOT factor .)
+    LESSTHANEQUAL   reduce using rule 29 (factor -> NOT factor .)
+    GREATERTHANEQUAL reduce using rule 29 (factor -> NOT factor .)
+    AND             reduce using rule 29 (factor -> NOT factor .)
+    OR              reduce using rule 29 (factor -> NOT factor .)
+    PLUS            reduce using rule 29 (factor -> NOT factor .)
+    MINUS           reduce using rule 29 (factor -> NOT factor .)
+    $end            reduce using rule 29 (factor -> NOT factor .)
+    RPAREN          reduce using rule 29 (factor -> NOT factor .)
+
+
+state 55
+
+    (31) factor -> INCREMENT factor .
+
+    TIMES           reduce using rule 31 (factor -> INCREMENT factor .)
+    DIVIDE          reduce using rule 31 (factor -> INCREMENT factor .)
+    MOD             reduce using rule 31 (factor -> INCREMENT factor .)
+    ASSIGN          reduce using rule 31 (factor -> INCREMENT factor .)
+    EQUAL           reduce using rule 31 (factor -> INCREMENT factor .)
+    NOTEQUAL        reduce using rule 31 (factor -> INCREMENT factor .)
+    LESSTHAN        reduce using rule 31 (factor -> INCREMENT factor .)
+    GREATERTHAN     reduce using rule 31 (factor -> INCREMENT factor .)
+    LESSTHANEQUAL   reduce using rule 31 (factor -> INCREMENT factor .)
+    GREATERTHANEQUAL reduce using rule 31 (factor -> INCREMENT factor .)
+    AND             reduce using rule 31 (factor -> INCREMENT factor .)
+    OR              reduce using rule 31 (factor -> INCREMENT factor .)
+    PLUS            reduce using rule 31 (factor -> INCREMENT factor .)
+    MINUS           reduce using rule 31 (factor -> INCREMENT factor .)
+    $end            reduce using rule 31 (factor -> INCREMENT factor .)
+    RPAREN          reduce using rule 31 (factor -> INCREMENT factor .)
+
+
+state 56
+
+    (32) factor -> DECREMENT factor .
+
+    TIMES           reduce using rule 32 (factor -> DECREMENT factor .)
+    DIVIDE          reduce using rule 32 (factor -> DECREMENT factor .)
+    MOD             reduce using rule 32 (factor -> DECREMENT factor .)
+    ASSIGN          reduce using rule 32 (factor -> DECREMENT factor .)
+    EQUAL           reduce using rule 32 (factor -> DECREMENT factor .)
+    NOTEQUAL        reduce using rule 32 (factor -> DECREMENT factor .)
+    LESSTHAN        reduce using rule 32 (factor -> DECREMENT factor .)
+    GREATERTHAN     reduce using rule 32 (factor -> DECREMENT factor .)
+    LESSTHANEQUAL   reduce using rule 32 (factor -> DECREMENT factor .)
+    GREATERTHANEQUAL reduce using rule 32 (factor -> DECREMENT factor .)
+    AND             reduce using rule 32 (factor -> DECREMENT factor .)
+    OR              reduce using rule 32 (factor -> DECREMENT factor .)
+    PLUS            reduce using rule 32 (factor -> DECREMENT factor .)
+    MINUS           reduce using rule 32 (factor -> DECREMENT factor .)
+    $end            reduce using rule 32 (factor -> DECREMENT factor .)
+    RPAREN          reduce using rule 32 (factor -> DECREMENT factor .)
+
+
+state 57
+
+    (41) factor -> LPAREN expression . RPAREN
+
+    RPAREN          shift and go to state 80
+
+
+state 58
 
     (1) expression -> term PLUS term .
 
@@ -290,7 +2355,7 @@ state 16
     RPAREN          reduce using rule 1 (expression -> term PLUS term .)
 
 
-state 17
+state 59
 
     (2) expression -> term MINUS term .
 
@@ -298,34 +2363,315 @@ state 17
     RPAREN          reduce using rule 2 (expression -> term MINUS term .)
 
 
-state 18
+state 60
 
-    (4) term -> factor TIMES factor .
+    (3) expression -> term EQUAL term .
 
-    PLUS            reduce using rule 4 (term -> factor TIMES factor .)
-    MINUS           reduce using rule 4 (term -> factor TIMES factor .)
-    $end            reduce using rule 4 (term -> factor TIMES factor .)
-    RPAREN          reduce using rule 4 (term -> factor TIMES factor .)
+    $end            reduce using rule 3 (expression -> term EQUAL term .)
+    RPAREN          reduce using rule 3 (expression -> term EQUAL term .)
 
 
-state 19
+state 61
 
-    (5) term -> factor DIVIDE factor .
+    (4) expression -> term NOTEQUAL term .
 
-    PLUS            reduce using rule 5 (term -> factor DIVIDE factor .)
-    MINUS           reduce using rule 5 (term -> factor DIVIDE factor .)
-    $end            reduce using rule 5 (term -> factor DIVIDE factor .)
-    RPAREN          reduce using rule 5 (term -> factor DIVIDE factor .)
+    $end            reduce using rule 4 (expression -> term NOTEQUAL term .)
+    RPAREN          reduce using rule 4 (expression -> term NOTEQUAL term .)
 
 
-state 20
+state 62
 
-    (11) factor -> LPAREN expression RPAREN .
+    (5) expression -> term LESSTHAN term .
 
-    TIMES           reduce using rule 11 (factor -> LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 11 (factor -> LPAREN expression RPAREN .)
-    PLUS            reduce using rule 11 (factor -> LPAREN expression RPAREN .)
-    MINUS           reduce using rule 11 (factor -> LPAREN expression RPAREN .)
-    $end            reduce using rule 11 (factor -> LPAREN expression RPAREN .)
-    RPAREN          reduce using rule 11 (factor -> LPAREN expression RPAREN .)
+    $end            reduce using rule 5 (expression -> term LESSTHAN term .)
+    RPAREN          reduce using rule 5 (expression -> term LESSTHAN term .)
 
+
+state 63
+
+    (6) expression -> term GREATERTHAN term .
+
+    $end            reduce using rule 6 (expression -> term GREATERTHAN term .)
+    RPAREN          reduce using rule 6 (expression -> term GREATERTHAN term .)
+
+
+state 64
+
+    (7) expression -> term LESSTHANEQUAL term .
+
+    $end            reduce using rule 7 (expression -> term LESSTHANEQUAL term .)
+    RPAREN          reduce using rule 7 (expression -> term LESSTHANEQUAL term .)
+
+
+state 65
+
+    (8) expression -> term GREATERTHANEQUAL term .
+
+    $end            reduce using rule 8 (expression -> term GREATERTHANEQUAL term .)
+    RPAREN          reduce using rule 8 (expression -> term GREATERTHANEQUAL term .)
+
+
+state 66
+
+    (9) expression -> term AND term .
+
+    $end            reduce using rule 9 (expression -> term AND term .)
+    RPAREN          reduce using rule 9 (expression -> term AND term .)
+
+
+state 67
+
+    (10) expression -> term OR term .
+
+    $end            reduce using rule 10 (expression -> term OR term .)
+    RPAREN          reduce using rule 10 (expression -> term OR term .)
+
+
+state 68
+
+    (12) term -> factor TIMES factor .
+
+    PLUS            reduce using rule 12 (term -> factor TIMES factor .)
+    MINUS           reduce using rule 12 (term -> factor TIMES factor .)
+    EQUAL           reduce using rule 12 (term -> factor TIMES factor .)
+    NOTEQUAL        reduce using rule 12 (term -> factor TIMES factor .)
+    LESSTHAN        reduce using rule 12 (term -> factor TIMES factor .)
+    GREATERTHAN     reduce using rule 12 (term -> factor TIMES factor .)
+    LESSTHANEQUAL   reduce using rule 12 (term -> factor TIMES factor .)
+    GREATERTHANEQUAL reduce using rule 12 (term -> factor TIMES factor .)
+    AND             reduce using rule 12 (term -> factor TIMES factor .)
+    OR              reduce using rule 12 (term -> factor TIMES factor .)
+    $end            reduce using rule 12 (term -> factor TIMES factor .)
+    RPAREN          reduce using rule 12 (term -> factor TIMES factor .)
+
+
+state 69
+
+    (13) term -> factor DIVIDE factor .
+
+    PLUS            reduce using rule 13 (term -> factor DIVIDE factor .)
+    MINUS           reduce using rule 13 (term -> factor DIVIDE factor .)
+    EQUAL           reduce using rule 13 (term -> factor DIVIDE factor .)
+    NOTEQUAL        reduce using rule 13 (term -> factor DIVIDE factor .)
+    LESSTHAN        reduce using rule 13 (term -> factor DIVIDE factor .)
+    GREATERTHAN     reduce using rule 13 (term -> factor DIVIDE factor .)
+    LESSTHANEQUAL   reduce using rule 13 (term -> factor DIVIDE factor .)
+    GREATERTHANEQUAL reduce using rule 13 (term -> factor DIVIDE factor .)
+    AND             reduce using rule 13 (term -> factor DIVIDE factor .)
+    OR              reduce using rule 13 (term -> factor DIVIDE factor .)
+    $end            reduce using rule 13 (term -> factor DIVIDE factor .)
+    RPAREN          reduce using rule 13 (term -> factor DIVIDE factor .)
+
+
+state 70
+
+    (14) term -> factor MOD factor .
+
+    PLUS            reduce using rule 14 (term -> factor MOD factor .)
+    MINUS           reduce using rule 14 (term -> factor MOD factor .)
+    EQUAL           reduce using rule 14 (term -> factor MOD factor .)
+    NOTEQUAL        reduce using rule 14 (term -> factor MOD factor .)
+    LESSTHAN        reduce using rule 14 (term -> factor MOD factor .)
+    GREATERTHAN     reduce using rule 14 (term -> factor MOD factor .)
+    LESSTHANEQUAL   reduce using rule 14 (term -> factor MOD factor .)
+    GREATERTHANEQUAL reduce using rule 14 (term -> factor MOD factor .)
+    AND             reduce using rule 14 (term -> factor MOD factor .)
+    OR              reduce using rule 14 (term -> factor MOD factor .)
+    $end            reduce using rule 14 (term -> factor MOD factor .)
+    RPAREN          reduce using rule 14 (term -> factor MOD factor .)
+
+
+state 71
+
+    (15) term -> factor ASSIGN factor .
+
+    PLUS            reduce using rule 15 (term -> factor ASSIGN factor .)
+    MINUS           reduce using rule 15 (term -> factor ASSIGN factor .)
+    EQUAL           reduce using rule 15 (term -> factor ASSIGN factor .)
+    NOTEQUAL        reduce using rule 15 (term -> factor ASSIGN factor .)
+    LESSTHAN        reduce using rule 15 (term -> factor ASSIGN factor .)
+    GREATERTHAN     reduce using rule 15 (term -> factor ASSIGN factor .)
+    LESSTHANEQUAL   reduce using rule 15 (term -> factor ASSIGN factor .)
+    GREATERTHANEQUAL reduce using rule 15 (term -> factor ASSIGN factor .)
+    AND             reduce using rule 15 (term -> factor ASSIGN factor .)
+    OR              reduce using rule 15 (term -> factor ASSIGN factor .)
+    $end            reduce using rule 15 (term -> factor ASSIGN factor .)
+    RPAREN          reduce using rule 15 (term -> factor ASSIGN factor .)
+
+
+state 72
+
+    (16) term -> factor EQUAL factor .
+
+    PLUS            reduce using rule 16 (term -> factor EQUAL factor .)
+    MINUS           reduce using rule 16 (term -> factor EQUAL factor .)
+    EQUAL           reduce using rule 16 (term -> factor EQUAL factor .)
+    NOTEQUAL        reduce using rule 16 (term -> factor EQUAL factor .)
+    LESSTHAN        reduce using rule 16 (term -> factor EQUAL factor .)
+    GREATERTHAN     reduce using rule 16 (term -> factor EQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 16 (term -> factor EQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 16 (term -> factor EQUAL factor .)
+    AND             reduce using rule 16 (term -> factor EQUAL factor .)
+    OR              reduce using rule 16 (term -> factor EQUAL factor .)
+    $end            reduce using rule 16 (term -> factor EQUAL factor .)
+    RPAREN          reduce using rule 16 (term -> factor EQUAL factor .)
+
+
+state 73
+
+    (17) term -> factor NOTEQUAL factor .
+
+    PLUS            reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    MINUS           reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    EQUAL           reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    NOTEQUAL        reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    LESSTHAN        reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    GREATERTHAN     reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    AND             reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    OR              reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    $end            reduce using rule 17 (term -> factor NOTEQUAL factor .)
+    RPAREN          reduce using rule 17 (term -> factor NOTEQUAL factor .)
+
+
+state 74
+
+    (18) term -> factor LESSTHAN factor .
+
+    PLUS            reduce using rule 18 (term -> factor LESSTHAN factor .)
+    MINUS           reduce using rule 18 (term -> factor LESSTHAN factor .)
+    EQUAL           reduce using rule 18 (term -> factor LESSTHAN factor .)
+    NOTEQUAL        reduce using rule 18 (term -> factor LESSTHAN factor .)
+    LESSTHAN        reduce using rule 18 (term -> factor LESSTHAN factor .)
+    GREATERTHAN     reduce using rule 18 (term -> factor LESSTHAN factor .)
+    LESSTHANEQUAL   reduce using rule 18 (term -> factor LESSTHAN factor .)
+    GREATERTHANEQUAL reduce using rule 18 (term -> factor LESSTHAN factor .)
+    AND             reduce using rule 18 (term -> factor LESSTHAN factor .)
+    OR              reduce using rule 18 (term -> factor LESSTHAN factor .)
+    $end            reduce using rule 18 (term -> factor LESSTHAN factor .)
+    RPAREN          reduce using rule 18 (term -> factor LESSTHAN factor .)
+
+
+state 75
+
+    (19) term -> factor GREATERTHAN factor .
+
+    PLUS            reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    MINUS           reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    EQUAL           reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    NOTEQUAL        reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    LESSTHAN        reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    GREATERTHAN     reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    LESSTHANEQUAL   reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    GREATERTHANEQUAL reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    AND             reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    OR              reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    $end            reduce using rule 19 (term -> factor GREATERTHAN factor .)
+    RPAREN          reduce using rule 19 (term -> factor GREATERTHAN factor .)
+
+
+state 76
+
+    (20) term -> factor LESSTHANEQUAL factor .
+
+    PLUS            reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    MINUS           reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    EQUAL           reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    NOTEQUAL        reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    LESSTHAN        reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    GREATERTHAN     reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    AND             reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    OR              reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    $end            reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+    RPAREN          reduce using rule 20 (term -> factor LESSTHANEQUAL factor .)
+
+
+state 77
+
+    (21) term -> factor GREATERTHANEQUAL factor .
+
+    PLUS            reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    MINUS           reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    EQUAL           reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    NOTEQUAL        reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    LESSTHAN        reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    GREATERTHAN     reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    LESSTHANEQUAL   reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    GREATERTHANEQUAL reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    AND             reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    OR              reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    $end            reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+    RPAREN          reduce using rule 21 (term -> factor GREATERTHANEQUAL factor .)
+
+
+state 78
+
+    (22) term -> factor AND factor .
+
+    PLUS            reduce using rule 22 (term -> factor AND factor .)
+    MINUS           reduce using rule 22 (term -> factor AND factor .)
+    EQUAL           reduce using rule 22 (term -> factor AND factor .)
+    NOTEQUAL        reduce using rule 22 (term -> factor AND factor .)
+    LESSTHAN        reduce using rule 22 (term -> factor AND factor .)
+    GREATERTHAN     reduce using rule 22 (term -> factor AND factor .)
+    LESSTHANEQUAL   reduce using rule 22 (term -> factor AND factor .)
+    GREATERTHANEQUAL reduce using rule 22 (term -> factor AND factor .)
+    AND             reduce using rule 22 (term -> factor AND factor .)
+    OR              reduce using rule 22 (term -> factor AND factor .)
+    $end            reduce using rule 22 (term -> factor AND factor .)
+    RPAREN          reduce using rule 22 (term -> factor AND factor .)
+
+
+state 79
+
+    (23) term -> factor OR factor .
+
+    PLUS            reduce using rule 23 (term -> factor OR factor .)
+    MINUS           reduce using rule 23 (term -> factor OR factor .)
+    EQUAL           reduce using rule 23 (term -> factor OR factor .)
+    NOTEQUAL        reduce using rule 23 (term -> factor OR factor .)
+    LESSTHAN        reduce using rule 23 (term -> factor OR factor .)
+    GREATERTHAN     reduce using rule 23 (term -> factor OR factor .)
+    LESSTHANEQUAL   reduce using rule 23 (term -> factor OR factor .)
+    GREATERTHANEQUAL reduce using rule 23 (term -> factor OR factor .)
+    AND             reduce using rule 23 (term -> factor OR factor .)
+    OR              reduce using rule 23 (term -> factor OR factor .)
+    $end            reduce using rule 23 (term -> factor OR factor .)
+    RPAREN          reduce using rule 23 (term -> factor OR factor .)
+
+
+state 80
+
+    (41) factor -> LPAREN expression RPAREN .
+
+    TIMES           reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    DIVIDE          reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    MOD             reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    ASSIGN          reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    EQUAL           reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    NOTEQUAL        reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    LESSTHAN        reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    GREATERTHAN     reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    LESSTHANEQUAL   reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    GREATERTHANEQUAL reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    AND             reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    OR              reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    PLUS            reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    $end            reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 41 (factor -> LPAREN expression RPAREN .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for EQUAL in state 13 resolved as shift
+WARNING: shift/reduce conflict for NOTEQUAL in state 13 resolved as shift
+WARNING: shift/reduce conflict for LESSTHAN in state 13 resolved as shift
+WARNING: shift/reduce conflict for GREATERTHAN in state 13 resolved as shift
+WARNING: shift/reduce conflict for LESSTHANEQUAL in state 13 resolved as shift
+WARNING: shift/reduce conflict for GREATERTHANEQUAL in state 13 resolved as shift
+WARNING: shift/reduce conflict for AND in state 13 resolved as shift
+WARNING: shift/reduce conflict for OR in state 13 resolved as shift

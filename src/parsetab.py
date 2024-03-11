@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'DIVIDE LPAREN MINUS NAME NUMBER PLUS RPAREN TIMES\n    expression : term PLUS term\n               | term MINUS term\n    \n    expression : term\n    \n    term : factor TIMES factor\n         | factor DIVIDE factor\n    \n    term : factor\n    \n    factor : NUMBER\n    \n    factor : NAME\n    \n    factor : PLUS factor\n           | MINUS factor\n    \n    factor : LPAREN expression RPAREN\n    '
+_lr_signature = 'AND APOSTROPHE ARROW ASSIGN ASSIGN AT BACKSLASH CLASS COLON COMMA DECREMENT DIVIDE DIVIDEASSIGN DOT DOUBLEQUOTE ELSE EQUAL FALSE FOR FUNCTION GREATERTHAN GREATERTHANEQUAL HASH IF INCREMENT INPUT LBRACE LBRACKET LESSTHAN LESSTHANEQUAL LPAREN MINUS MINUSASSIGN MOD MODASSIGN NAME NEW NOT NOTEQUAL NULL NUMBER OR PIPE PLUS PLUSASSIGN POW PRINT RBRACE RBRACKET RETURN RPAREN SEMICOLON SLASH TIMES TIMESASSIGN TRUE UNDERSCORE WHILE\n    expression : term PLUS term\n               | term MINUS term\n               | term EQUAL term\n               | term NOTEQUAL term\n               | term LESSTHAN term\n               | term GREATERTHAN term\n               | term LESSTHANEQUAL term\n               | term GREATERTHANEQUAL term\n               | term AND term\n               | term OR term\n    \n    expression : term\n    \n    term : factor TIMES factor\n         | factor DIVIDE factor\n         | factor MOD factor\n         | factor ASSIGN factor\n         | factor EQUAL factor\n         | factor NOTEQUAL factor\n         | factor LESSTHAN factor\n         | factor GREATERTHAN factor\n         | factor LESSTHANEQUAL factor\n         | factor GREATERTHANEQUAL factor\n         | factor AND factor\n         | factor OR factor\n    \n    term : factor\n    \n    factor : NUMBER\n    \n    factor : NAME\n    \n    factor : PLUS factor\n           | MINUS factor\n           | NOT factor\n           | ASSIGN factor\n           | INCREMENT factor\n           | DECREMENT factor\n           | EQUAL factor\n           | NOTEQUAL factor\n           | LESSTHAN factor\n           | GREATERTHAN factor\n           | LESSTHANEQUAL factor\n           | GREATERTHANEQUAL factor\n           | AND factor\n           | OR factor\n    \n    factor : LPAREN expression RPAREN\n    '
     
-_lr_action_items = {'NUMBER':([0,3,4,8,9,10,13,14,],[6,6,6,6,6,6,6,6,]),'NAME':([0,3,4,8,9,10,13,14,],[7,7,7,7,7,7,7,7,]),'PLUS':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,18,19,20,],[3,9,3,3,-6,-7,-8,3,3,3,-9,-10,3,3,-4,-5,-11,]),'MINUS':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,18,19,20,],[4,10,4,4,-6,-7,-8,4,4,4,-9,-10,4,4,-4,-5,-11,]),'LPAREN':([0,3,4,8,9,10,13,14,],[8,8,8,8,8,8,8,8,]),'$end':([1,2,5,6,7,11,12,16,17,18,19,20,],[0,-3,-6,-7,-8,-9,-10,-1,-2,-4,-5,-11,]),'RPAREN':([2,5,6,7,11,12,15,16,17,18,19,20,],[-3,-6,-7,-8,-9,-10,20,-1,-2,-4,-5,-11,]),'TIMES':([5,6,7,11,12,20,],[13,-7,-8,-9,-10,-11,]),'DIVIDE':([5,6,7,11,12,20,],[14,-7,-8,-9,-10,-11,]),}
+_lr_action_items = {'NUMBER':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,]),'NAME':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,]),'PLUS':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[3,21,3,3,3,3,3,3,3,3,3,3,-24,3,-25,-26,3,3,3,3,3,3,3,3,3,3,3,3,3,3,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,3,3,3,3,3,3,3,3,3,3,3,3,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'MINUS':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[4,22,4,4,4,4,4,4,4,4,4,4,-24,4,-25,-26,4,4,4,4,4,4,4,4,4,4,4,4,4,4,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,4,4,4,4,4,4,4,4,4,4,4,4,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'NOT':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,]),'ASSIGN':([0,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,80,],[14,14,14,14,14,14,14,14,14,14,14,44,14,-25,-26,14,14,14,14,14,14,14,14,14,14,14,14,14,14,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,14,14,14,14,14,14,14,14,14,14,14,14,-30,-29,-31,-32,-41,]),'INCREMENT':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,]),'DECREMENT':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,19,]),'EQUAL':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[5,23,5,5,5,5,5,5,5,5,5,5,45,5,-25,-26,5,5,5,5,5,5,5,5,5,5,5,5,5,5,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,5,5,5,5,5,5,5,5,5,5,5,5,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'NOTEQUAL':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[6,24,6,6,6,6,6,6,6,6,6,6,46,6,-25,-26,6,6,6,6,6,6,6,6,6,6,6,6,6,6,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,6,6,6,6,6,6,6,6,6,6,6,6,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'LESSTHAN':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[7,25,7,7,7,7,7,7,7,7,7,7,47,7,-25,-26,7,7,7,7,7,7,7,7,7,7,7,7,7,7,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,7,7,7,7,7,7,7,7,7,7,7,7,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'GREATERTHAN':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[8,26,8,8,8,8,8,8,8,8,8,8,48,8,-25,-26,8,8,8,8,8,8,8,8,8,8,8,8,8,8,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,8,8,8,8,8,8,8,8,8,8,8,8,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'LESSTHANEQUAL':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[9,27,9,9,9,9,9,9,9,9,9,9,49,9,-25,-26,9,9,9,9,9,9,9,9,9,9,9,9,9,9,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,9,9,9,9,9,9,9,9,9,9,9,9,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'GREATERTHANEQUAL':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[10,28,10,10,10,10,10,10,10,10,10,10,50,10,-25,-26,10,10,10,10,10,10,10,10,10,10,10,10,10,10,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,10,10,10,10,10,10,10,10,10,10,10,10,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'AND':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[11,29,11,11,11,11,11,11,11,11,11,11,51,11,-25,-26,11,11,11,11,11,11,11,11,11,11,11,11,11,11,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,11,11,11,11,11,11,11,11,11,11,11,11,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'OR':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,68,69,70,71,72,73,74,75,76,77,78,79,80,],[12,30,12,12,12,12,12,12,12,12,12,12,52,12,-25,-26,12,12,12,12,12,12,12,12,12,12,12,12,12,12,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,12,12,12,12,12,12,12,12,12,12,12,12,-30,-29,-31,-32,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'LPAREN':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,]),'$end':([1,2,13,15,16,31,32,33,34,35,36,37,38,39,40,53,54,55,56,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,],[0,-11,-24,-25,-26,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,-30,-29,-31,-32,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'RPAREN':([2,13,15,16,31,32,33,34,35,36,37,38,39,40,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,],[-11,-24,-25,-26,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,-30,-29,-31,-32,80,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-12,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,-23,-41,]),'TIMES':([13,15,16,31,32,33,34,35,36,37,38,39,40,53,54,55,56,80,],[41,-25,-26,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,-30,-29,-31,-32,-41,]),'DIVIDE':([13,15,16,31,32,33,34,35,36,37,38,39,40,53,54,55,56,80,],[42,-25,-26,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,-30,-29,-31,-32,-41,]),'MOD':([13,15,16,31,32,33,34,35,36,37,38,39,40,53,54,55,56,80,],[43,-25,-26,-27,-28,-33,-34,-35,-36,-37,-38,-39,-40,-30,-29,-31,-32,-41,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expression':([0,8,],[1,15,]),'term':([0,8,9,10,],[2,2,16,17,]),'factor':([0,3,4,8,9,10,13,14,],[5,11,12,5,5,5,18,19,]),}
+_lr_goto_items = {'expression':([0,20,],[1,57,]),'term':([0,20,21,22,23,24,25,26,27,28,29,30,],[2,2,58,59,60,61,62,63,64,65,66,67,]),'factor':([0,3,4,5,6,7,8,9,10,11,12,14,17,18,19,20,21,22,23,24,25,26,27,28,29,30,41,42,43,44,45,46,47,48,49,50,51,52,],[13,31,32,33,34,35,36,37,38,39,40,53,54,55,56,13,13,13,13,13,13,13,13,13,13,13,68,69,70,71,72,73,74,75,76,77,78,79,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,15 +27,45 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> expression","S'",1,None,None,None),
-  ('expression -> term PLUS term','expression',3,'p_expression','parser.py',69),
-  ('expression -> term MINUS term','expression',3,'p_expression','parser.py',70),
-  ('expression -> term','expression',1,'p_expression_term','parser.py',81),
-  ('term -> factor TIMES factor','term',3,'p_term','parser.py',87),
-  ('term -> factor DIVIDE factor','term',3,'p_term','parser.py',88),
-  ('term -> factor','term',1,'p_term_factor','parser.py',94),
-  ('factor -> NUMBER','factor',1,'p_factor_number','parser.py',100),
-  ('factor -> NAME','factor',1,'p_factor_name','parser.py',106),
-  ('factor -> PLUS factor','factor',2,'p_factor_unary','parser.py',112),
-  ('factor -> MINUS factor','factor',2,'p_factor_unary','parser.py',113),
-  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor_grouped','parser.py',119),
+  ('expression -> term PLUS term','expression',3,'p_expression','parser.py',126),
+  ('expression -> term MINUS term','expression',3,'p_expression','parser.py',127),
+  ('expression -> term EQUAL term','expression',3,'p_expression','parser.py',128),
+  ('expression -> term NOTEQUAL term','expression',3,'p_expression','parser.py',129),
+  ('expression -> term LESSTHAN term','expression',3,'p_expression','parser.py',130),
+  ('expression -> term GREATERTHAN term','expression',3,'p_expression','parser.py',131),
+  ('expression -> term LESSTHANEQUAL term','expression',3,'p_expression','parser.py',132),
+  ('expression -> term GREATERTHANEQUAL term','expression',3,'p_expression','parser.py',133),
+  ('expression -> term AND term','expression',3,'p_expression','parser.py',134),
+  ('expression -> term OR term','expression',3,'p_expression','parser.py',135),
+  ('expression -> term','expression',1,'p_expression_term','parser.py',147),
+  ('term -> factor TIMES factor','term',3,'p_term','parser.py',154),
+  ('term -> factor DIVIDE factor','term',3,'p_term','parser.py',155),
+  ('term -> factor MOD factor','term',3,'p_term','parser.py',156),
+  ('term -> factor ASSIGN factor','term',3,'p_term','parser.py',157),
+  ('term -> factor EQUAL factor','term',3,'p_term','parser.py',158),
+  ('term -> factor NOTEQUAL factor','term',3,'p_term','parser.py',159),
+  ('term -> factor LESSTHAN factor','term',3,'p_term','parser.py',160),
+  ('term -> factor GREATERTHAN factor','term',3,'p_term','parser.py',161),
+  ('term -> factor LESSTHANEQUAL factor','term',3,'p_term','parser.py',162),
+  ('term -> factor GREATERTHANEQUAL factor','term',3,'p_term','parser.py',163),
+  ('term -> factor AND factor','term',3,'p_term','parser.py',164),
+  ('term -> factor OR factor','term',3,'p_term','parser.py',165),
+  ('term -> factor','term',1,'p_term_factor','parser.py',172),
+  ('factor -> NUMBER','factor',1,'p_factor_number','parser.py',179),
+  ('factor -> NAME','factor',1,'p_factor_name','parser.py',186),
+  ('factor -> PLUS factor','factor',2,'p_factor_unary','parser.py',193),
+  ('factor -> MINUS factor','factor',2,'p_factor_unary','parser.py',194),
+  ('factor -> NOT factor','factor',2,'p_factor_unary','parser.py',195),
+  ('factor -> ASSIGN factor','factor',2,'p_factor_unary','parser.py',196),
+  ('factor -> INCREMENT factor','factor',2,'p_factor_unary','parser.py',197),
+  ('factor -> DECREMENT factor','factor',2,'p_factor_unary','parser.py',198),
+  ('factor -> EQUAL factor','factor',2,'p_factor_unary','parser.py',199),
+  ('factor -> NOTEQUAL factor','factor',2,'p_factor_unary','parser.py',200),
+  ('factor -> LESSTHAN factor','factor',2,'p_factor_unary','parser.py',201),
+  ('factor -> GREATERTHAN factor','factor',2,'p_factor_unary','parser.py',202),
+  ('factor -> LESSTHANEQUAL factor','factor',2,'p_factor_unary','parser.py',203),
+  ('factor -> GREATERTHANEQUAL factor','factor',2,'p_factor_unary','parser.py',204),
+  ('factor -> AND factor','factor',2,'p_factor_unary','parser.py',205),
+  ('factor -> OR factor','factor',2,'p_factor_unary','parser.py',206),
+  ('factor -> LPAREN expression RPAREN','factor',3,'p_factor_grouped','parser.py',213),
 ]
