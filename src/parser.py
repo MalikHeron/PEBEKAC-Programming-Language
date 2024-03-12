@@ -238,10 +238,16 @@ def p_control_structure(p):
 
 def p_if_stmt(p):
     """
-    if_stmt : IF LPAREN expression RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE
+    if_stmt : IF LPAREN expression RPAREN LBRACE stmt_list RBRACE
+            | IF LPAREN expression RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE
             | expression QUESTION expression COLON expression SEMICOLON
     """
-    p[0] = ('if_stmt', p[3], p[6], p[10])
+    if len(p) == 12:
+        p[0] = ('if_stmt', p[3], p[6], p[10])
+    elif len(p) == 8:
+        p[0] = ('if_stmt', p[3], p[6])
+    elif len(p) == 7:
+        p[0] = ('if_stmt', p[1], p[3], p[5])
 
 
 def p_for_stmt(p):
@@ -290,6 +296,15 @@ def p_expression(p):
                | expression MODULUS expression
                | expression AND expression
                | expression OR expression
+               | expression EQUAL expression
+               | expression NOTEQUAL expression
+               | expression LESSTHAN expression
+               | expression GREATERTHAN expression
+               | expression LESSTHANEQUAL expression
+               | expression GREATERTHANEQUAL expression
+               | expression INCREMENT
+               | expression DECREMENT
+               | expression POW expression
                | NOT expression
                | LPAREN expression RPAREN
                | IDENTIFIER
@@ -301,8 +316,10 @@ def p_expression(p):
     """
     if len(p) == 5:
         p[0] = ('expression', p[1], p[3])
-    if len(p) >= 3:
-        p[0] = ('expression', p[2])
+    elif len(p) == 4:
+        p[0] = ('expression', p[1], p[2], p[3])
+    if len(p) == 3:
+        p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
 
@@ -369,5 +386,5 @@ def p_error(p):
 parser = yacc()
 
 # Parse an expression
-ast = parser.parse('int x = 10;')
+ast = parser.parse('if (true) {}')
 print(ast)
