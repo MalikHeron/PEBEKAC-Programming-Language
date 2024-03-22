@@ -1,4 +1,5 @@
 from ply.yacc import yacc
+from lex import *
 
 
 # --- Parser
@@ -42,22 +43,22 @@ def p_stmt(p):
 
 def p_class_declaration(p):
     """
-    class_declaration : CLASS IDENTIFIER LBRACE stmt_list RBRACE
+    class_declaration : CLASS identifier LBRACE stmt_list RBRACE
     """
     p[0] = ('class_declaration', p[2], p[4])
 
 
 def p_fun_declaration(p):
     """
-    fun_declaration : FUN IDENTIFIER LPAREN params RPAREN LBRACE stmt_list RBRACE
+    fun_declaration : FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
     """
     p[0] = ('fun_declaration', p[2], p[4], p[7])
 
 
 def p_params(p):
     """
-    params : general_type IDENTIFIER COMMA params
-           | general_type IDENTIFIER
+    params : general_type identifier COMMA params
+           | general_type identifier
            | empty
     """
     if len(p) == 5:
@@ -77,20 +78,27 @@ def p_import_declaration(p):
 
 def p_variable_declaration(p):
     """
-    variable_declaration : general_type IDENTIFIER SEMICOLON
-                         | list_type IDENTIFIER LBRACKET RBRACKET SEMICOLON
-                         | array_type IDENTIFIER LBRACE RBRACE SEMICOLON
+    variable_declaration : general_type identifier SEMICOLON
+                         | list_type identifier LBRACKET RBRACKET SEMICOLON
+                         | array_type identifier LBRACE RBRACE SEMICOLON
     """
     p[0] = ('variable_declaration', p[1], p[2])
 
 
 def p_assignment(p):
     """
-    assignment : general_type IDENTIFIER ASSIGN expression SEMICOLON
-               | list_type IDENTIFIER LBRACKET expression RBRACKET ASSIGN expression SEMICOLON
-               | array_type IDENTIFIER LBRACE expression RBRACE ASSIGN expression SEMICOLON
+    assignment : general_type identifier ASSIGN expression SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
+               | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
+               | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
+               | identifier ASSIGN expression SEMICOLON
     """
-    p[0] = ('assignment', p[1], p[2], p[4])
+    if len(p) == 6:
+        p[0] = ('assignment', p[1], p[2], p[4])
+    else:
+        p[0] = ('assignment', p[1], p[3])
+
 
 
 def p_print_stmt(p):
@@ -178,6 +186,7 @@ def p_expression(p):
                | expression GREATERTHANEQUAL expression
                | expression INCREMENT
                | expression DECREMENT
+               | expression COMMA expression
                | expression POW expression
                | NOT expression
                | LPAREN expression RPAREN
@@ -192,7 +201,7 @@ def p_expression(p):
         p[0] = ('expression', p[1], p[3])
     elif len(p) == 4:
         p[0] = ('expression', p[1], p[2], p[3])
-    if len(p) == 3:
+    elif len(p) == 3:
         p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
@@ -220,7 +229,7 @@ def p_general_type(p):
                  | DOUBLE
                  | STRING
                  | BOOLEAN
-                 | IDENTIFIER
+                 | identifier
     """
     p[0] = ('general_type', p[1])
 
@@ -243,6 +252,13 @@ def p_list_type(p):
               | DOUBLELIST
     """
     p[0] = ('list_type', p[1])
+
+
+def p_identifier(p):
+    """
+    identifier : IDENTIFIER
+    """
+    p[0] = ('identifier', p[1])
 
 
 def p_empty(p):

@@ -3,12 +3,10 @@ from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
 program_code = """
-class Test {
     fun main() {
         string name = "John Brown";
         print("Hello World, my name is ");
     }
-}
 """
 
 # Parse and analyze the program

@@ -91,6 +91,7 @@ t_MINUSASSIGN = r'-='
 t_TIMESASSIGN = r'\*='
 t_DIVIDEASSIGN = r'/='
 t_MODASSIGN = r'%='
+t_ARROW = r'->'
 
 # Ignored characters
 t_ignore = ' \t'
