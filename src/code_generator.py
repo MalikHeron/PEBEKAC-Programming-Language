@@ -24,6 +24,16 @@ def generate_code(node):
         else:
             return ', '.join(generate_code(param) for param in node[1])
 
+    elif node_type == 'variable_declaration':
+        var_type = generate_code(node[1])
+        var_name = node[2]
+        if var_type.startswith('list') or var_type.endswith('[]'):
+            return f'{var_name} = []'  # Initializing an empty list
+        elif var_type.endswith('Array'):
+            return f'{var_name} = [0] * {var_type[3:-5]}'  # Initializing an array of zeros of given size
+        else:
+            return f'{var_name} = None'  # Initializing other variables as None
+
     elif node_type == 'assignment':
         var_name = node[2]
         expr = generate_code(node[3])
@@ -32,6 +42,42 @@ def generate_code(node):
     elif node_type == 'print_stmt':
         expr = generate_code(node[1])  # Extract expression node directly
         return f'print({expr})'
+
+    elif node_type == 'control_structure':
+        return generate_code(node[1])
+
+    elif node_type == 'if_stmt':
+        condition = generate_code(node[1])
+        if_body = generate_code(node[2])
+        else_body = generate_code(node[3]) if len(node) > 3 else ''
+        return f'if {condition}:\n{indent(if_body)}' + (f'\nelse:\n{indent(else_body)}' if else_body else '')
+
+    elif node_type == 'while_stmt':
+        condition = generate_code(node[1])
+        loop_body = generate_code(node[2])
+        return f'while {condition}:\n{indent(loop_body)}'
+
+    elif node_type == 'for_stmt':
+        init = generate_code(node[1])
+        condition = generate_code(node[2])
+        increment = generate_code(node[3])
+        loop_body = generate_code(node[4])
+        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n    {increment}'
+
+    elif node_type == 'switch_stmt':
+        expression = generate_code(node[1])
+        case_stmts = generate_code(node[2])
+        default_stmt = generate_code(node[3])
+        return f'switch {expression}:\n{indent(case_stmts)}\n{indent(default_stmt)}'
+
+    elif node_type == 'case_stmts':
+        if len(node) == 2:
+            return generate_code(node[1])
+        else:
+            return generate_code(node[1]) + '\n' + generate_code(node[2])
+
+    elif node_type == 'default_stmt':
+        return generate_code(node[1])
 
     elif node_type == 'expression':
         if len(node) == 2:
