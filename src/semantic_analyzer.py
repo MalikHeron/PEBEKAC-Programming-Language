@@ -98,6 +98,7 @@ def analyze_semantics(node):
 
     # Add more semantic analysis rules for other language construct
 
+
 def is_type(symbol_table, type_candidate):
     # Check if a given string is a type in the symbol table.
     for symbol, attributes in symbol_table.items():
