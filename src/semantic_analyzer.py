@@ -97,7 +97,6 @@ def analyze_semantics(node):
 
         pop_scope()
 
-
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
         for param in node[1:]:
