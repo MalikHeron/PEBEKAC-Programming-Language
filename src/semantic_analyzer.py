@@ -102,6 +102,12 @@ def analyze_semantics(node):
         for param in node[1:]:
             analyze_semantics(param)
 
+        # Check if there are multiple parameters with the same name and datatype
+        param_names = [param[1] for param in node[1:]]
+        param_types = [param[0] for param in node[1:]]
+        if len(param_names) != len(set(param_names)) or len(param_types) != len(set(param_types)):
+            raise Exception("Error: Function has multiple parameters with the same name and datatype")
+
     elif node_type == 'import_declaration':
         # Add import information to the symbol table
         module_name = node[1]
@@ -169,6 +175,27 @@ def analyze_semantics(node):
         analyze_semantics(node[2])
         pop_scope()
 
+    elif node_type == 'for_stmt':
+        # Check if initial assignment, condition, and increment are valid...
+        init_type = get_assignment_type(node[1])
+        cond_type = get_expression_type(node[2])
+        incr_type = get_expression_type(node[3])
+        if init_type is None or cond_type != 'boolean' or incr_type is None:
+            raise ValueError(
+                f"Invalid for statement: init_type={init_type}, cond_type={cond_type}, incr_type={incr_type}")
+
+            # Check if the variable in the initial assignment is not used in the condition and increment
+        init_var = node[1][2][1]  # Extract the variable name from the initial assignment
+        if not (init_var in str(node[2]) and init_var in str(node[3])):
+            raise ValueError(
+                f"Variable {init_var} in the initial assignment is not used correctly in the condition and increment")
+
+        # Analyze statements in the for block
+        push_scope()
+        analyze_semantics(node[1])  # Analyze the initialization part in the new scope
+        analyze_semantics(node[2])  # Analyze the loop body in the new scope
+        pop_scope()
+
     elif node_type == 'class_method':
         # Analyze statements inside the method
         push_scope()
@@ -208,21 +235,6 @@ def analyze_semantics(node):
         if expr_type is None:
             raise ValueError(f"Invalid expression in print statement: {node[1]}")
 
-    elif node_type == 'if_stmt':
-        # Check if condition is a boolean expression...
-        cond_type = get_expression_type(node[1])
-        if cond_type != 'boolean':
-            raise TypeError(f"Condition in if statement must be a boolean expression, not {cond_type}")
-
-    elif node_type == 'for_stmt':
-        # Check if initial assignment, condition, and increment are valid...
-        init_type = get_assignment_type(node[1])
-        cond_type = get_expression_type(node[2])
-        incr_type = get_expression_type(node[3])
-        if init_type is None or cond_type != 'boolean' or incr_type is None:
-            raise ValueError(
-                f"Invalid for statement: init_type={init_type}, cond_type={cond_type}, incr_type={incr_type}")
-
     elif node_type == 'fun_call':
         fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
         args = node[2]
@@ -231,6 +243,14 @@ def analyze_semantics(node):
         fun_info = lookup_symbol(fun_name)
         if not fun_info or fun_info['type'] != 'function':
             raise Exception(f"Error: Function {fun_name} not declared")
+
+        # Check if the function is a method of the correct class
+        if 'class' in fun_info and (not args or lookup_symbol(args[0])['type'] != fun_info['class']):
+            raise Exception(f"Error: Method {fun_name} called on an instance of the wrong class")
+
+        # Check if the function is from an imported module and used correctly
+        if 'module' in fun_info and not args:
+            raise Exception(f"Error: Function {fun_name} from module {fun_info['module']} used incorrectly")
 
         # Check if the number and types of arguments match the function declaration
         declared_params = fun_info['params']
