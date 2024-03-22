@@ -50,9 +50,35 @@ def p_class_declaration(p):
 
 def p_fun_declaration(p):
     """
-    fun_declaration : FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+       fun_declaration : general_type FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+                       | FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
     """
-    p[0] = ('fun_declaration', p[2], p[4], p[7])
+    if len(p) == 10:
+        p[0] = ('fun_declaration', p[1], p[3], p[5], p[8]) # Accounting for return type specification
+    else:
+        p[0] = ('fun_declaration', p[2], p[4], p[7])
+
+
+def p_fun_call(p):
+    """
+    fun_call : identifier LPAREN args RPAREN
+    """
+    p[0] = ('fun_call', p[1], p[3])
+
+
+def p_return_stmt(p):
+    """
+    return_stmt : RETURN expression SEMICOLON
+    """
+    p[0] = ('return_stmt', p[2])
+
+
+def p_break_continue_stmt(p):
+    """
+    break_continue_stmt : BREAK SEMICOLON
+                        | CONTINUE SEMICOLON
+    """
+    p[0] = (f'{p[1]}_stmt',)
 
 
 def p_params(p):

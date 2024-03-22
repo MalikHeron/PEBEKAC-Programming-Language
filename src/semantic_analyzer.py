@@ -66,30 +66,37 @@ def analyze_semantics(node):
         analyze_semantics(node[2])
         pop_scope()
 
+
     elif node_type == 'fun_declaration':
         # Add function information to the symbol table
-        fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
-        params = node[2]
+        fun_name = node[2][1] if node[1] else node[1][
+            1]  # Extract the actual function name from the identifier non-terminal
+
+        params = node[3] if node[1] else node[2]
 
         if lookup_symbol(fun_name):
             raise Exception(f"Error: Function {fun_name} already defined")
         else:
-            declare_symbol(fun_name, {'type': 'function', 'params': params})
+            fun_type = node[1][1] if node[1] else None  # Extract the return type if it exists
+            declare_symbol(fun_name, {'type': 'function', 'return_type': fun_type, 'params': params})
 
         # Analyze statements inside the function declaration
         push_scope()
 
         # First analyze all declarations and initializations
-        for stmt in node[3]:
+        for stmt in node[4] if node[1] else node[3]:
+
             if stmt[0] in ['variable_declaration', 'assignment']:
                 analyze_semantics(stmt)
 
         # Then analyze other statements
-        for stmt in node[3]:
+        for stmt in node[4] if node[1] else node[3]:
+
             if stmt[0] not in ['variable_declaration', 'assignment']:
                 analyze_semantics(stmt)
 
         pop_scope()
+
 
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
@@ -216,6 +223,42 @@ def analyze_semantics(node):
         if init_type is None or cond_type != 'boolean' or incr_type is None:
             raise ValueError(
                 f"Invalid for statement: init_type={init_type}, cond_type={cond_type}, incr_type={incr_type}")
+
+    elif node_type == 'fun_call':
+        fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
+        args = node[2]
+
+        # Check if the function is declared
+        fun_info = lookup_symbol(fun_name)
+        if not fun_info or fun_info['type'] != 'function':
+            raise Exception(f"Error: Function {fun_name} not declared")
+
+        # Check if the number and types of arguments match the function declaration
+        declared_params = fun_info['params']
+        if len(args) != len(declared_params):
+            raise Exception(f"Error: Incorrect number of arguments for function {fun_name}")
+        for arg, declared_param in zip(args, declared_params):
+            if get_expression_type(arg) != declared_param['type']:
+                raise Exception(f"Error: Incorrect type of argument for function {fun_name}")
+
+    elif node_type == 'return_stmt':
+        expr = node[1]
+
+        # Check if the return statement is inside a function
+        if 'function' not in [info['type'] for info in reversed(scope_stack)]:
+            raise Exception("Error: Return statement not inside a function")
+
+        # Check if the type of the returned expression matches the function's return type
+        fun_info = next(info for info in reversed(scope_stack) if info['type'] == 'function')
+        if get_expression_type(expr) != fun_info['return_type']:
+            raise Exception("Error: Return type does not match function's return type")
+
+    elif node_type == 'break_continue_stmt':
+        stmt_type = node[1]
+
+        # Check if the break or continue statement is inside a loop
+        if 'loop' not in [info['type'] for info in reversed(scope_stack)]:
+            raise Exception(f"Error: {stmt_type} statement not inside a loop")
 
     # Add more semantic analysis rules for other language construct
 
