@@ -122,9 +122,16 @@ def t_ignore_newline(t):
     t.lexer.lineno += t.value.count('\n')
 
 
+def find_column(t):
+    line_start = t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    if line_start < 0:
+        line_start = 0
+    return (t.lexpos - line_start) + 1
+
+
 # Error handler for illegal characters
 def t_error(t):
-    print(f'Illegal character {t.value[0]!r}')
+    print(f'Illegal character {t.value[0]} at line no: {t.lineno} col: {find_column(t)}')
     t.lexer.skip(1)
 
 
