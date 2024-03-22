@@ -126,7 +126,6 @@ def p_assignment(p):
         p[0] = ('assignment', p[1], p[3])
 
 
-
 def p_print_stmt(p):
     """
     print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
@@ -216,12 +215,12 @@ def p_expression(p):
                | expression POW expression
                | NOT expression
                | LPAREN expression RPAREN
-               | IDENTIFIER
+               | identifier
                | digit
-               | STRING_LITERAL
+               | string
                | boolean
-               | IDENTIFIER LBRACKET expression RBRACKET
-               | IDENTIFIER LBRACE expression RBRACE
+               | identifier LBRACKET expression RBRACKET
+               | identifier LBRACE expression RBRACE
     """
     if len(p) == 5:
         p[0] = ('expression', p[1], p[3])
@@ -294,6 +293,13 @@ def p_comment(p):
     p[0] = ('comment', p[1])
 
 
+def p_string_literal(p):
+    """
+    string : STRING_LITERAL
+    """
+    p[0] = ('string_literal', p[1])
+
+
 def p_empty(p):
     """
     empty :
@@ -306,4 +312,4 @@ def p_error(p):
 
 
 # Build the parser
-parser = yacc.yacc()
+parser = yacc()
