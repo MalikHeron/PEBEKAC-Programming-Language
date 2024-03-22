@@ -46,8 +46,13 @@ tokens = list(reserved.values()) + [
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION'
+    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT'
 ]
+
+# States
+states = (
+    ('comment', 'exclusive'),
+)
 
 # Token matching rules are written as regexs
 t_PLUS = r'\+'
@@ -105,15 +110,55 @@ def t_IDENTIFIER(t):
     return t
 
 
+# Defining float Values
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
+
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
     return t
 
 
+def t_BOOLEAN(t):
+    r'true|false'
+    t.value = (t.value == 'true')  # Convert the string to a Python boolean
+    return t
+
 def t_STRING_LITERAL(t):
     r'\".*?\"'
     t.value = t.value[1:-1]  # Remove the quotation marks
+    return t
+
+
+
+# Start of a comment
+def t_comment(t):
+    r'//.*|/\*|\#.*'
+    if t.value.startswith('/*'):
+        t.lexer.comment_text = t.value[2:]  # Save the text of the comment
+        t.lexer.begin('comment')
+    else:
+        t.type = 'COMMENT'
+        return t
+
+
+# Inside a comment
+def t_comment_COMMENT(t):
+    r'.|\n'
+    t.lexer.comment_text += t.value  # Add the text to the comment
+
+
+# End of a comment
+def t_comment_end(t):
+    r'\*/'
+    t.lexer.lineno += t.value.count('\n')
+    t.lexer.begin('INITIAL')
+    t.value = t.lexer.comment_text  # Use the accumulated text for the token
+    t.type = 'COMMENT'
     return t
 
 

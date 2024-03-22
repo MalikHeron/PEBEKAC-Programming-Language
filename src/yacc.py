@@ -261,6 +261,13 @@ def p_identifier(p):
     p[0] = ('identifier', p[1])
 
 
+def p_comment(p):
+    """
+    comment : COMMENT
+    """
+    p[0] = ('comment', p[1])
+
+
 def p_empty(p):
     """
     empty :
