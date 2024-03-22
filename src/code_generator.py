@@ -35,9 +35,14 @@ def generate_code(node):
             return f'{var_name} = None'  # Initializing other variables as None
 
     elif node_type == 'assignment':
-        var_name = node[2][1]
-        expr = generate_code(node[3])
-        return f'{var_name} = {expr}'  # Correct assignment syntax
+        if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
+            var_name = node[2][1]
+            expr = generate_code(node[3])
+            return f'{var_name} = {expr}'  # Correct assignment syntax
+        else:
+            var_name = node[1][1]
+            expr = generate_code(node[2])
+            return f'{var_name} = {expr}'
 
     elif node_type == 'print_stmt':
         expr = generate_code(node[1])  # Extract expression node directly

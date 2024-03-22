@@ -6,7 +6,6 @@ program_code = """
     fun main() {
         int x;
         string code = "John";
-        code = "Hello";
         print("Hello World, my name is ");
     }
 """
