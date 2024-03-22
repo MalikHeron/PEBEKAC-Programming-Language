@@ -1,3 +1,4 @@
 def main():
-    name = "John Brown"
+    x = None
+    code = "John"
     print("Hello World, my name is ")

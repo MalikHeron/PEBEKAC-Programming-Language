@@ -13,7 +13,7 @@ def generate_code(node):
         return f'class {class_name}:\n{indent(stmts)}'
 
     elif node_type == 'fun_declaration':
-        fun_name = node[1]
+        fun_name = node[1][1]
         params = generate_code(node[2])
         stmts = generate_code(node[3])
         return f'def {fun_name}({params}):\n{indent(stmts)}'
@@ -26,7 +26,7 @@ def generate_code(node):
 
     elif node_type == 'variable_declaration':
         var_type = generate_code(node[1])
-        var_name = node[2]
+        var_name = node[2][1]
         if var_type.startswith('list') or var_type.endswith('[]'):
             return f'{var_name} = []'  # Initializing an empty list
         elif var_type.endswith('Array'):
@@ -35,7 +35,7 @@ def generate_code(node):
             return f'{var_name} = None'  # Initializing other variables as None
 
     elif node_type == 'assignment':
-        var_name = node[2]
+        var_name = node[2][1]
         expr = generate_code(node[3])
         return f'{var_name} = {expr}'  # Correct assignment syntax
 
@@ -81,7 +81,7 @@ def generate_code(node):
 
     elif node_type == 'expression':
         if len(node) == 2:
-            return f'"{node[1]}"'  # Treat literals as string literals
+            return f'"{node[1][1]}"'  # Treat literals as string literals
         elif len(node) == 3:
             op = node[1]
             right = generate_code(node[2])
