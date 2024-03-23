@@ -36,6 +36,8 @@ def p_stmt(p):
          | variable_declaration
          | print_stmt
          | control_structure
+         | return_stmt
+         | function_call
          | empty
     """
     p[0] = p[1]
@@ -141,6 +143,31 @@ def p_control_structure(p):
                       | switch_stmt
     """
     p[0] = ('control_structure', p[1])
+
+
+def p_function_call(p):
+    """
+    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
+    """
+    p[0] = ('function_call', p[1], p[3])
+
+
+def p_arg_list(p):
+    """
+    arg_list : expression COMMA arg_list
+             | expression
+    """
+    if len(p) == 4:
+        p[0] = ('arg_list', p[1], p[3])
+    else:
+        p[0] = ('arg_list', p[1])
+
+
+def p_return_stmt(p):
+    """
+    return_stmt : RETURN expression SEMICOLON
+    """
+    p[0] = ('return_stmt', p[2])
 
 
 def p_if_stmt(p):

@@ -86,7 +86,10 @@ def generate_code(node):
 
     elif node_type == 'expression':
         if len(node) == 2:
-            return f'"{node[1][1]}"'  # Treat literals as string literals
+            if node[1][0] == 'string_literal':
+                return f'"{node[1][1]}"'  # Treat literals as string literals
+            else:
+                return f'{node[1][1]}'
         elif len(node) == 3:
             op = node[1]
             right = generate_code(node[2])
@@ -98,6 +101,20 @@ def generate_code(node):
             return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
+
+    elif node_type == 'function_call':
+        fun_name = node[1]
+        args = generate_code(node[2])
+        return f'{fun_name}({args})'
+
+    elif node_type == 'args':
+        if len(node) == 2:
+            return generate_code(node[1])
+        else:
+            return generate_code(node[1]) + ', ' + generate_code(node[2])
+
+    elif node_type == 'return_stmt':
+        return f'return {generate_code(node[1])}'
 
     elif node_type == 'empty':
         return ''
