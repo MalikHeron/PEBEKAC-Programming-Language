@@ -56,14 +56,15 @@ def p_fun_declaration(p):
                        | FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
     """
     if len(p) == 10:
-        p[0] = ('fun_declaration', p[1], p[3], p[5], p[8]) # Accounting for return type specification
+        # Accounting for return type specification
+        p[0] = ('fun_declaration', p[1], p[3], p[5], p[8])
     else:
         p[0] = ('fun_declaration', p[2], p[4], p[7])
 
 
 def p_fun_call(p):
     """
-    fun_call : identifier LPAREN args RPAREN
+    fun_call : identifier LPAREN params RPAREN SEMICOLON
     """
     p[0] = ('fun_call', p[1], p[3])
 
@@ -128,13 +129,6 @@ def p_assignment(p):
         p[0] = ('assignment', p[1], p[3])
 
 
-def p_print_stmt(p):
-    """
-    print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
-    """
-    p[0] = ('print_stmt', p[3])
-
-
 def p_control_structure(p):
     """
     control_structure : if_stmt
@@ -143,13 +137,6 @@ def p_control_structure(p):
                       | switch_stmt
     """
     p[0] = ('control_structure', p[1])
-
-
-def p_function_call(p):
-    """
-    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
-    """
-    p[0] = ('function_call', p[1], p[3])
 
 
 def p_arg_list(p):
@@ -161,13 +148,6 @@ def p_arg_list(p):
         p[0] = ('arg_list', p[1], p[3])
     else:
         p[0] = ('arg_list', p[1])
-
-
-def p_return_stmt(p):
-    """
-    return_stmt : RETURN expression SEMICOLON
-    """
-    p[0] = ('return_stmt', p[2])
 
 
 def p_if_stmt(p):

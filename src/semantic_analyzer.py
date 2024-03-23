@@ -336,8 +336,10 @@ def analyze_semantics(node):
             if get_expression_type(arg) != declared_param['type']:
                 raise Exception(f"Error: Incorrect type of argument for function {fun_name}")
 
+
     elif node_type == 'return_stmt':
         expr = node[1]
+        print(f'return: {node[1]}')
 
         # Check if the return statement is inside a function
         if 'function' not in [info['type'] for info in reversed(scope_stack)]:
@@ -347,6 +349,9 @@ def analyze_semantics(node):
         fun_info = next(info for info in reversed(scope_stack) if info['type'] == 'function')
         if get_expression_type(expr) != fun_info['return_type']:
             raise Exception("Error: Return type does not match function's return type")
+            # Analyze the return expression
+
+        analyze_semantics(node[1])
 
     elif node_type == 'break_continue_stmt':
         stmt_type = node[1]
@@ -405,12 +410,8 @@ def get_assignment_type(assignment):
         # raise NameError(f"Variable {var_name} is not defined")
     else:
         pass
-    elif node_type == 'return_stmt':
-        print(f'return: {node[1]}')
-        # Analyze the return expression
-        analyze_semantics(node[1])
 
-    # Add more semantic analysis rules for other language constructs
+# Add more semantic analysis rules for other language constructs
 
 
 # Integrate semantic analysis into the parser

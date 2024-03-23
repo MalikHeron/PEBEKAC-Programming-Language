@@ -21,7 +21,6 @@ reserved = {
     'int': 'INT',
     'float': 'FLOAT',
     'double': 'DOUBLE',
-    'boolean': 'BOOLEAN',
     'string': 'STRING',
     'intArray': 'INTARRAY',
     'floatArray': 'FLOATARRAY',
@@ -46,7 +45,7 @@ tokens = list(reserved.values()) + [
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT'
+    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT', 'ARGS', 'CONTINUE'
 ]
 
 # States
@@ -100,7 +99,7 @@ t_ARROW = r'->'
 
 # Ignored characters
 t_ignore = ' \t'
-
+t_comment_ignore = ' \t'
 
 # A function can be used if there is an associated action.
 # Write the matching regex in the docstring.
