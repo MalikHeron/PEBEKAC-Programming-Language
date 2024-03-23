@@ -10,6 +10,12 @@ symbol_table = {}
 scope_stack = []
 
 assigned_value = None
+in_loop_or_switch = False
+
+
+def loop_or_switch(value):
+    global in_loop_or_switch
+    in_loop_or_switch = value
 
 
 def push_scope():
@@ -232,7 +238,9 @@ def analyze_semantics(node):
 
         # Analyze statements in the while loop body
         push_scope()
+        loop_or_switch(True)
         analyze_semantics(node[2])
+        loop_or_switch(False)
         pop_scope()
 
     elif node_type == 'for_stmt':
@@ -256,37 +264,21 @@ def analyze_semantics(node):
 
         # Analyze statements in the for loop body
         push_scope()
+        loop_or_switch(True)
         analyze_semantics(node[4])
+        loop_or_switch(False)
         pop_scope()
 
+    elif node_type == 'switch_stmt':
+        loop_or_switch(True)
+        # analyze_semantics(node[?])
+        loop_or_switch(False)
 
     elif node_type == 'class_method':
         # Analyze statements inside the method
         push_scope()
         analyze_semantics(node[2])
         pop_scope()
-
-    elif node_type == 'assignment':
-        var_type = node[1] if is_type(symbol_table, node[1]) else None
-        var_name = node[2] if var_type else node[1]
-        expr = node[3] if var_type else node[2]
-
-        if var_name in symbol_table:
-            # If variable is already in symbol table, check if types match
-            existing_type = symbol_table[var_name]['type']
-
-            if var_type and existing_type != var_type:
-                raise TypeError(
-                    f"Type mismatch: {var_name} is already declared as type {existing_type}, cannot redeclare as {var_type}")
-        else:
-            # If variable is not in symbol table, add it
-            symbol_table[var_name] = {'type': var_type}
-
-        # Check if the type of the expression matches the variable's type
-        expr_type = get_expression_type(expr)
-        if expr_type != symbol_table[var_name]['type']:
-            raise TypeError(
-                f"Type mismatch: {var_name} is of type {var_type}, but assigned expression is of type {expr_type}")
 
     elif node_type == 'print_stmt':
         # Analyze expression(s) in print statement
@@ -324,27 +316,19 @@ def analyze_semantics(node):
                 raise Exception(f"Error: Incorrect type of argument for function {fun_name}")
 
     elif node_type == 'return_stmt':
-        expr = node[1]
         print(f'return: {node[1]}')
 
-        # Check if the return statement is inside a function
-        if 'function' not in [info['type'] for info in reversed(scope_stack)]:
-            raise Exception("Error: Return statement not inside a function")
+        # TODO Check if the return statement is inside a function
 
-        # Check if the type of the returned expression matches the function's return type
-        fun_info = next(info for info in reversed(scope_stack) if info['type'] == 'function')
-        if get_expression_type(expr) != fun_info['return_type']:
-            raise Exception("Error: Return type does not match function's return type")
-            # Analyze the return expression
-
+        # TODO Check if the type of the returned expression matches the function's return type
         analyze_semantics(node[1])
 
-    elif node_type == 'break_continue_stmt':
-        stmt_type = node[1]
 
-        # Check if the break or continue statement is inside a loop
-        if 'loop' not in [info['type'] for info in reversed(scope_stack)]:
-            raise Exception(f"Error: {stmt_type} statement not inside a loop")
+    elif node_type == 'break_stmt':
+        if in_loop_or_switch is False:
+            raise Exception("Error: break statement not inside loop or switch")
+        else:
+            print(f'break: {node[1]}')
 
     # Add more semantic analysis rules for other language construct
 
