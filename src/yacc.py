@@ -38,7 +38,9 @@ def p_stmt(p):
          | control_structure
          | return_stmt
          | function_call
+         | break_stmt
          | empty
+         | comment stmt
     """
     p[0] = p[1]
 
@@ -48,6 +50,13 @@ def p_class_declaration(p):
     class_declaration : CLASS identifier LBRACE stmt_list RBRACE
     """
     p[0] = ('class_declaration', p[2], p[4])
+
+
+def p_print_stmt(p):
+    """
+    print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
+    """
+    p[0] = ('print_stmt', p[3])
 
 
 def p_fun_declaration(p):
@@ -62,11 +71,11 @@ def p_fun_declaration(p):
         p[0] = ('fun_declaration', p[2], p[4], p[7])
 
 
-def p_fun_call(p):
+def p_function_call(p):
     """
-    fun_call : identifier LPAREN params RPAREN SEMICOLON
+    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
     """
-    p[0] = ('fun_call', p[1], p[3])
+    p[0] = ('function_call', p[1], p[3])
 
 
 def p_return_stmt(p):
@@ -76,10 +85,9 @@ def p_return_stmt(p):
     p[0] = ('return_stmt', p[2])
 
 
-def p_break_continue_stmt(p):
+def p_break_stmt(p):
     """
-    break_continue_stmt : BREAK SEMICOLON
-                        | CONTINUE SEMICOLON
+    break_stmt : BREAK SEMICOLON
     """
     p[0] = (f'{p[1]}_stmt',)
 
@@ -166,7 +174,7 @@ def p_if_stmt(p):
 
 def p_for_stmt(p):
     """
-    for_stmt : FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+       for_stmt : FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
     """
     p[0] = ('for_stmt', p[3], p[5], p[7], p[10])
 
@@ -203,7 +211,7 @@ def p_default_stmt(p):
 
 def p_expression(p):
     """
-    expression : expression PLUS expression
+    expression : expression_plus
                | expression MINUS expression
                | expression MULTIPLY expression
                | expression DIVIDE expression
@@ -229,6 +237,23 @@ def p_expression(p):
                | identifier LBRACKET expression RBRACKET
                | identifier LBRACE expression RBRACE
     """
+
+    left = p[1]
+    right = p[3] if len(p) > 3 else None
+    operator = p[2] if len(p) > 3 else None
+
+    if operator in ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'MODULUS', 'POW']:
+        # For mathematical operations, check if operands are numerical
+        if not isinstance(left, (int, float)) or not isinstance(right, (int, float)):
+            raise TypeError("Error: Mathematical operations can only be performed on numerical values")
+    elif operator in ['AND', 'OR', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN', 'LESSTHANEQUAL', 'GREATERTHANEQUAL']:
+        # For logical and comparison operations, operands can be of any type
+        pass
+    elif operator in ['INCREMENT', 'DECREMENT']:
+        # For increment and decrement operations, check if operand is numerical
+        if not isinstance(left, (int, float)):
+            raise TypeError("Error: Increment and decrement operations can only be performed on numerical values")
+
     if len(p) == 5:
         p[0] = ('expression', p[1], p[3])
     elif len(p) == 4:
@@ -237,6 +262,22 @@ def p_expression(p):
         p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
+
+
+def p_expression_plus(p):
+    """
+    expression_plus : expression PLUS expression
+    """
+    left = p[1]
+    right = p[3]
+    if isinstance(left, str) and isinstance(right, str):
+        p[0] = left + right
+    elif isinstance(left, str) and isinstance(right, (int, float)):
+        p[0] = left + str(right)
+    elif isinstance(left, (int, float)) and isinstance(right, str):
+        p[0] = str(left) + right
+    else:
+        p[0] = left + right
 
 
 def p_digit(p):
@@ -315,7 +356,10 @@ def p_empty(p):
 
 
 def p_error(p):
-    print(f'Syntax error at {p.value!r}')
+    if p:
+        print(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
+    else:
+        print("Syntax error at EOF")
 
 
 # Build the parser

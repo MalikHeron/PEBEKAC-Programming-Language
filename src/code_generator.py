@@ -67,7 +67,7 @@ def generate_code(node):
         condition = generate_code(node[2])
         increment = generate_code(node[3])
         loop_body = generate_code(node[4])
-        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n    {increment}'
+        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n  {increment}'
 
     elif node_type == 'switch_stmt':
         expression = generate_code(node[1])
@@ -115,6 +115,10 @@ def generate_code(node):
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
+
+    elif node_type == 'comment':
+        comment_text = node[1]
+        return f'{comment_text}'
 
     elif node_type == 'empty':
         return ''

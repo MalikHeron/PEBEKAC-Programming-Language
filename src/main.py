@@ -2,7 +2,7 @@ from code_generator import generate_code
 from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
-program_code = """
+program_code = """  
     fun add() {
         return 0;
     }
@@ -22,7 +22,22 @@ program_code = """
         
         while(x) {
             print("x is not zero");
-        }
+        } 
+        
+        print("x = " + x);
+        
+        /*
+           I still see your shadows in my room
+            Can't take back the love that I gave you
+            It's to the point where I love and I hate you
+            And I cannot change you, so I must replace you, oh
+            Easier said than done, I thought you were the one
+            Listenin' to my heart instead of my head
+            
+            changed my mind about saving tokens for comments, I just throw 
+            them away now. Ignore them.
+        */
+          
         
     }
 """

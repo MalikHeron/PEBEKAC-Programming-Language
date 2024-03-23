@@ -48,11 +48,6 @@ tokens = list(reserved.values()) + [
     'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT', 'ARGS', 'CONTINUE'
 ]
 
-# States
-states = (
-    ('comment', 'exclusive'),
-)
-
 # Token matching rules are written as regexs
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -99,7 +94,7 @@ t_ARROW = r'->'
 
 # Ignored characters
 t_ignore = ' \t'
-t_comment_ignore = ' \t'
+
 
 # A function can be used if there is an associated action.
 # Write the matching regex in the docstring.
@@ -127,39 +122,16 @@ def t_BOOLEAN(t):
     t.value = (t.value == 'true')  # Convert the string to a Python boolean
     return t
 
+
 def t_STRING_LITERAL(t):
     r'\".*?\"'
     t.value = t.value[1:-1]  # Remove the quotation marks
     return t
 
-
-
 # Start of a comment
-def t_comment(t):
-    r'//.*|/\*|\#.*'
-    if t.value.startswith('/*'):
-        t.lexer.comment_text = t.value[2:]  # Save the text of the comment
-        t.lexer.begin('comment')
-    else:
-        t.type = 'COMMENT'
-        return t
-
-
-# Inside a comment
-def t_comment_COMMENT(t):
-    r'.|\n'
-    t.lexer.comment_text += t.value  # Add the text to the comment
-
-
-# End of a comment
-def t_comment_end(t):
-    r'\*/'
-    t.lexer.lineno += t.value.count('\n')
-    t.lexer.begin('INITIAL')
-    t.value = t.lexer.comment_text  # Use the accumulated text for the token
-    t.type = 'COMMENT'
-    return t
-
+def t_COMMENT(t):
+    r'(/\*(.|\n)*?\*/)|(//.*?\n)|(\#.*?\n)'
+    pass  # No return value. Token discarded
 
 # Ignored token with an action associated with it
 def t_ignore_newline(t):
@@ -172,12 +144,6 @@ def find_column(t):
     if line_start < 0:
         line_start = 0
     return (t.lexpos - line_start) + 1
-
-
-# Error handler for illegal characters
-def t_error(t):
-    print(f'Illegal character {t.value[0]} at line no: {t.lineno} col: {find_column(t)}')
-    t.lexer.skip(1)
 
 
 # Build the lexer object

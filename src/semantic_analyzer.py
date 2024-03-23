@@ -109,22 +109,6 @@ def analyze_semantics(node):
         # Analyze statements inside the function declaration
         push_scope()
 
-        # First analyze all declarations and initializations
-        for stmt in node[4] if node[1] else node[3]:
-
-            if stmt[0] in ['variable_declaration', 'assignment']:
-                print(f'var or assign: {stmt[0]}')
-                analyze_semantics(stmt)
-
-        # Then analyze other statements
-        for stmt in node[4] if node[1] else node[3]:
-
-            if stmt[0] not in ['variable_declaration', 'assignment']:
-                print(f'not var or assign: {stmt[0]}')
-                analyze_semantics(stmt)
-
-        pop_scope()
-
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
         for param in node[1:]:
@@ -252,36 +236,35 @@ def analyze_semantics(node):
         pop_scope()
 
     elif node_type == 'for_stmt':
-        # Check if initial assignment, condition, and increment are valid...
-        init_type = get_assignment_type(node[1])
-        cond_type = get_expression_type(node[2])
-        incr_type = get_expression_type(node[3])
-        if init_type is None or cond_type != 'boolean' or incr_type is None:
-            raise ValueError(
-                f"Invalid for statement: init_type={init_type}, cond_type={cond_type}, incr_type={incr_type}")
+        # Analyze Assignment expression
+        analyze_semantics(node[1])
 
-            # Check if the variable in the initial assignment is not used in the condition and increment
-        init_var = node[1][2][1]  # Extract the variable name from the initial assignment
-        if not (init_var in str(node[2]) and init_var in str(node[3])):
-            raise ValueError(
-                f"Variable {init_var} in the initial assignment is not used correctly in the condition and increment")
+        if len(node[2]) == 3:
+            # Analyze the condition expression
+            expression_type = node[1][1][1][0]
+            var = node[1][1][1][1]
+            print(f'expression_type: {expression_type}')
+            print(f'var: {var}')
+            if expression_type == 'identifier' and not lookup_symbol(var):
+                raise Exception(f"Error: Variable {var} not declared")
+        else:
+            raise Exception(f"Error: Invalid loop condition {node[2]}")
 
-        # Analyze statements in the for block
+        analyze_semantics(node[2])
+
+        analyze_semantics(node[3])
+
+        # Analyze statements in the for loop body
         push_scope()
-        analyze_semantics(node[1])  # Analyze the initialization part in the new scope
-        analyze_semantics(node[2])  # Analyze the loop body in the new scope
+        analyze_semantics(node[4])
         pop_scope()
+
 
     elif node_type == 'class_method':
         # Analyze statements inside the method
         push_scope()
         analyze_semantics(node[2])
         pop_scope()
-
-    elif node_type == 'print_stmt':
-        # Analyze expression(s) in print statement
-        for expr in node[1:]:
-            analyze_semantics(expr)
 
     elif node_type == 'assignment':
         var_type = node[1] if is_type(symbol_table, node[1]) else None
@@ -306,6 +289,10 @@ def analyze_semantics(node):
                 f"Type mismatch: {var_name} is of type {var_type}, but assigned expression is of type {expr_type}")
 
     elif node_type == 'print_stmt':
+        # Analyze expression(s) in print statement
+        for expr in node[1:]:
+            analyze_semantics(expr)
+
         # Check if expression is valid...
         expr_type = get_expression_type(node[1])
         if expr_type is None:
@@ -335,7 +322,6 @@ def analyze_semantics(node):
         for arg, declared_param in zip(args, declared_params):
             if get_expression_type(arg) != declared_param['type']:
                 raise Exception(f"Error: Incorrect type of argument for function {fun_name}")
-
 
     elif node_type == 'return_stmt':
         expr = node[1]
@@ -410,6 +396,7 @@ def get_assignment_type(assignment):
         # raise NameError(f"Variable {var_name} is not defined")
     else:
         pass
+
 
 # Add more semantic analysis rules for other language constructs
 
