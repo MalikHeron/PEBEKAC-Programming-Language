@@ -35,6 +35,30 @@ def lookup_symbol(name):
     return None
 
 
+def p_function_call(p):
+    """
+    function_call : identifier LPAREN arg_list RPAREN
+    """
+    function_name = p[1][1]
+    arg_list = p[3]
+
+    # Look up the function in the symbol table
+    function_info = lookup_symbol(function_name)
+    if not function_info or function_info['type'] != 'function':
+        raise Exception(f"Error: {function_name} is not a declared function")
+
+    # Check that the number of arguments matches
+    if len(arg_list) != len(function_info['params']):
+        raise Exception(f"Error: Incorrect number of arguments for function {function_name}")
+
+    # Check that the types of the arguments match
+    for i in range(len(arg_list)):
+        if arg_list[i][0] != function_info['params'][i]:
+            raise Exception(f"Error: Incorrect type for argument {i + 1} of function {function_name}")
+
+    p[0] = ('function_call', function_name, arg_list)
+
+
 # Now, modify your semantic analysis functions to use these scope management functions.
 # For example, when entering a function or class declaration, push a new scope, and when exiting, pop the scope.
 # When declaring a variable, use the declare_symbol function.
@@ -73,7 +97,7 @@ def analyze_semantics(node):
         # Add function information to the symbol table
         fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
         print(f'fun_name: {fun_name}')
-        params = node[2][1]
+        params = node[2]
         print(f'params: {params}')
 
         if lookup_symbol(fun_name):
@@ -167,8 +191,28 @@ def analyze_semantics(node):
         elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
             raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
 
-    elif node_type == 'if_stmt':
+    elif node_type == 'control_structure':
+        # Analyze the control structure
+        analyze_semantics(node[1])
+
+    elif node_type == 'if_stmt' or node_type == 'while_stmt':
         # Analyze the condition expression
+        if len(node[1]) == 2:
+            # Analyze the condition expression
+            expression_type = node[1][1][0]
+            var = node[1][1][1]
+            print(f'expression_type: {expression_type}')
+            print(f'var: {var}')
+            if expression_type == 'identifier' and not lookup_symbol(var):
+                raise Exception(f"Error: Variable {var} not declared")
+        else:
+            # Analyze the condition expression
+            expression_type = node[1][1][1][0]
+            var = node[1][1][1][1]
+            print(f'expression_type: {expression_type}')
+            print(f'var: {var}')
+            if expression_type == 'identifier' and not lookup_symbol(var):
+                raise Exception(f"Error: Variable {var} not declared")
         analyze_semantics(node[1])
 
         # Analyze statements in the if block
@@ -177,19 +221,10 @@ def analyze_semantics(node):
         pop_scope()
 
         # If there's an else block, analyze its statements too
-        if len(node) == 4:
+        if node_type == 'if_stmt' and len(node) == 4:
             push_scope()
             analyze_semantics(node[3])
             pop_scope()
-
-    elif node_type == 'while_stmt':
-        # Analyze the condition expression
-        analyze_semantics(node[1])
-
-        # Analyze statements in the while loop body
-        push_scope()
-        analyze_semantics(node[2])
-        pop_scope()
 
     elif node_type == 'class_method':
         # Analyze statements inside the method
@@ -202,6 +237,11 @@ def analyze_semantics(node):
         for expr in node[1:]:
             analyze_semantics(expr)
 
+    elif node_type == 'return_stmt':
+        print(f'return: {node[1]}')
+        # Analyze the return expression
+        analyze_semantics(node[1])
+
     # Add more semantic analysis rules for other language constructs
 
 
@@ -211,5 +251,3 @@ def parse_and_analyze(program):
     print(ast)
     analyze_semantics(ast)
     return ast
-
-# ... rest of your code ...
