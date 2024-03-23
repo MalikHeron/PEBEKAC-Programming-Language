@@ -4,7 +4,8 @@ from semantic_analyzer import parse_and_analyze
 # Read the program code from a file or define it here...
 program_code = """
     fun main() {
-        string name = "John Brown";
+        int x;
+        string code = "John";
         print("Hello World, my name is ");
     }
 """

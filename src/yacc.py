@@ -304,7 +304,7 @@ def p_empty(p):
     """
     empty :
     """
-    p[0] = ('empty',)
+    p[0] = 'empty'
 
 
 def p_error(p):

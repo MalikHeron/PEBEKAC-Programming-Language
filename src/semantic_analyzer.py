@@ -9,6 +9,8 @@ symbol_table = {}
 # Define a stack to manage scopes
 scope_stack = []
 
+assigned_value = None
+
 
 def push_scope():
     # Push a new scope onto the stack
@@ -60,6 +62,7 @@ def analyze_semantics(node):
             raise Exception(f"Error: Class {class_name} already defined")
         else:
             declare_symbol(class_name, {'type': 'class'})
+            print(f'added to symbol_table: {class_name}')
 
         # Analyze statements inside the class declaration
         push_scope()
@@ -69,16 +72,16 @@ def analyze_semantics(node):
 
     elif node_type == 'fun_declaration':
         # Add function information to the symbol table
-        fun_name = node[2][1] if node[1] else node[1][
-            1]  # Extract the actual function name from the identifier non-terminal
-
-        params = node[3] if node[1] else node[2]
+        fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
+        print(f'fun_name: {fun_name}')
+        params = node[2][1]
+        print(f'params: {params}')
 
         if lookup_symbol(fun_name):
             raise Exception(f"Error: Function {fun_name} already defined")
         else:
-            fun_type = node[1][1] if node[1] else None  # Extract the return type if it exists
-            declare_symbol(fun_name, {'type': 'function', 'return_type': fun_type, 'params': params})
+            declare_symbol(fun_name, {'type': 'function', 'params': params})
+            print(f'added to symbol_table: {fun_name}')
 
         # Analyze statements inside the function declaration
         push_scope()
@@ -87,12 +90,14 @@ def analyze_semantics(node):
         for stmt in node[4] if node[1] else node[3]:
 
             if stmt[0] in ['variable_declaration', 'assignment']:
+                print(f'var or assign: {stmt[0]}')
                 analyze_semantics(stmt)
 
         # Then analyze other statements
         for stmt in node[4] if node[1] else node[3]:
 
             if stmt[0] not in ['variable_declaration', 'assignment']:
+                print(f'not var or assign: {stmt[0]}')
                 analyze_semantics(stmt)
 
         pop_scope()
@@ -115,7 +120,8 @@ def analyze_semantics(node):
 
     elif node_type == 'variable_declaration':
         # Extract variable information
-        var_type = node[1]
+        var_type = node[1][1]
+        print(f'var_type: {var_type}')
         var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
 
         # Check if the variable is already declared
@@ -124,6 +130,7 @@ def analyze_semantics(node):
         else:
             # Add variable to the symbol table
             declare_symbol(var_name, {'type': var_type})
+            print(f'added to symbol_table: {var_name}')
 
         # If the variable has an initialization value, analyze it
         if len(node) == 4:
@@ -132,14 +139,40 @@ def analyze_semantics(node):
             analyze_semantics(('assignment', var_type, var_name, init_value))
 
     elif node_type == 'assignment':
-        # Check if the variable being assigned is declared
-        var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
-        if not lookup_symbol(var_name):
-            raise Exception(f"Error: Variable {var_name} not declared")
+        global assigned_value
+        if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
+            # Check if the variable being assigned is declared
+            var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
+            print(f'assignment var_name: {var_name}')
+            # Check if the assigned value matches the type of the variable
+            assigned_value = node[3][1][1]
+            print(f'assigned_value: {assigned_value}')
+            # Extract variable information
+            var_type = node[1][1]
+            print(f'assigned var_type: {var_type}')
 
-        # Check if the assigned value matches the type of the variable
-        assigned_value = node[3]
-        var_type = lookup_symbol(var_name)['type']
+            if not lookup_symbol(var_name):
+                # Add variable to the symbol table
+                declare_symbol(var_name, {'type': var_type})
+            elif lookup_symbol(var_name):
+                raise Exception(f"Error: Variable {var_name} already declared")
+        else:
+            # Extract variable information
+            var_type = lookup_symbol(node[1][1])['type']
+
+            # Check if the variable being assigned is declared
+            var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
+            print(f'assignment var_name: {var_name}')
+
+            if not lookup_symbol(var_name):
+                raise Exception(f"Error: Variable {var_name} not declared")
+            elif lookup_symbol(var_name):
+                # Check if the assigned value matches the type of the variable
+                assigned_value = node[2][1][1]
+                print(f'assigned_value: {assigned_value}')
+                var_type = lookup_symbol(var_name)['type']
+                print(f'assigned var_type: {var_type}')
+
         if isinstance(assigned_value, str) and var_type != 'string':
             raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
         elif isinstance(assigned_value, int) and var_type != 'int':
