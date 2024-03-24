@@ -6,7 +6,7 @@ def main():
     x = 5
     code = "John"
     print("Hello World, my name is ")
-    if x == 10:
+    if x >= 10:
         print("x = 10")
     else:
         print("x != 10")

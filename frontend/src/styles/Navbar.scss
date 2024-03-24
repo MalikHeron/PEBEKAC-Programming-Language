@@ -1,0 +1,15 @@
+.Header {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 100vw;
+   height: 70px;
+
+   .header {
+      font-size: 1.5em;
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      width: 100%;
+   }
+}
