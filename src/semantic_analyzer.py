@@ -246,22 +246,8 @@ def analyze_semantics(node):
     elif node_type == 'for_stmt':
         # Analyze Assignment expression
         analyze_semantics(node[1])
-
-        if len(node[2]) == 3:
-            # Analyze the condition expression
-            expression_type = node[1][1][1][0]
-            var = node[1][1][1][1]
-            print(f'expression_type: {expression_type}')
-            print(f'var: {var}')
-            if expression_type == 'identifier' and not lookup_symbol(var):
-                raise Exception(f"Error: Variable {var} not declared")
-        else:
-            raise Exception(f"Error: Invalid loop condition {node[2]}")
-
         analyze_semantics(node[2])
-
         analyze_semantics(node[3])
-
         # Analyze statements in the for loop body
         push_scope()
         loop_or_switch(True)
@@ -330,7 +316,6 @@ def analyze_semantics(node):
             print(f'break: {node[1]}')
 
     # Add more semantic analysis rules for other language construct
-
 
 def is_type(symbol_table, type_candidate):
     # Check if a given string is a type in the symbol table.

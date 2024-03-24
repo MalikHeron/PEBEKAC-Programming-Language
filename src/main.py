@@ -7,26 +7,8 @@ program_code = """
         return 0;
     }
     
-    fun main() {
-        int a = 10;
-        int b = 5;
-        int x = 5;
-        string code = "John";
-        print("Hello World, my name is ");
-        
-        if (x == 10) {
-            print("x = 10");
-        } else {
-            print("x != 10");
-        }
-        
-        while(x) {
-            print("x is not zero");
-        } 
-        
-        #print("x = " + x);
-        
-        
+    fun main() {     
+        add();    
         /*
             I still see your shadows in my room
             Can't take back the love that I gave you
@@ -38,7 +20,7 @@ program_code = """
             changed my mind about saving tokens for comments, I just throw 
             them away now. Ignore them.
         */   
-    }
+    }    
 """
 
 # Parse and analyze the program

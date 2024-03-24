@@ -151,6 +151,7 @@ def p_arg_list(p):
     """
     arg_list : expression COMMA arg_list
              | expression
+             | empty
     """
     if len(p) == 4:
         p[0] = ('arg_list', p[1], p[3])
@@ -174,7 +175,8 @@ def p_if_stmt(p):
 
 def p_for_stmt(p):
     """
-       for_stmt : FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+       for_stmt : FOR LPAREN variable_declaration SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+                | FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
     """
     p[0] = ('for_stmt', p[3], p[5], p[7], p[10])
 
@@ -211,7 +213,7 @@ def p_default_stmt(p):
 
 def p_expression(p):
     """
-    expression : expression_plus
+    expression : expression PLUS expression
                | expression MINUS expression
                | expression MULTIPLY expression
                | expression DIVIDE expression
@@ -262,23 +264,6 @@ def p_expression(p):
         p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
-
-
-def p_expression_plus(p):
-    """
-    expression_plus : expression PLUS expression
-    """
-    left = p[1]
-    right = p[3]
-    if isinstance(left, str) and isinstance(right, str):
-        p[0] = left + right
-    elif isinstance(left, str) and isinstance(right, (int, float)):
-        p[0] = left + str(right)
-    elif isinstance(left, (int, float)) and isinstance(right, str):
-        p[0] = str(left) + right
-    else:
-        p[0] = left + right
-
 
 def p_digit(p):
     """

@@ -85,7 +85,7 @@ def generate_code(node):
         return generate_code(node[1])
 
     elif node_type == 'digit':
-        return str(node[1])
+        return node[1]
 
     elif node_type == 'identifier':
         return node[1]
@@ -109,10 +109,14 @@ def generate_code(node):
             op = node[2]
             right = generate_code(node[3])
             if op == '+':
-                # Check if either operand is a string
-                if isinstance(left, str) or isinstance(right, str):
-                    # Convert both operands to strings before concatenation
-                    return f'str({left}) + str({right})'
+                if isinstance(left, str) and isinstance(right, str):
+                    # Both operands are strings, generate code for string concatenation
+                    return f'{left} + {right}'
+                elif isinstance(left, str) and isinstance(right, int) or isinstance(right, float):
+                    return f'{left} + str({right})'
+                # Check if left is number and right is string
+                elif isinstance(left, int) and isinstance(left, float) or isinstance(right, str):
+                    return f'str({left}) + {right}'
                 else:
                     return f'{left} + {right}'
             else:
@@ -121,15 +125,15 @@ def generate_code(node):
             return str(node[0])
 
     elif node_type == 'function_call':
-        fun_name = node[1]
-        args = generate_code(node[2])
+        fun_name = node[1][1]
+        args = generate_code(node[2])  # Generate code for all arguments
         return f'{fun_name}({args})'
 
-    elif node_type == 'args':
+    elif node_type == 'arg_list':
         if len(node) == 2:
             return generate_code(node[1])
         else:
-            return generate_code(node[1]) + ', ' + generate_code(node[2])
+            return ', '.join(generate_code(arg) for arg in node[1:])
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
@@ -138,7 +142,7 @@ def generate_code(node):
         comment_text = node[1]
         return f'{comment_text}'
 
-    elif node_type == 'empty':
+    elif node_type == 'empty' or node_type == 'e':
         return ''
 
     else:
