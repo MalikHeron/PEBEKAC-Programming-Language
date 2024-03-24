@@ -24,10 +24,11 @@ program_code = """
             print("x is not zero");
         } 
         
-        print("x = " + x);
+        #print("x = " + x);
+        
         
         /*
-           I still see your shadows in my room
+            I still see your shadows in my room
             Can't take back the love that I gave you
             It's to the point where I love and I hate you
             And I cannot change you, so I must replace you, oh
@@ -36,9 +37,7 @@ program_code = """
             
             changed my mind about saving tokens for comments, I just throw 
             them away now. Ignore them.
-        */
-          
-        
+        */   
     }
 """
 

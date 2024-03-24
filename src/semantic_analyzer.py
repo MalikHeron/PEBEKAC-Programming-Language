@@ -323,7 +323,6 @@ def analyze_semantics(node):
         # TODO Check if the type of the returned expression matches the function's return type
         analyze_semantics(node[1])
 
-
     elif node_type == 'break_stmt':
         if in_loop_or_switch is False:
             raise Exception("Error: break statement not inside loop or switch")

@@ -84,12 +84,22 @@ def generate_code(node):
     elif node_type == 'default_stmt':
         return generate_code(node[1])
 
+    elif node_type == 'digit':
+        return str(node[1])
+
+    elif node_type == 'identifier':
+        return node[1]
+
+    elif node_type == 'string_literal':
+        return f'"{node[1]}"'
+
+    elif node_type == 'boolean':
+        return str(node[1]).lower()
+
     elif node_type == 'expression':
         if len(node) == 2:
-            if node[1][0] == 'string_literal':
-                return f'"{node[1][1]}"'  # Treat literals as string literals
-            else:
-                return f'{node[1][1]}'
+            return generate_code(node[1])
+
         elif len(node) == 3:
             op = node[1]
             right = generate_code(node[2])
@@ -98,7 +108,15 @@ def generate_code(node):
             left = generate_code(node[1])
             op = node[2]
             right = generate_code(node[3])
-            return f'{left} {op} {right}'
+            if op == '+':
+                # Check if either operand is a string
+                if isinstance(left, str) or isinstance(right, str):
+                    # Convert both operands to strings before concatenation
+                    return f'str({left}) + str({right})'
+                else:
+                    return f'{left} + {right}'
+            else:
+                return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
 
