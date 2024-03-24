@@ -8,7 +8,7 @@ const MODEL_NAME = "gemini-1.0-pro";
 export class ChatService {
 
    public async getResponse(query: string): Promise<string> {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const genAI = new GoogleGenerativeAI("AIzaSyC8Rv2N81nwr5KruEfg8rQ27ap5GFAZzlU");
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
       const generationConfig = {

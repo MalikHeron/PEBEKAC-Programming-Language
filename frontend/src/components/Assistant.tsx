@@ -1,27 +1,21 @@
 import { ChatMessage } from '@models/ChatMessage';
 import { useState, useRef, useEffect } from 'react';
-import '@styles/ChatPage.scss';
+import '@styles/Assistant.scss';
 import ReactMarkdown from 'react-markdown';
 import { Timestamp } from 'firebase/firestore';
-import { Link } from 'react-router-dom'
 import useSpeechToText from '@services/SpeechToText';
-import profileImg from "@assets/images/profile-gray.png";
-import profileImgWhite from "@assets/images/profile-white.png";
 import { ChatService } from '@services/ChatService';
 
-function ChatPage() {
+function Assistant() {
    const [userInput, setUserInput] = useState('');
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isLoading, setIsLoading] = useState(false);
    const textAreaRef = useRef<HTMLTextAreaElement>(null);
    const chatContainerRef = useRef<HTMLDivElement>(null);
-   const [clearIndex, setClearIndex] = useState(false);
-   const characterCount = `${userInput.length}/150`;
    const { isListening, setIsListening } = useSpeechToText(setUserInput);
    const [tooltipTexts, setTooltipTexts] = useState<string[]>([]);
    const [suggestions, setSuggestions] = useState<string[]>([]);
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
-   const [suggestionsLoaded, setSuggestionsLoaded] = useState(true);
 
    const copyToClipboard = (message: string, index: number) => {
       navigator.clipboard.writeText(message);
@@ -54,23 +48,16 @@ function ChatPage() {
       setMessages(newMessages);
       setUserInput('');
       setIsLoading(true);
-      setSuggestionsLoaded(false);
 
       try {
          // Send message to backend here
-         let response = '';
-         await new Promise<void>((resolve) => {
-            new ChatService().getResponse(trimmedInput).then((botResponse) => {
-               response = botResponse;
-               //const botMessage = { author: 'bot', text: response, timestamp: new Timestamp(seconds, milliseconds) };
-               //updatedMessages = [...newMessages, botMessage];
-               resolve();
-            });
+         new ChatService().getResponse(trimmedInput).then((botResponse) => {
+            const response = botResponse;
+            const botMessage = { author: 'bot', text: response, timestamp: new Timestamp(seconds, milliseconds) };
+            setMessages([...newMessages, botMessage]);
+         }).catch((error) => {
+            throw error;
          });
-
-         if (response === '') {
-            throw new Error('Error occurred while streaming');
-         }
       } catch (error) {
          console.error(error);
          now = Date.now(); // Get the current time in milliseconds
@@ -79,14 +66,13 @@ function ChatPage() {
 
          const errorMessage = { author: 'bot', text: "Sorry, I'm unable to provide a response at this time. Please try again later.", timestamp: new Timestamp(seconds, milliseconds) };
          setMessages([...newMessages, errorMessage]);
-         setIsLoading(false);
       } finally {
-         setSuggestionsLoaded(true);
+         setIsLoading(false);
       }
    };
 
    textAreaRef.current?.addEventListener('keypress', function (e) {
-      const maxLength = 150;
+      const maxLength = 200;
 
       if (textAreaRef.current) {
          if (textAreaRef.current.value.length > maxLength) {
@@ -96,7 +82,7 @@ function ChatPage() {
    });
 
    textAreaRef.current?.addEventListener('paste', function (e) {
-      const maxLength = 150;
+      const maxLength = 200;
 
       if (e.clipboardData && textAreaRef.current) {
          const pastedText = e.clipboardData.getData('text');
@@ -150,64 +136,15 @@ function ChatPage() {
    }, [messages, suggestions]);
 
    return (
-      <div className="ChatPage">
-         <div className="backdrop"></div>
-         {/* sidebar */}
-         <div className="sidebar">
-            <div className="sidebar-content">
-               {/* chat history */}
-               <div className="chat-history">
-                  <div className="header">
-                     <h6>File Explorer</h6>
-                     <button type="button" className="close-btn">
-                        <i className='bi-chevron-left'></i>
-                     </button>
-                  </div>
-                  <hr className="divider" />
-               </div>
-
-               {/*profile*/}
-               <div className="profile">
-                  <div className="profile-card">
-                     <Link className="profile-info" to="/profile">
-                        <img className='profile-picture' src={profileImgWhite} alt="" />
-                     </Link>
-                     <div className='actions'>
-                        <button className="logout-button">
-                           <i className='bi-power'></i>
-                           <span className="tooltip">Logout</span>
-                        </button>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-
+      <div className="Assistant">
          {/* chat pane */}
-         <div className="chat-pane">
+         <div className="assistant-pane">
             <div ref={chatContainerRef} className="conversation-container card">
-               <div className="mobile-toggles">
-                  {/* sidebar open button for mobile*/}
-                  <button className="sidebar-open-btn">
-                     <i className='bi-layout-sidebar-inset'></i>
-                  </button>
-                  {/* feedback button for mobile*/}
-                  <button className="feedback-btn-mobile" type="button" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-                     <i className='bi-chat'></i>
-                  </button>
-               </div>
-
                {/* Display the messages */}
                {messages.map((message, index) => (
                   <div key={index} className={`message-container`}>
                      <div className='message-header'>
-                        <div className='user-avatar'>
-                           {message.author === 'user' ?
-                              <img className='icon' src={profileImg} alt="" /> :
-                              <img className='icon' src='icon.png' alt="" />
-                           }
-                        </div>
-                        <div className='message-author' style={{ color: message.author === 'user' ? 'white' : 'var(--sophie-blue)' }}>{message.author === 'user' ? 'You' : 'Sophie'}</div>
+                        <div className='message-author' style={{ color: message.author === 'user' ? 'white' : 'var(--sophie-blue)' }}>{message.author === 'user' ? 'You' : 'Assistant'}</div>
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
                         <ReactMarkdown className="message-text">
@@ -225,40 +162,10 @@ function ChatPage() {
                      </div>
                   </div>
                ))}
-
-               {/* Display the suggestions */}
-               <div className="suggestions-list">
-                  {suggestions.map((suggestion, index) => (
-                     <div key={index} className="suggestion" onClick={() => setUserInput(suggestion)}>
-                        {suggestion}
-                     </div>
-                  ))}
-               </div>
-
-               {/* loading indicator */}
-               {isLoading && (
-                  <div className="loading-message">
-                     <div className='message-header'>
-                        <div className='user-avatar'>
-                           <img className='icon' src='icon.png' alt="" />
-                        </div>
-                        <div className='message-author' style={{ color: 'var(--sophie-blue)' }}>Sophie</div>
-                     </div>
-                     <div className="content">
-                        <span>I'm thinking</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <div className="dot-pulse"></div>
-                     </div>
-                  </div>
-               )}
             </div>
 
             {/* prompt container */}
             <div className="prompt-container">
-               {/* new chat button */}
-               <button className="new-chat-button" disabled={messages.length === 0 || isLoading || !suggestionsLoaded} onClick={() => { setMessages([]), setClearIndex(!clearIndex), setSuggestions([]) }}>
-                  <i className='bi-chat-text'></i>
-                  <span className="tooltip">New chat</span>
-               </button>
                {/* input box */}
                <div className="input-container">
                   <textarea
@@ -276,7 +183,7 @@ function ChatPage() {
                      }}
                      autoFocus
                      rows={1}
-                     maxLength={150}
+                     maxLength={200}
                   />
                   <div className="input-footer">
                      <button className="mic-button" style={{ display: speechToTextSupported ? (userInput ? 'none' : 'flex') : 'none', animation: isListening ? 'listening 1s infinite' : 'none' }} onClick={() => { setIsListening(prevState => !prevState); }}>
@@ -290,7 +197,6 @@ function ChatPage() {
                            <i className='bi-send-fill'></i>
                         </div>
                      </button>
-                     <div className="character-count">{characterCount}</div>
                   </div>
                </div>
             </div>
@@ -299,4 +205,4 @@ function ChatPage() {
    );
 }
 
-export default ChatPage;
+export default Assistant;

@@ -4,7 +4,7 @@ function Navbar() {
    return (
       <header className="Header">
          <span className="header fw-bold" >
-            PEBEKOC Playground
+            PEBEKOC Compiler
          </span>
       </header >
    )

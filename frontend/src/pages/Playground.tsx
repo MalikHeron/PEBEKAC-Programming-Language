@@ -1,8 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import '@styles/Playground.scss';
+import Assistant from '@components/Assistant';
 
 function Playground() {
+   const defaultCode = `fun main() {
+    print("Hello World!")
+}`;
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
@@ -17,47 +20,67 @@ function Playground() {
 
    return (
       <div className="Playground">
-         <div className="backdrop"></div>
-         {/* sidebar */}
-         <div className="sidebar">
-            <div className="sidebar-content">
-               {/* file explorer */}
-               <div className="file-explorer card">
-                  <div className="header">
-                     <h6>File Explorer</h6>
-                     <button type="button" className="close-btn">
+         {/* chat pane */}
+         <div className="chat-pane">
+            <div className="content">
+               <div className="header">
+                  <h6>Chat</h6>
+                  <div className='action-buttons'>
+                     <div className='new-chat-btn'>
+                        <i className='bi-plus-lg'></i>
+                        <span className="tooltip">New chat</span>
+                     </div>
+                     <div className="close-btn">
                         <i className='bi-chevron-left'></i>
-                     </button>
+                        <span className="tooltip">Collapse</span>
+                     </div>
                   </div>
-                  <hr className="divider" />
                </div>
+               <hr className="divider" />
+               <Assistant />
             </div>
          </div>
 
          {/* editor pane */}
          <div className="editor-pane">
-            <div className='tab-container'>
-               <ul className="nav nav-tabs">
-                  <li className="nav-item">
-                     <a className="nav-link active" aria-current="page" href="#">
-                        hello_word.pk
-                        <i className='bi-x ms-3'></i>
-                     </a>
-                  </li>
-                  <li className="nav-item">
-                     <a className="nav-link">Untitled</a>
-                  </li>
-                  <a className="new-tab">
-                     <i className='bi-plus'></i>
-                  </a>
-               </ul>
+            {/* editor header */}
+            <div className="editor-header">
+               <div className='tab-container'>
+                  <ul className="nav nav-tabs">
+                     <li className="nav-item">
+                        <a className="nav-link active" aria-current="page" href="#">
+                           main.pk
+                        </a>
+                     </li>
+                  </ul>
+               </div>
+               <div className="action-container">
+                  <button className='download-btn'>
+                     <div className='icon'>
+                        <i className='bi-download'></i>
+                        <span className="tooltip">Download file</span>
+                     </div>
+                  </button>
+                  <button className='run-btn'>
+                     <div className='icon'>
+                        <i className='bi-play'></i>
+                        <span className="tooltip">Run code</span>
+                     </div>
+                  </button>
+                  <button className='stop-btn' disabled={true}>
+                     <div className='icon'>
+                        <i className='bi-stop'></i>
+                        <span className="tooltip">Stop</span>
+                     </div>
+                  </button>
+               </div>
             </div>
 
             <Editor
                className='editor-container'
-               height="85vh"
+               height="100%"
                defaultLanguage="kotlin"
-               defaultValue="// some comment"
+               defaultValue={defaultCode}
                theme="myTheme"
                beforeMount={handleEditorWillMount}
                options={{
