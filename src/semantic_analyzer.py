@@ -10,12 +10,12 @@ symbol_table = {}
 scope_stack = []
 
 assigned_value = None
-in_loop_or_switch = False
+in_loop = False
 
 
-def loop_or_switch(value):
-    global in_loop_or_switch
-    in_loop_or_switch = value
+def looping(value):
+    global in_loop
+    in_loop = value
 
 
 def push_scope():
@@ -41,31 +41,6 @@ def lookup_symbol(name):
     return None
 
 
-def p_function_call(p):
-    """
-    function_call : identifier LPAREN arg_list RPAREN
-    """
-    function_name = p[1][1]
-    arg_list = p[3]
-
-    # Look up the function in the symbol table
-    function_info = lookup_symbol(function_name)
-    if not function_info or function_info['type'] != 'function':
-        raise Exception(f"Error: {function_name} is not a declared function")
-
-    # Check that the number of arguments matches
-    if len(arg_list) != len(function_info['params']):
-        raise Exception(f"Error: Incorrect number of arguments for function {function_name}")
-
-    # Check that the types of the arguments match
-    for i in range(len(arg_list)):
-        if arg_list[i][0] != function_info['params'][i]:
-            raise Exception(f"Error: Incorrect type for argument {i + 1} of function {function_name}")
-
-    p[0] = ('function_call', function_name, arg_list)
-
-
-# Now, modify your semantic analysis functions to use these scope management functions.
 # For example, when entering a function or class declaration, push a new scope, and when exiting, pop the scope.
 # When declaring a variable, use the declare_symbol function.
 # When looking up a variable, use the lookup_symbol function.
@@ -238,9 +213,9 @@ def analyze_semantics(node):
 
         # Analyze statements in the while loop body
         push_scope()
-        loop_or_switch(True)
+        looping(True)
         analyze_semantics(node[2])
-        loop_or_switch(False)
+        looping(False)
         pop_scope()
 
     elif node_type == 'for_stmt':
@@ -250,15 +225,10 @@ def analyze_semantics(node):
         analyze_semantics(node[3])
         # Analyze statements in the for loop body
         push_scope()
-        loop_or_switch(True)
+        looping(True)
         analyze_semantics(node[4])
-        loop_or_switch(False)
+        looping(False)
         pop_scope()
-
-    elif node_type == 'switch_stmt':
-        loop_or_switch(True)
-        # analyze_semantics(node[?])
-        loop_or_switch(False)
 
     elif node_type == 'class_method':
         # Analyze statements inside the method
@@ -276,30 +246,46 @@ def analyze_semantics(node):
         if expr_type is None:
             raise ValueError(f"Invalid expression in print statement: {node[1]}")
 
-    elif node_type == 'fun_call':
+    elif node_type == 'function_call':
         fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
-        args = node[2]
-
-        # Check if the function is declared
+        arg_list = node[2]
         fun_info = lookup_symbol(fun_name)
-        if not fun_info or fun_info['type'] != 'function':
-            raise Exception(f"Error: Function {fun_name} not declared")
 
-        # Check if the function is a method of the correct class
-        if 'class' in fun_info and (not args or lookup_symbol(args[0])['type'] != fun_info['class']):
-            raise Exception(f"Error: Method {fun_name} called on an instance of the wrong class")
+        # Check if the arguments are expressions
+        def count_args(arg_node):
+            if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
+                return sum(count_args(arg) for arg in arg_node[1:])
+            else:
+                return 1
 
-        # Check if the function is from an imported module and used correctly
-        if 'module' in fun_info and not args:
-            raise Exception(f"Error: Function {fun_name} from module {fun_info['module']} used incorrectly")
+        num_args = count_args(arg_list)
+        print(f'fun_call: {fun_name}')
+        print(f'arg_list: {arg_list}')
+        print(f'Number of arguments: {num_args}')
 
-        # Check if the number and types of arguments match the function declaration
-        declared_params = fun_info['params']
-        if len(args) != len(declared_params):
-            raise Exception(f"Error: Incorrect number of arguments for function {fun_name}")
-        for arg, declared_param in zip(args, declared_params):
-            if get_expression_type(arg) != declared_param['type']:
-                raise Exception(f"Error: Incorrect type of argument for function {fun_name}")
+        if fun_info is None:
+            raise Exception(f"Error: Function {fun_name} not defined")
+        else:
+            params = fun_info['params']
+
+            # Count the number of parameters in the function declaration
+            def count_params(param_node):
+                if isinstance(param_node, tuple) and param_node[0] == 'params':
+                    if param_node[1] == 'empty':
+                        return 0
+                    else:
+                        # If the node is a 'params' node, count the identifier and recursively count the rest of the
+                        # parameters
+                        return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
+
+            num_params = count_params(params)
+            print(f'params: {params}')
+            print(f'Number of params: {num_params}')
+            if num_args != num_params:
+                raise Exception(
+                    f"Error: Number of arguments in function call ({num_args}) does not match the number of parameters in function declaration ({num_params})")
+        # Analyze statements inside the function declaration
+        push_scope()
 
     elif node_type == 'return_stmt':
         print(f'return: {node[1]}')
@@ -310,12 +296,13 @@ def analyze_semantics(node):
         analyze_semantics(node[1])
 
     elif node_type == 'break_stmt':
-        if in_loop_or_switch is False:
+        if in_loop is False:
             raise Exception("Error: break statement not inside loop or switch")
         else:
             print(f'break: {node[1]}')
 
     # Add more semantic analysis rules for other language construct
+
 
 def is_type(symbol_table, type_candidate):
     # Check if a given string is a type in the symbol table.
