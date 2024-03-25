@@ -11,13 +11,13 @@ import 'aos/dist/aos.css';
 import Router from "./Router";
 
 const firebaseConfig = {
-   apiKey: "AIzaSyDVMo4d8CcEZz3kHR2syadxEAqOj6GO1Ps",
-   authDomain: "utechchatbot.web.app",
-   projectId: "utech-academic-advisor-chatbot",
-   storageBucket: "utech-academic-advisor-chatbot.appspot.com",
-   messagingSenderId: "803326633273",
-   appId: "1:803326633273:web:019e81902b7ef1b85df4e8",
-   measurementId: "G-RWF8SZ8MWB"
+   apiKey: "",
+   authDomain: "",
+   projectId: "",
+   storageBucket: "",
+   messagingSenderId: "",
+   appId: "",
+   measurementId: ""
 };
 
 // Initialize Firebase

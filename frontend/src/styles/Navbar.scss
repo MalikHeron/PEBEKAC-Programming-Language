@@ -12,4 +12,28 @@
       justify-content: center;
       width: 100%;
    }
+
+   .theme-switch-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 140px;
+      border-radius: 8px;
+      background: var(--primary-gray);
+      border: none;
+      font-size: 0.9em;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.2em;
+      margin-right: 0.5em;
+
+      i {
+         font-size: 1.2em;
+         margin-right: 0.5em;
+      }
+
+      &:hover {
+         background: var(--primary-gray-dark);
+      }
+   }
 }

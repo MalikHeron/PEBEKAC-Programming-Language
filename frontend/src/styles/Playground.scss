@@ -10,13 +10,19 @@
    .chat-pane {
       display: flex;
       flex-direction: column;
-      width: 300px;
+      width: clamp(200px, 85vw, 300px);
       min-height: 90vh;
       max-height: 90vh;
-      margin-right: 1.5em;
       background-color: var(--black-lighter);
-      transition: width 0.3s ease-in-out;
       border-radius: 0 10px;
+      margin-right: 1.5em;
+      transition: width 0.3s ease-in-out;
+      overflow: hidden;
+
+      &.hide {
+         margin-right: 0;
+         width: 0;
+      }
 
       // hide the sidebar when the screen is too small
       @media screen and (max-width: 850px) {
@@ -28,12 +34,8 @@
          z-index: 1000;
          border-radius: 10px;
 
-         .sidebar-content {
+         .content {
             padding: 0.6em;
-         }
-
-         &.show {
-            width: clamp(200px, 85vw, 300px);
          }
       }
 
@@ -44,7 +46,6 @@
          min-height: 90vh;
          max-height: 90vh;
          background-color: var(--black-lighter);
-         transition: all 0.3s ease-in-out;
          border-radius: 0 10px 10px 0;
          border: 1px solid rgba(255, 255, 255, 0.15);
 
@@ -67,7 +68,8 @@
             .action-buttons {
                display: flex;
 
-               .new-chat-btn, .close-btn {
+               .new-chat-btn,
+               .close-btn {
                   &:hover .tooltip {
                      visibility: visible;
                      opacity: 1;
@@ -157,6 +159,7 @@
             align-items: center;
             margin-right: 0.5em;
 
+            .chat-btn,
             .download-btn,
             .run-btn,
             .stop-btn {
@@ -167,6 +170,9 @@
                height: fit-content;
                max-height: 2.5rem;
                padding: 0.5em;
+               padding-top: 0em;
+               padding-bottom: 0em;
+               margin-right: 0.3em;
 
                .icon {
                   font-size: 1.2em;
@@ -183,13 +189,21 @@
                }
             }
 
+            .chat-btn {
+               .tooltip {
+                  transform: translate(-25px, -65px);
+               }
+            }
+
             .stop-btn {
+               display: none;
+
                .icon {
                   color: red;
                }
 
                .tooltip {
-                  transform: translate(-10px, -65px);
+                  transform: translate(-8px, -65px);
                }
 
                &:disabled {
@@ -204,13 +218,13 @@
 
             .run-btn {
                .tooltip {
-                  transform: translate(-22px, -70px);
+                  transform: translate(-22px, -65px);
                }
             }
 
             .download-btn {
                .tooltip {
-                  transform: translate(-35px, -70px);
+                  transform: translate(-35px, -65px);
                }
             }
          }

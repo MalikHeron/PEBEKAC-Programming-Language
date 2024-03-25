@@ -1,11 +1,13 @@
 import Editor from '@monaco-editor/react';
 import '@styles/Playground.scss';
 import Assistant from '@components/Assistant';
+import { useState } from 'react';
 
 function Playground() {
    const defaultCode = `fun main() {
-    print("Hello World!")
+    print("Hello World!");
 }`;
+   const [collapse, setCollapse] = useState(false);
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
@@ -18,10 +20,27 @@ function Playground() {
       });
    };
 
+   const toggleChatPane = () => {
+      const chatPane = document.querySelector('.chat-pane');
+      const editorPane = document.querySelector('.editor-pane') as HTMLElement;
+
+      if (chatPane) {
+         chatPane.classList.toggle('hide');
+
+         if (editorPane) {
+            if (chatPane.classList.contains('hide')) {
+               editorPane.style.width = '100%';
+            } else {
+               editorPane.style.width = 'calc(100% - 350px)';
+            }
+         }
+      }
+   }
+
    return (
       <div className="Playground">
          {/* chat pane */}
-         <div className="chat-pane">
+         <div className="chat-pane" >
             <div className="content">
                <div className="header">
                   <h6>Chat</h6>
@@ -30,7 +49,7 @@ function Playground() {
                         <i className='bi-plus-lg'></i>
                         <span className="tooltip">New chat</span>
                      </div>
-                     <div className="close-btn">
+                     <div className="close-btn" onClick={() => { toggleChatPane(), setCollapse(!collapse) }}>
                         <i className='bi-chevron-left'></i>
                         <span className="tooltip">Collapse</span>
                      </div>
@@ -48,13 +67,19 @@ function Playground() {
                <div className='tab-container'>
                   <ul className="nav nav-tabs">
                      <li className="nav-item">
-                        <a className="nav-link active" aria-current="page" href="#">
+                        <a className="nav-link active" aria-current="page">
                            main.pk
                         </a>
                      </li>
                   </ul>
                </div>
                <div className="action-container">
+                  <button className='chat-btn' onClick={() => { toggleChatPane(), setCollapse(!collapse) }} style={{ visibility: collapse ? 'visible' : 'hidden' }}>
+                     <div className='icon'>
+                        <i className='bi-chat'></i>
+                        <span className="tooltip">Open chat</span>
+                     </div>
+                  </button>
                   <button className='download-btn'>
                      <div className='icon'>
                         <i className='bi-download'></i>

@@ -6,6 +6,10 @@ function Navbar() {
          <span className="header fw-bold" >
             PEBEKOC Compiler
          </span>
+         <div className='theme-switch-btn'>
+            <i className='bi-cloud-moon'></i>
+            Dark mode
+         </div>
       </header >
    )
 }
