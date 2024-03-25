@@ -3,11 +3,13 @@ from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
 program_code = """  
-    fun add(int a) {
+    fun add(int a, int c, string s) {
         return 0;
     }
-    
-    add(a);
+    int a = 5;
+    int c = 6;
+    string s = "hello world";
+    add(a, c, s);
     fun main() {     
         int a = 10;
         int b = 5;
@@ -23,6 +25,7 @@ program_code = """
 
         while(x) {
             print("x is not zero");
+            break;
         }
 
         print("x = " + 5);

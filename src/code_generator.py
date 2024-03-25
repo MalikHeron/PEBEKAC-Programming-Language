@@ -20,9 +20,9 @@ def generate_code(node):
 
     elif node_type == 'params':
         if len(node) == 2:
-            return ''
+            return generate_code(node[1])
         else:
-            return ', '.join(generate_code(param) for param in node[1])
+            return node[2][1] + ', ' + generate_code(node[3]) if len(node) > 3 else node[2][1]
 
     elif node_type == 'variable_declaration':
         var_type = generate_code(node[1])
@@ -84,18 +84,6 @@ def generate_code(node):
     elif node_type == 'default_stmt':
         return generate_code(node[1])
 
-    elif node_type == 'digit':
-        return node[1]
-
-    elif node_type == 'identifier':
-        return node[1]
-
-    elif node_type == 'string_literal':
-        return f'"{node[1]}"'
-
-    elif node_type == 'boolean':
-        return str(node[1]).lower()
-
     elif node_type == 'expression':
         if len(node) == 2:
             return generate_code(node[1])
@@ -124,6 +112,18 @@ def generate_code(node):
         elif len(node) == 1:
             return str(node[0])
 
+    elif node_type == 'digit':
+        return node[1]
+
+    elif node_type == 'identifier':
+        return node[1]
+
+    elif node_type == 'string_literal':
+        return f'"{node[1]}"'
+
+    elif node_type == 'boolean':
+        return str(node[1]).lower()
+
     elif node_type == 'function_call':
         fun_name = node[1][1]
         args = generate_code(node[2])  # Generate code for all arguments
@@ -137,6 +137,9 @@ def generate_code(node):
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
+
+    elif node_type == 'break_stmt':
+        return 'break'
 
     elif node_type == 'comment':
         comment_text = node[1]
