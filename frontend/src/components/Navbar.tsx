@@ -7,8 +7,8 @@ function Navbar() {
             PEBEKOC Compiler
          </span>
          <div className='theme-switch-btn'>
-            <i className='bi-cloud-moon'></i>
-            Dark mode
+            <i className='bi-sun'></i>
+            Light
          </div>
       </header >
    )
