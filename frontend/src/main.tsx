@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getPerformance } from "firebase/performance";
+//import { initializeApp } from "firebase/app";
+//import { getPerformance } from "firebase/performance";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
@@ -10,7 +10,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import Router from "./Router";
 
-const firebaseConfig = {
+/*const firebaseConfig = {
    apiKey: "",
    authDomain: "",
    projectId: "",
@@ -18,12 +18,12 @@ const firebaseConfig = {
    messagingSenderId: "",
    appId: "",
    measurementId: ""
-};
+};*/
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+//const app = initializeApp(firebaseConfig);
 // Initialize Performance Monitoring and get a reference to the service
-getPerformance(app);
+//getPerformance(app);
 // init aos
 AOS.init();
 
