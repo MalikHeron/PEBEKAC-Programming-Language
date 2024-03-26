@@ -6,7 +6,7 @@ import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 
 function Playground() {
-   const terminalRef = useRef<HTMLElement | null>(null);
+   const terminalRef = useRef<HTMLDivElement>(null);
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
    const defaultCode = `fun main() {
     print("Hello World!");
@@ -32,6 +32,9 @@ function Playground() {
    const toggleSidePane = () => {
       const sidePane = document.querySelector('.side-pane');
       const editorPane = document.querySelector('.editor-pane') as HTMLElement;
+      const editorContainer = document.querySelector('.editor-container') as HTMLElement;
+      const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
+      const navTabs = document.querySelector('.nav-tabs') as HTMLElement;
 
       if (sidePane) {
          sidePane.classList.toggle('hide');
@@ -39,12 +42,19 @@ function Playground() {
          if (editorPane) {
             if (sidePane.classList.contains('hide')) {
                editorPane.style.width = '100%'; // Expand editor pane to full width
+               editorContainer.style.borderRadius = '0px 10px 10px 0px';
+               terminalContainer.style.borderRadius = '0px 0px 10px 0px';
+               navTabs.style.setProperty('--bs-nav-tabs-border-radius', '0px');
             } else {
                editorPane.style.width = 'calc(100% - 450px)'; // Shrink editor pane to accommodate side pane
+               editorContainer.style.borderRadius = '0px 10px 10px 10px';
+               terminalContainer.style.borderRadius = '0px 10px 10px 10px';
+               navTabs.style.setProperty('--bs-nav-tabs-border-radius', '');
             }
          }
       }
    }
+
 
    // Function to save the file
    const saveFile = () => {
@@ -87,29 +97,23 @@ function Playground() {
       const handleInput = async (data) => {
          const charCode = data.charCodeAt(0);
          if (charCode === 13) { // Enter key pressed
-            if (commandBuffer.trim() === 'clear' || commandBuffer.trim() === 'cls' ) {
+            if (commandBuffer.trim() === 'clear' || commandBuffer.trim() === 'cls') {
                terminal.reset(); // Clear the terminal
                terminal.write('$ '); // Write prompt
             } else {
                // New line
-               terminal.writeln('');               
-               if (commandBuffer.trim() === 'run') {
-                  // Simulate compiling and running code
-                  const response = await compileAndRunCode(defaultCode);
-                  setOutput(response);
-                  terminal.writeln(response); // Display output
-                  terminal.write('$ '); // Write prompt
-               } else if (commandBuffer.trim() === 'save') {
+               terminal.writeln('');
+               if (commandBuffer.trim() === 'save') {
                   saveFile();
                   terminal.writeln('File saved successfully.');
                   terminal.write('$ '); // Write prompt
                } else if (commandBuffer.trim() === 'help') {
                   // Display help information
                   terminal.writeln('Available commands:');
-                  terminal.writeln('run - Compile and run the code');
-                  terminal.writeln('save - Save the current file');
                   terminal.writeln('clear - Clear the terminal');
-                  terminal.writeln('help - Display this help information');
+                  terminal.writeln('cls   - Clear the terminal');
+                  terminal.writeln('save  - Save the current file');
+                  terminal.writeln('help  - Display this help information');
                   terminal.write('$ '); // Write prompt
                } else {
                   terminal.writeln(`Command not found: ${commandBuffer}`);
@@ -136,6 +140,7 @@ function Playground() {
       return () => {
          terminal.dispose(); // Cleanup terminal instance on unmount
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
    // Function to handle running the code
@@ -145,8 +150,6 @@ function Playground() {
 
       const response = await compileAndRunCode(code);
       if (terminalInstance) {
-         terminalInstance.write('run'); // New line
-         terminalInstance.writeln(''); // New line
          terminalInstance.writeln(response); // Write the response to the terminal
          terminalInstance.write('$ '); // Write the prompt
       }
@@ -179,11 +182,32 @@ function Playground() {
       setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
    };
 
+   // Function to toggle the chat visibility
+   const toggleChat = () => {
+      setChatActive((prevChatActive) => !prevChatActive); // Toggle chat active state
+      toggleSidePane(); // Toggle side pane visibility
+   };
+
+   useEffect(() => {
+      const editorContainer = document.querySelector('.editor-container') as HTMLElement;
+      const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
+
+      if (terminalActive && chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 0px 0px';
+         terminalContainer.style.borderRadius = '0px 0px 10px 10px';
+      } else if (terminalActive && !chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 0px 0px';
+      } else if (!terminalActive && chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 10px 10px';
+      }
+   }, [terminalActive, chatActive]);
+
    // Add event listener for keyboard shortcuts
    useEffect(() => {
       const handleKeyDown = (e) => {
          // Handle keyboard shortcuts
          if (e.ctrlKey && e.key === 'e') {
+            e.preventDefault(); // Prevent default browser behavior
             // Ctrl + E to run code
             runCode();
          } else if (e.ctrlKey && e.key === 's') {
@@ -208,22 +232,17 @@ function Playground() {
       return () => {
          window.removeEventListener('keydown', handleKeyDown);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
-
 
    return (
       <div className="Playground">
          {/* side pane mini */}
-         <div className='side-pane-mini' style={{
-            marginRight: chatActive ? '' : '1.5em',
-            borderRadius: chatActive ? '0px' : '',
-            borderRight: chatActive ? 'none' : ''
-         }}>
+         <div className='side-pane-mini'>
             <div
                className={`chat-btn ${chatActive ? 'active' : ''}`}
                onClick={() => {
-                  setChatActive(!chatActive);
-                  toggleSidePane();
+                  toggleChat();
                }}
             >
                <div className="indicator" />
@@ -237,17 +256,13 @@ function Playground() {
          <div className="side-pane">
             <div className="content">
                <div className="header">
-                  {chatActive &&
-                     <>
-                        <h6>Chat</h6>
-                        <div className='action-buttons'>
-                           <div className='reset-btn' onClick={() => setReset(true)}>
-                              <i className='bi-arrow-clockwise'></i>
-                              <span className="tooltip">Reset</span>
-                           </div>
-                        </div>
-                     </>
-                  }
+                  <h6>Chat</h6>
+                  <div className='action-buttons'>
+                     <div className='reset-btn' onClick={() => setReset(true)}>
+                        <i className='bi-arrow-clockwise'></i>
+                        <span className="tooltip">Reset</span>
+                     </div>
+                  </div>
                </div>
                <hr className="divider" />
                {chatActive && <Assistant reset={reset} setReset={setReset} />}

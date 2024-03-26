@@ -128,10 +128,12 @@ def t_STRING_LITERAL(t):
     t.value = t.value[1:-1]  # Remove the quotation marks
     return t
 
+
 # Start of a comment
 def t_COMMENT(t):
     r'(/\*(.|\n)*?\*/)|(//.*?\n)|(\#.*?\n)'
     pass  # No return value. Token discarded
+
 
 # Ignored token with an action associated with it
 def t_ignore_newline(t):
@@ -144,6 +146,12 @@ def find_column(t):
     if line_start < 0:
         line_start = 0
     return (t.lexpos - line_start) + 1
+
+
+# Error handler for illegal characters
+def t_error(t):
+    print(f'Illegal character {t.value[0]!r}')
+    t.lexer.skip(1)
 
 
 # Build the lexer object

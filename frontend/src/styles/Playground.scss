@@ -11,9 +11,9 @@
       display: flex;
       flex-direction: column;
       background-color: var(--black-lighter);
-      border-radius: 0 10px 10px 0;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      transition: width 0.3s ease-in-out;
+      border-right: none;
+      transition: all 0.3s ease-in-out;
       overflow: hidden;
 
       .chat-btn {
@@ -278,23 +278,24 @@
          .editor-container {
             display: flex;
             flex: 1;
-            overflow-y: auto;
+            overflow: hidden;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
             background-color: var(--black-lighter);
-            border-radius: 0 10px;
+            border-radius: 0px 10px 10px 10px;
             border: 1px solid rgba(255, 255, 255, 0.15);
          }
 
          .terminal-container {
             display: none;
             height: 30%; // Adjust based on your preference
-            margin-top: 0.5em;
             background-color: #1e1e1e; // Terminal background color
-            border-radius: 10px;
+            border-radius: 0 0 10px 10px;
             border: 1px solid rgba(255, 255, 255, 0.15);
+            border-top: none;
             padding: 0.5em;
+            overflow: hidden;
 
             .header {
                font-size: 0.8em;
