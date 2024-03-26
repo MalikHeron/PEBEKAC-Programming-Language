@@ -184,14 +184,15 @@ function Playground() {
    useEffect(() => {
       const handleKeyDown = (e) => {
          // Handle keyboard shortcuts
-         e.preventDefault(); // Prevent default browser behavior
          if (e.ctrlKey && e.key === 'e') {
             // Ctrl + E to run code
             runCode();
          } else if (e.ctrlKey && e.key === 's') {
+            e.preventDefault(); // Prevent default browser behavior
             // Ctrl + S to save file
             saveFile();
          } else if (e.ctrlKey && e.key === 'k') {
+            e.preventDefault(); // Prevent default browser behavior
             // Ctrl + K to toggle terminal visibility
             toggleTerminal();
          } else if (e.ctrlKey && e.key === 'c') {
