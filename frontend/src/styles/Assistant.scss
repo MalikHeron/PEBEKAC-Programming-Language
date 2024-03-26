@@ -1,0 +1,491 @@
+.Assistant {
+   display: flex;
+   max-height: 91%;
+   min-height: 91%;
+
+   @media screen and (max-width: 850px) {
+      max-height: 95vh;
+   }
+
+   .assistant-pane {
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .card {
+         border-radius: 10px;
+         padding: 1em;
+         padding-bottom: 0;
+         border-width: 0;
+
+         @media screen and (max-width: 850px) {
+            padding: 0 1.5em 0 1.5em;
+            border-width: 1px;
+         }
+      }
+
+      .conversation-container {
+         width: 100%;
+         flex: 1;
+         overflow-y: auto;
+         align-items: center;
+
+         @media screen and (max-width: 850px) {
+            padding-top: 0;
+            min-height: 70vh;
+            max-height: 70vh;
+            align-items: initial;
+         }
+
+         .message-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin-bottom: 1.5em;
+
+            @media screen and (max-width: 1024px) {
+               width: 100%;
+            }
+
+            @media screen and (max-width: 850px) {
+               width: 100%;
+
+               &:nth-child(2) {
+                  margin-top: 50px;
+               }
+            }
+
+            .message-header {
+               display: flex;
+               align-self: start;
+               justify-content: center;
+               align-items: center;
+               color: white;
+
+               .message-author {
+                  font-weight: bold;
+                  font-size: 0.9em;
+               }
+            }
+
+            .message-card {
+               color: white;
+               margin-top: 0.5em;
+               margin-bottom: 0.5em;
+               width: 100%;
+
+               @media screen and (max-width: 850px) {
+                  padding: 0;
+               }
+
+               .message-text p {
+                  margin: 0;
+                  white-space: pre-wrap;
+                  word-break: break-word;
+                  font-size: 0.95em;
+               }
+
+               .message-text a {
+                  color: var(--sophie-blue-dark);
+                  text-decoration: none;
+               }
+
+               .message-text a:hover {
+                  text-decoration: underline;
+               }
+
+               .actions {
+                  margin-top: 0.5em;
+                  border-radius: 10px;
+                  display: flex;
+                  align-self: flex-end;
+                  cursor: pointer;
+
+                  .like-message .tooltip {
+                     transform: translate(-8px, -65px);
+                  }
+
+                  .dislike-message .tooltip {
+                     transform: translate(-16px, -65px);
+                  }
+
+                  .copy-message .tooltip {
+                     transform: translate(-22px, -65px);
+                     width: 60px;
+                  }
+
+                  .message-sound .tooltip {
+                     transform: translate(-26px, -65px);
+                     width: 80px;
+                  }
+
+                  .like-message,
+                  .dislike-message,
+                  .copy-message,
+                  .message-sound {
+                     border-radius: 8px;
+                     padding: 0.5em;
+                     border: 1px solid transparent;
+
+                     .icon {
+                        font-size: 1.5em;
+                     }
+
+                     &:hover {
+                        border: 1px solid var(--primary-gray-dark);
+                     }
+
+                     &:hover .tooltip {
+                        visibility: visible;
+                        opacity: 1;
+                     }
+                  }
+               }
+            }
+         }
+
+         .loading-message {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 80%;
+            margin-bottom: 1.5em;
+
+            .message-header {
+               display: flex;
+               align-items: center;
+
+               .user-avatar {
+                  .icon {
+                     width: 30px;
+                  }
+               }
+
+               .message-author {
+                  margin-left: 0.5em;
+                  font-weight: bold;
+                  font-size: 1em;
+               }
+            }
+
+            .content {
+               display: flex;
+               justify-content: start;
+               align-items: center;
+               color: white;
+               padding: 0 0 0 2em;
+               margin: 0.5em;
+               width: 150px;
+
+               @media screen and (max-width: 850px) {
+                  padding: 0;
+               }
+
+               .spinner-border {
+                  width: 20px;
+                  height: 20px;
+               }
+            }
+         }
+      }
+
+      .prompt-container {
+         margin-top: 0.5em;
+         display: flex;
+         width: 100%;
+         align-items: center;
+         justify-content: center;
+         overflow: hidden;
+
+         // hide the sidebar when the screen is too small
+         @media screen and (max-width: 850px) {
+            margin-bottom: 0;
+         }
+
+         .input-container {
+            border: 1px solid var(--primary-gray-dark);
+            border-radius: 10px;
+            padding: 0.5em;
+            display: flex;
+            width: 100%;
+            align-items: center;
+            overflow: hidden;
+            margin: 0.5em;
+
+            // make container full width when the screen is too small
+            @media screen and (max-width: 850px) {
+               width: 100%;
+
+               .input-footer {
+                  .character-count {
+                     display: none;
+                  }
+               }
+            }
+
+            .input {
+               width: 100%;
+               height: 100%;
+               padding: 0.5em;
+               outline: none;
+               border: none;
+               background: transparent;
+               transition: all 0.3s ease-in-out;
+               margin-right: 10px;
+               resize: none;
+            }
+
+            .input-footer {
+               display: block;
+               padding: 0;
+               margin: 0;
+               align-self: flex-end;
+
+               .send-button,
+               .mic-button {
+                  border-radius: 10px;
+                  background: transparent;
+                  border: none;
+                  width: auto;
+                  height: auto;
+                  max-height: 2.5rem;
+
+                  &:hover {
+                     background-color: var(--primary-gray-dark);
+                  }
+               }
+
+               .send-button {
+                  .icon {
+                     color: var(--sophie-blue-dark);
+                     transform: rotate(45deg);
+                  }
+
+                  &:disabled {
+                     background-color: transparent;
+                     cursor: default;
+
+                     .icon {
+                        color: var(--primary-gray-dark);
+                     }
+                  }
+               }
+
+               .mic-button {
+                  .tooltip {
+                     transform: translate(-45px, -70px);
+
+                     @media screen and (max-width: 850px) {
+                        transform: translate(-55px, -70px);
+                     }
+                  }
+
+                  &:hover .tooltip {
+                     visibility: visible;
+                     opacity: 1;
+                  }
+
+                  &:disabled {
+                     background-color: transparent;
+                     cursor: default;
+
+                     .tooltip {
+                        visibility: hidden;
+                        opacity: 0;
+                     }
+
+                     .icon {
+                        color: var(--primary-gray-dark);
+                     }
+                  }
+
+                  .icon {
+                     color: var(--sophie-blue-dark);
+
+                     @keyframes listen {
+                        0% {
+                           color: var(--sophie-blue-dark);
+                        }
+
+                        50% {
+                           color: var(--white-light);
+                        }
+
+                        100% {
+                           color: var(--sophie-blue-dark);
+                        }
+                     }
+                  }
+
+                  @keyframes listening {
+                     0% {
+                        background-color: var(--primary-gray-darker);
+                     }
+
+                     50% {
+                        background-color: var(--sophie-blue-dark);
+                     }
+
+                     100% {
+                        background-color: var(--primary-gray-darker);
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 95%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+   }
+
+   .tooltip {
+      position: absolute;
+      width: max-content;
+      visibility: hidden;
+      justify-content: center;
+      background-color: white;
+      color: black;
+      text-align: center;
+      padding: 5px;
+      border-radius: 7px;
+      transition: opacity 0.3s;
+      font-size: 0.8em;
+      font-weight: 500;
+      z-index: 1;
+   }
+
+   .button-group {
+      display: flex;
+      justify-content: right;
+      margin: 10px;
+      margin-bottom: 15px;
+
+      .cancel-button {
+         background-color: var(--primary-gray-dark);
+         margin-right: 10px;
+         font-weight: normal;
+      }
+
+      .delete-button {
+         color: var(--white-light);
+         background-color: rgb(235, 52, 52);
+         margin-right: 10px;
+         font-weight: normal;
+
+         &:hover {
+            background-color: rgb(172, 37, 37);
+         }
+      }
+   }
+
+   /*!
+   * three-dots - v0.3.2
+   * CSS loading animations made with single element
+   * https://nzbin.github.io/three-dots/
+   *
+   * Copyright (c) 2018 nzbin
+   * Released under MIT License
+   */
+
+   /**
+   * ==============================================
+   * Dot Pulse
+   * ==============================================
+   */
+   .dot-pulse {
+      position: relative;
+      left: -9999px;
+      width: 6px;
+      height: 6px;
+      border-radius: 5px;
+      background-color: whitesmoke;
+      color: whitesmoke;
+      box-shadow: 9999px 0 0 -5px;
+      animation: dot-pulse 1.8s infinite linear;
+      animation-delay: 0.25s;
+   }
+
+   .dot-pulse::before,
+   .dot-pulse::after {
+      content: "";
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 5px;
+      background-color: whitesmoke;
+      color: whitesmoke;
+   }
+
+   .dot-pulse::before {
+      box-shadow: 9984px 0 0 -5px;
+      animation: dot-pulse-before 1.8s infinite linear;
+      animation-delay: 0s;
+   }
+
+   .dot-pulse::after {
+      box-shadow: 10014px 0 0 -5px;
+      animation: dot-pulse-after 1.8s infinite linear;
+      animation-delay: 0.5s;
+   }
+
+   @keyframes dot-pulse-before {
+      0% {
+         box-shadow: 9984px 0 0 -5px;
+      }
+
+      30% {
+         box-shadow: 9984px 0 0 2px;
+      }
+
+      60%,
+      100% {
+         box-shadow: 9984px 0 0 -5px;
+      }
+   }
+
+   @keyframes dot-pulse {
+      0% {
+         box-shadow: 9999px 0 0 -5px;
+      }
+
+      30% {
+         box-shadow: 9999px 0 0 2px;
+      }
+
+      60%,
+      100% {
+         box-shadow: 9999px 0 0 -5px;
+      }
+   }
+
+   @keyframes dot-pulse-after {
+      0% {
+         box-shadow: 10014px 0 0 -5px;
+      }
+
+      30% {
+         box-shadow: 10014px 0 0 2px;
+      }
+
+      60%,
+      100% {
+         box-shadow: 10014px 0 0 -5px;
+      }
+   }
+}
