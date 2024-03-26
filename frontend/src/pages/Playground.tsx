@@ -14,7 +14,6 @@ function Playground() {
    const [chatActive, setChatActive] = useState(true);
    const [terminalActive, setTerminalActive] = useState(false);
    const [code, setCode] = useState(defaultCode);
-   const [output, setOutput] = useState('');
    const [reset, setReset] = useState(false);
 
    const handleEditorWillMount = (monaco) => {
