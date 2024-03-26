@@ -6,7 +6,7 @@ import { Timestamp } from 'firebase/firestore';
 import useSpeechToText from '@services/SpeechToText';
 import { ChatService } from '@services/ChatService';
 
-function Assistant() {
+function Assistant( {reset, setReset} ) {
    const [userInput, setUserInput] = useState('');
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isLoading, setIsLoading] = useState(false);
@@ -134,6 +134,13 @@ function Assistant() {
          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
       }
    }, [messages, suggestions]);
+
+   useEffect(() => {
+      if (reset) {
+         setMessages([]);
+         setReset(false);
+      }
+   }, [reset, setReset]);
 
    return (
       <div className="Assistant">

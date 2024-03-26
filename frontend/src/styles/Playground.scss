@@ -13,28 +13,45 @@
       background-color: var(--black-lighter);
       border-radius: 0 10px 10px 0;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 0 10px 10px 0;
-      margin-right: 1.5em;
       transition: width 0.3s ease-in-out;
       overflow: hidden;
-      padding: 0.5em;
 
-      .chat-btn,
-      .terminal-btn {
-         border-radius: 8px;
+      .chat-btn {
+         width: 100%;
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: space-between;
+         align-items: center;
+         margin: 0;
          background: transparent;
-         border: none;
-         width: fit-content;
-         height: fit-content;
-         max-height: 2.5rem;
-         padding: 0.5em;
-         padding-top: 0em;
-         padding-bottom: 0em;
-         margin-right: 0.3em;
+         padding-right: 0.5em;
+         padding-top: 0.5em;
+         padding-bottom: 0.3em;
+         cursor: pointer;
+
+         .indicator {
+            transition: all 0.2s ease-in-out;
+            width: 3px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 50px;
+         }
 
          .icon {
-            font-size: 1.5em;
+            font-size: 1.7em;
             padding: 0em;
+            margin-left: 0.3em;
+            color: gray;
+         }
+
+         &.active {
+            .icon {
+               color: var(--white-light);
+            }
+
+            .indicator {
+               background-color: var(--sophie-blue);
+            }
          }
 
          &:hover .tooltip-side {
@@ -43,14 +60,15 @@
          }
 
          &:hover {
-            background: var(--primary-gray-dark);
+            .icon {
+               color: var(--white-light);
+            }
          }
       }
 
-      .chat-btn,
-      .terminal-btn {
+      .chat-btn {
          .tooltip-side {
-            transform: translate(30px, -32px);
+            transform: translate(50px, 0px);
          }
       }
    }
@@ -115,53 +133,27 @@
             .action-buttons {
                display: flex;
 
-               .new-chat-btn,
-               .close-btn {
+               .reset-btn {
+                  justify-content: center;
+                  align-items: center;
+                  border-radius: 50%;
+                  margin-right: 0.5em;
+                  padding: 0;
+                  cursor: pointer;
+
+                  i {
+                     font-size: 1.2em;
+                     padding: 0.2em;
+                     padding-right: 0.3em;
+                  }
+
+                  .tooltip {
+                     transform: translate(-7px, -65px);
+                  }
+
                   &:hover .tooltip {
                      visibility: visible;
                      opacity: 1;
-                  }
-               }
-
-               .new-chat-btn {
-                  justify-content: center;
-                  align-items: center;
-                  border-radius: 50%;
-                  margin-right: 0.5em;
-                  padding: 0;
-                  cursor: pointer;
-
-                  i {
-                     font-size: 1.2em;
-                     padding: 0.2em;
-                     padding-right: 0.3em;
-                  }
-
-                  .tooltip {
-                     transform: translate(-18px, -65px);
-                  }
-
-                  &:hover {
-                     background: var(--primary-gray-dark);
-                  }
-               }
-
-               .close-btn {
-                  justify-content: center;
-                  align-items: center;
-                  border-radius: 50%;
-                  margin-right: 0.5em;
-                  padding: 0;
-                  cursor: pointer;
-
-                  i {
-                     font-size: 1.2em;
-                     padding: 0.2em;
-                     padding-right: 0.3em;
-                  }
-
-                  .tooltip {
-                     transform: translate(-15px, -65px);
                   }
 
                   &:hover {
@@ -179,6 +171,7 @@
    }
 
    .editor-pane {
+      position: relative;
       width: 100%;
       min-height: 100%;
       display: flex;
@@ -204,6 +197,7 @@
             align-items: center;
             margin-right: 0.5em;
 
+            .terminal-btn,
             .download-btn,
             .run-btn,
             .stop-btn {
@@ -254,6 +248,13 @@
                }
             }
 
+            
+            .terminal-btn {
+               .tooltip {
+                  transform: translate(-20px, -65px);
+               }
+            }
+
             .run-btn {
                .tooltip {
                   transform: translate(-22px, -65px);
@@ -268,14 +269,39 @@
          }
       }
 
-      .editor-container {
+      .containers {
          display: flex;
+         flex-direction: column;
          width: 100%;
-         max-height: 90vh;
-         overflow-y: auto;
-         background-color: var(--black-lighter);
-         border-radius: 0 10px;
-         border: 1px solid rgba(255, 255, 255, 0.15);
+         height: 100%;
+         overflow: hidden;
+
+         .editor-container {
+            display: flex;
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: var(--black-lighter);
+            border-radius: 0 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+         }
+
+         .terminal-container {
+            display: none;
+            height: 30%; // Adjust based on your preference
+            margin-top: 0.5em;
+            background-color: #1e1e1e; // Terminal background color
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.5em;
+
+            .header {
+               font-size: 0.8em;
+               text-decoration: underline;
+            }
+         }
       }
    }
 

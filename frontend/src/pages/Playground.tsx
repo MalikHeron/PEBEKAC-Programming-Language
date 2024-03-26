@@ -1,28 +1,33 @@
 import Editor from '@monaco-editor/react';
 import '@styles/Playground.scss';
 import Assistant from '@components/Assistant';
-import { /*useEffect,*/ useState } from 'react';
-//import { Terminal } from 'xterm';
+import { useEffect, useState } from 'react';
+import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 
 function Playground() {
    const defaultCode = `fun main() {
     print("Hello World!");
 }`;
-   const [collapse, setCollapse] = useState(false);
-   //const [output, setOutput] = useState('');
+   const [chatActive, setChatActive] = useState(true);
+   const [terminalActive, setTerminalActive] = useState(false);
+   const [code, setCode] = useState(defaultCode);
+   const [output, setOutput] = useState('');
+   const [reset, setReset] = useState(false);
+   
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
          inherit: true,
          rules: [
-            { token: 'comment', foreground: 'ffa500', fontStyle: 'italic' },
-            { token: 'keyword', foreground: '00ff00' },
+            //{ token: 'comment', foreground: 'ffa500', fontStyle: 'italic' },
+            //{ token: 'keyword', foreground: '00ff00' },
          ],
          colors: {},
       });
    };
 
+   // Function to toggle the side pane visibility
    const toggleSidePane = () => {
       const sidePane = document.querySelector('.side-pane');
       const editorPane = document.querySelector('.editor-pane') as HTMLElement;
@@ -32,16 +37,43 @@ function Playground() {
 
          if (editorPane) {
             if (sidePane.classList.contains('hide')) {
-               editorPane.style.width = '100%';
+               editorPane.style.width = '100%'; // Expand editor pane to full width
             } else {
-               editorPane.style.width = 'calc(100% - 350px)';
+               editorPane.style.width = 'calc(100% - 450px)'; // Shrink editor pane to accommodate side pane
             }
          }
       }
    }
 
-   /*useEffect(() => {
-      const terminal = new Terminal();
+   // Function to save the file
+   const saveFile = () => {
+      // Create a new anchor element
+      const element = document.createElement('a');
+      // Set the href attribute to the code content
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(code));
+      // Set the download attribute to the file name
+      element.setAttribute('download', 'main.pk');
+      // Hide the element
+      element.style.display = 'none';
+      // Append the element to the document body
+      document.body.appendChild(element);
+      // Simulate a click event on the element
+      element.click();
+      // Remove the element from the document body
+      document.body.removeChild(element);
+   }
+
+   useEffect(() => {
+      const terminal = new Terminal({
+         theme: {
+            background: '#1e1e1e',
+            foreground: '#ffffff',
+            cursor: '#ffffff'
+         },
+         cursorStyle: 'block',
+         fontFamily: `"Fira Code", monospace`,
+         fontSize: 14,
+      });
       terminal.open(document.getElementById('terminal') as HTMLElement);
       terminal.write('$ ');
 
@@ -94,45 +126,49 @@ function Playground() {
       // and receive the response containing the output
       // For demonstration purposes, let's just return a static output
       return 'Hello from simulated compilation and execution!';
-   };*/
+   };
 
    return (
       <div className="Playground">
-         {/* chat pane */}
-         <div className="side-pane" >
-            <div className="content">
-               <div className="header">
-                  <h6>Chat</h6>
-                  <div className='action-buttons'>
-                     <div className='new-chat-btn'>
-                        <i className='bi-plus-lg'></i>
-                        <span className="tooltip">New chat</span>
-                     </div>
-                     <div className="close-btn" onClick={() => { toggleSidePane(), setCollapse(!collapse) }}>
-                        <i className='bi-chevron-left'></i>
-                        <span className="tooltip">Collapse</span>
-                     </div>
-                  </div>
-               </div>
-               <hr className="divider" />
-               <Assistant />
-               {/*<div id="terminal" className='terminal'></div>*/}
-            </div>
-         </div>
-         {/* chat pane mini button */}
-         <div className='side-pane-mini' style={{ display: collapse ? 'flex' : 'none' }}>
-            <button className='chat-btn' onClick={() => { toggleSidePane(), setCollapse(!collapse) }}>
+         {/* side pane mini */}
+         <div className='side-pane-mini' style={{
+            marginRight: chatActive ? '' : '1.5em',
+            borderRadius: chatActive ? '0px' : '',
+            borderRight: chatActive ? 'none' : ''
+         }}>
+            <div
+               className={`chat-btn ${chatActive ? 'active' : ''}`}
+               onClick={() => {
+                  setChatActive(!chatActive);
+                  toggleSidePane();
+               }}
+            >
+               <div className="indicator" />
                <div className='icon'>
                   <i className='bi-chat'></i>
                </div>
-               <span className="tooltip-side">Open chat</span>
-            </button>
-            <button className='terminal-btn' onClick={() => { toggleSidePane(), setCollapse(!collapse) }}>
-               <div className='icon'>
-                  <i className='bi-terminal'></i>
+               <span className="tooltip-side">Chat</span>
+            </div>
+         </div>
+         {/* side pane */}
+         <div className="side-pane">
+            <div className="content">
+               <div className="header">
+                  {chatActive &&
+                     <>
+                        <h6>Chat</h6>
+                        <div className='action-buttons'>
+                           <div className='reset-btn' onClick={() => setReset(true)}>
+                              <i className='bi-arrow-clockwise'></i>
+                              <span className="tooltip">Reset</span>
+                           </div>
+                        </div>
+                     </>
+                  }
                </div>
-               <span className="tooltip-side">Open terminal</span>
-            </button>
+               <hr className="divider" />
+               {chatActive && <Assistant reset={reset} setReset={setReset} />}
+            </div>
          </div>
          {/* editor pane */}
          <div className="editor-pane">
@@ -148,7 +184,24 @@ function Playground() {
                   </ul>
                </div>
                <div className="action-container">
-                  <button className='download-btn'>
+                  <button
+                     className={`terminal-btn ${terminalActive ? 'active' : ''}`}
+                     onClick={() => {
+                        const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
+                        setTerminalActive(!terminalActive); // Toggle terminal active state
+                        if (!terminalActive) {
+                           terminalContainer.style.display = 'block'; // Show terminal
+                        } else {
+                           terminalContainer.style.display = 'none'; // Hide terminal
+                        }
+                     }}
+                  >
+                     <div className='icon'>
+                        <i className='bi-terminal'></i>
+                     </div>
+                     <span className="tooltip">Terminal</span>
+                  </button>
+                  <button className='download-btn' onClick={saveFile}>
                      <div className='icon'>
                         <i className='bi-download'></i>
                      </div>
@@ -160,7 +213,7 @@ function Playground() {
                      </div>
                      <span className="tooltip">Run code</span>
                   </button>
-                  <button className='stop-btn' disabled={false}>
+                  <button className='stop-btn' disabled={true}>
                      <div className='icon'>
                         <i className='bi-stop'></i>
                      </div>
@@ -168,34 +221,45 @@ function Playground() {
                   </button>
                </div>
             </div>
-
-            <Editor
-               className='editor-container'
-               height="100%"
-               defaultLanguage="kotlin"
-               defaultValue={defaultCode}
-               theme="myTheme"
-               beforeMount={handleEditorWillMount}
-               options={{
-                  roundedSelection: true,
-                  scrollbar: {
-                     // Subtle shadow to the left & top. Defaults to true.
-                     useShadows: false,
-                     // Size of arrows (scrollbar buttons) in pixels. Defaults to 11.
-                     arrowSize: 11,
-                     // The scrollbar slider size will be increased by this number of pixels. Defaults to 0.
-                     horizontalScrollbarSize: 11,
-                     verticalScrollbarSize: 11,
-                     // The scrollbar will be visible, even when the view does not overflow. Defaults to 'auto'.
-                     vertical: 'visible',
-                     horizontal: 'visible',
-                     // Render vertical arrows (on the vertical scrollbar). Defaults to false.
-                     verticalHasArrows: true,
-                     // Render horizontal arrows (on the horizontal scrollbar). Defaults to false.
-                     horizontalHasArrows: true,
-                  },
-               }}
-            />
+            <div className='containers'>
+               {/* editor */}
+               <div className="editor-container">
+                  <Editor
+                     height="100%"
+                     defaultLanguage="kotlin"
+                     defaultValue={defaultCode}
+                     onChange={editorValue => { setCode(editorValue || '') }}
+                     theme="myTheme"
+                     beforeMount={handleEditorWillMount}
+                     options={{
+                        roundedSelection: true,
+                        scrollbar: {
+                           // Subtle shadow to the left & top. Defaults to true.
+                           useShadows: false,
+                           // Size of arrows (scrollbar buttons) in pixels. Defaults to 11.
+                           arrowSize: 11,
+                           // The scrollbar slider size will be increased by this number of pixels. Defaults to 0.
+                           horizontalScrollbarSize: 11,
+                           verticalScrollbarSize: 11,
+                           // The scrollbar will be visible, even when the view does not overflow. Defaults to 'auto'.
+                           vertical: 'visible',
+                           horizontal: 'visible',
+                           // Render vertical arrows (on the vertical scrollbar). Defaults to false.
+                           verticalHasArrows: true,
+                           // Render horizontal arrows (on the horizontal scrollbar). Defaults to false.
+                           horizontalHasArrows: true,
+                        },
+                     }}
+                  />
+               </div>
+               {/* output */}
+               <div className='terminal-container'>
+                  <h6 className='header'>
+                     TERMINAL
+                  </h6>
+                  <div id='terminal' />
+               </div>
+            </div>
          </div>
       </div>
    );
