@@ -55,7 +55,6 @@ function Playground() {
       }
    }
 
-
    // Function to save the file
    const saveFile = () => {
       // Create a new anchor element
@@ -72,7 +71,52 @@ function Playground() {
       element.click();
       // Remove the element from the document body
       document.body.removeChild(element);
-   }
+   }   
+   
+   // Function to handle running the code
+   const runCode = async () => {
+      const terminal = terminalRef.current;
+      if (!terminal) return;
+
+      const response = await compileAndRunCode(code);
+      if (terminalInstance) {
+         terminalInstance.writeln(response); // Write the response to the terminal
+         terminalInstance.write('$ '); // Write the prompt
+      }
+   };
+
+   // Simulate compiling and running code (Replace with actual API calls)
+   const compileAndRunCode = async (code) => {
+      // Here you would send the code to your compiler API
+      // and receive the response containing the output
+      // For demonstration purposes, let's just return a static output
+      try {
+         // Assuming you have an API endpoint for compilation and execution
+         const response = await fetch('/api/compile', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+         });
+         const data = await response.json();
+         return data.output; // Return the output from the API response
+      } catch (error) {
+         console.error('Error compiling and running code:', error);
+         return 'Error compiling and running code.';
+      }
+   };
+
+   // Function to toggle the terminal visibility
+   const toggleTerminal = () => {
+      setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
+   };
+
+   // Function to toggle the chat visibility
+   const toggleChat = () => {
+      setChatActive((prevChatActive) => !prevChatActive); // Toggle chat active state
+      toggleSidePane(); // Toggle side pane visibility
+   };
 
    useEffect(() => {
       const terminal = new Terminal({
@@ -143,51 +187,6 @@ function Playground() {
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
-   // Function to handle running the code
-   const runCode = async () => {
-      const terminal = terminalRef.current;
-      if (!terminal) return;
-
-      const response = await compileAndRunCode(code);
-      if (terminalInstance) {
-         terminalInstance.writeln(response); // Write the response to the terminal
-         terminalInstance.write('$ '); // Write the prompt
-      }
-   };
-
-   // Simulate compiling and running code (Replace with actual API calls)
-   const compileAndRunCode = async (code) => {
-      // Here you would send the code to your compiler API
-      // and receive the response containing the output
-      // For demonstration purposes, let's just return a static output
-      try {
-         // Assuming you have an API endpoint for compilation and execution
-         const response = await fetch('/api/compile', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-         });
-         const data = await response.json();
-         return data.output; // Return the output from the API response
-      } catch (error) {
-         console.error('Error compiling and running code:', error);
-         return 'Error compiling and running code.';
-      }
-   };
-
-   // Function to toggle the terminal visibility
-   const toggleTerminal = () => {
-      setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
-   };
-
-   // Function to toggle the chat visibility
-   const toggleChat = () => {
-      setChatActive((prevChatActive) => !prevChatActive); // Toggle chat active state
-      toggleSidePane(); // Toggle side pane visibility
-   };
-
    useEffect(() => {
       const editorContainer = document.querySelector('.editor-container') as HTMLElement;
       const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
@@ -197,8 +196,11 @@ function Playground() {
          terminalContainer.style.borderRadius = '0px 0px 10px 10px';
       } else if (terminalActive && !chatActive) {
          editorContainer.style.borderRadius = '0px 10px 0px 0px';
+         terminalContainer.style.borderRadius = '0px 0px 10px 0px';
       } else if (!terminalActive && chatActive) {
          editorContainer.style.borderRadius = '0px 10px 10px 10px';
+      } else if (!terminalActive && !chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 10px 0px';
       }
    }, [terminalActive, chatActive]);
 
@@ -239,12 +241,7 @@ function Playground() {
       <div className="Playground">
          {/* side pane mini */}
          <div className='side-pane-mini'>
-            <div
-               className={`chat-btn ${chatActive ? 'active' : ''}`}
-               onClick={() => {
-                  toggleChat();
-               }}
-            >
+            <div className={`chat-btn ${chatActive ? 'active' : ''}`} onClick={() => { toggleChat(); }}>
                <div className="indicator" />
                <div className='icon'>
                   <i className='bi-chat'></i>
