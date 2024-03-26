@@ -1,11 +1,13 @@
 import Editor from '@monaco-editor/react';
 import '@styles/Playground.scss';
 import Assistant from '@components/Assistant';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 
 function Playground() {
+   const terminalRef = useRef<HTMLElement | null>(null);
+   const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
    const defaultCode = `fun main() {
     print("Hello World!");
 }`;
@@ -14,7 +16,7 @@ function Playground() {
    const [code, setCode] = useState(defaultCode);
    const [output, setOutput] = useState('');
    const [reset, setReset] = useState(false);
-   
+
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
@@ -74,29 +76,46 @@ function Playground() {
          fontFamily: `"Fira Code", monospace`,
          fontSize: 14,
       });
-      terminal.open(document.getElementById('terminal') as HTMLElement);
-      terminal.write('$ ');
+
+      if (terminalRef.current) {
+         terminal.open(terminalRef.current);
+         setTerminalInstance(terminal);
+         terminal.write('$ ');
+      }
 
       // Handle user input
       let commandBuffer = '';
       const handleInput = async (data) => {
          const charCode = data.charCodeAt(0);
          if (charCode === 13) { // Enter key pressed
-            terminal.writeln(''); // New line
-            if (commandBuffer.trim() === '') {
-               terminal.write('$ '); // Write prompt
-            } else if (commandBuffer.trim() === 'clear') {
+            if (commandBuffer.trim() === 'clear' || commandBuffer.trim() === 'cls' ) {
                terminal.reset(); // Clear the terminal
                terminal.write('$ '); // Write prompt
-            } else if (commandBuffer.trim() === 'run') {
-               // Simulate compiling and running code
-               const response = await compileAndRunCode(defaultCode);
-               setOutput(response);
-               terminal.writeln(response); // Display output
-               terminal.write('$ '); // Write prompt
             } else {
-               terminal.writeln(`Command not found: ${commandBuffer}`);
-               terminal.write('$ '); // Write prompt
+               // New line
+               terminal.writeln('');               
+               if (commandBuffer.trim() === 'run') {
+                  // Simulate compiling and running code
+                  const response = await compileAndRunCode(defaultCode);
+                  setOutput(response);
+                  terminal.writeln(response); // Display output
+                  terminal.write('$ '); // Write prompt
+               } else if (commandBuffer.trim() === 'save') {
+                  saveFile();
+                  terminal.writeln('File saved successfully.');
+                  terminal.write('$ '); // Write prompt
+               } else if (commandBuffer.trim() === 'help') {
+                  // Display help information
+                  terminal.writeln('Available commands:');
+                  terminal.writeln('run - Compile and run the code');
+                  terminal.writeln('save - Save the current file');
+                  terminal.writeln('clear - Clear the terminal');
+                  terminal.writeln('help - Display this help information');
+                  terminal.write('$ '); // Write prompt
+               } else {
+                  terminal.writeln(`Command not found: ${commandBuffer}`);
+                  terminal.write('$ '); // Write prompt
+               }
             }
             commandBuffer = ''; // Clear command buffer
          } else if (charCode === 127) { // Backspace key pressed
@@ -120,13 +139,77 @@ function Playground() {
       };
    }, []);
 
+   // Function to handle running the code
+   const runCode = async () => {
+      const terminal = terminalRef.current;
+      if (!terminal) return;
+
+      const response = await compileAndRunCode(code);
+      if (terminalInstance) {
+         terminalInstance.write('run'); // New line
+         terminalInstance.writeln(''); // New line
+         terminalInstance.writeln(response); // Write the response to the terminal
+         terminalInstance.write('$ '); // Write the prompt
+      }
+   };
+
    // Simulate compiling and running code (Replace with actual API calls)
    const compileAndRunCode = async (code) => {
       // Here you would send the code to your compiler API
       // and receive the response containing the output
       // For demonstration purposes, let's just return a static output
-      return 'Hello from simulated compilation and execution!';
+      try {
+         // Assuming you have an API endpoint for compilation and execution
+         const response = await fetch('/api/compile', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ code }),
+         });
+         const data = await response.json();
+         return data.output; // Return the output from the API response
+      } catch (error) {
+         console.error('Error compiling and running code:', error);
+         return 'Error compiling and running code.';
+      }
    };
+
+   // Function to toggle the terminal visibility
+   const toggleTerminal = () => {
+      setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
+   };
+
+   // Add event listener for keyboard shortcuts
+   useEffect(() => {
+      const handleKeyDown = (e) => {
+         // Handle keyboard shortcuts
+         e.preventDefault(); // Prevent default browser behavior
+         if (e.ctrlKey && e.key === 'e') {
+            // Ctrl + E to run code
+            runCode();
+         } else if (e.ctrlKey && e.key === 's') {
+            // Ctrl + S to save file
+            saveFile();
+         } else if (e.ctrlKey && e.key === 'k') {
+            // Ctrl + K to toggle terminal visibility
+            toggleTerminal();
+         } else if (e.ctrlKey && e.key === 'c') {
+            // Ctrl + C to toggle chat visibility
+            setChatActive((prev) => !prev); // Toggle chat visibility
+            toggleSidePane(); // Toggle side pane visibility
+         }
+      };
+
+      // Attach event listener
+      window.addEventListener('keydown', handleKeyDown);
+
+      // Detach event listener on component unmount
+      return () => {
+         window.removeEventListener('keydown', handleKeyDown);
+      };
+   }, []);
+
 
    return (
       <div className="Playground">
@@ -184,30 +267,19 @@ function Playground() {
                   </ul>
                </div>
                <div className="action-container">
-                  <button
-                     className={`terminal-btn ${terminalActive ? 'active' : ''}`}
-                     onClick={() => {
-                        const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
-                        setTerminalActive(!terminalActive); // Toggle terminal active state
-                        if (!terminalActive) {
-                           terminalContainer.style.display = 'block'; // Show terminal
-                        } else {
-                           terminalContainer.style.display = 'none'; // Hide terminal
-                        }
-                     }}
-                  >
+                  <button className='terminal-btn' onClick={toggleTerminal}>
                      <div className='icon'>
                         <i className='bi-terminal'></i>
                      </div>
                      <span className="tooltip">Terminal</span>
                   </button>
-                  <button className='download-btn' onClick={saveFile}>
+                  <button className='save-btn' onClick={saveFile}>
                      <div className='icon'>
                         <i className='bi-download'></i>
                      </div>
-                     <span className="tooltip">Download file</span>
+                     <span className="tooltip">Save file</span>
                   </button>
-                  <button className='run-btn'>
+                  <button className='run-btn' onClick={runCode}>
                      <div className='icon'>
                         <i className='bi-play'></i>
                      </div>
@@ -252,12 +324,14 @@ function Playground() {
                      }}
                   />
                </div>
-               {/* output */}
-               <div className='terminal-container'>
+               {/* terminal */}
+               <div className='terminal-container' style={{ display: terminalActive ? 'block' : 'none' }}>
                   <h6 className='header'>
                      TERMINAL
                   </h6>
-                  <div id='terminal' />
+                  <div className='terminal-content'>
+                     <div id='terminal' ref={terminalRef} />
+                  </div>
                </div>
             </div>
          </div>
