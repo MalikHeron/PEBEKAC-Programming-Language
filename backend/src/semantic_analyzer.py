@@ -10,6 +10,12 @@ symbol_table = {}
 scope_stack = []
 
 assigned_value = None
+in_loop = False
+
+
+def looping(value):
+    global in_loop
+    in_loop = value
 
 
 def push_scope():
@@ -35,31 +41,6 @@ def lookup_symbol(name):
     return None
 
 
-def p_function_call(p):
-    """
-    function_call : identifier LPAREN arg_list RPAREN
-    """
-    function_name = p[1][1]
-    arg_list = p[3]
-
-    # Look up the function in the symbol table
-    function_info = lookup_symbol(function_name)
-    if not function_info or function_info['type'] != 'function':
-        raise Exception(f"Error: {function_name} is not a declared function")
-
-    # Check that the number of arguments matches
-    if len(arg_list) != len(function_info['params']):
-        raise Exception(f"Error: Incorrect number of arguments for function {function_name}")
-
-    # Check that the types of the arguments match
-    for i in range(len(arg_list)):
-        if arg_list[i][0] != function_info['params'][i]:
-            raise Exception(f"Error: Incorrect type for argument {i + 1} of function {function_name}")
-
-    p[0] = ('function_call', function_name, arg_list)
-
-
-# Now, modify your semantic analysis functions to use these scope management functions.
 # For example, when entering a function or class declaration, push a new scope, and when exiting, pop the scope.
 # When declaring a variable, use the declare_symbol function.
 # When looking up a variable, use the lookup_symbol function.
@@ -109,21 +90,21 @@ def analyze_semantics(node):
         # Analyze statements inside the function declaration
         push_scope()
 
-        # First analyze all declarations and initializations
-        for stmt in node[3]:
-            if stmt[0] in ['variable_declaration', 'assignment']:
-                print(f'var or assign: {stmt[0]}')
-                analyze_semantics(stmt)
-            if stmt[0] not in ['variable_declaration', 'assignment']:
-                print(f'not var or assign: {stmt[0]}')
-                analyze_semantics(stmt)
-
-        pop_scope()
-
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
         for param in node[1:]:
             analyze_semantics(param)
+
+        # Check if there are multiple parameters with the same name and datatype
+        param_names = [param[1] for param in node[1:]]
+        param_types = [param[0] for param in node[1:]]
+        if len(param_names) != len(set(param_names)) or len(param_types) != len(set(param_types)):
+            raise Exception("Error: Function has multiple parameters with the same name and datatype")
+
+    elif node_type == 'import_declaration':
+        # Add import information to the symbol table
+        module_name = node[1]
+        symbol_table[module_name] = {'type': 'module'}
 
     elif node_type == 'variable_declaration':
         # Extract variable information
@@ -226,6 +207,29 @@ def analyze_semantics(node):
             analyze_semantics(node[3])
             pop_scope()
 
+    elif node_type == 'while_stmt':
+        # Analyze the condition expression
+        analyze_semantics(node[1])
+
+        # Analyze statements in the while loop body
+        push_scope()
+        looping(True)
+        analyze_semantics(node[2])
+        looping(False)
+        pop_scope()
+
+    elif node_type == 'for_stmt':
+        # Analyze Assignment expression
+        analyze_semantics(node[1])
+        analyze_semantics(node[2])
+        analyze_semantics(node[3])
+        # Analyze statements in the for loop body
+        push_scope()
+        looping(True)
+        analyze_semantics(node[4])
+        looping(False)
+        pop_scope()
+
     elif node_type == 'class_method':
         # Analyze statements inside the method
         push_scope()
@@ -237,12 +241,119 @@ def analyze_semantics(node):
         for expr in node[1:]:
             analyze_semantics(expr)
 
+        # Check if expression is valid...
+        expr_type = get_expression_type(node[1])
+        if expr_type is None:
+            raise ValueError(f"Invalid expression in print statement: {node[1]}")
+
+    elif node_type == 'function_call':
+        fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
+        arg_list = node[2]
+        fun_info = lookup_symbol(fun_name)
+
+        # Check if the arguments are expressions
+        def count_args(arg_node):
+            if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
+                return sum(count_args(arg) for arg in arg_node[1:])
+            else:
+                return 1
+
+        num_args = count_args(arg_list)
+        print(f'fun_call: {fun_name}')
+        print(f'arg_list: {arg_list}')
+        print(f'Number of arguments: {num_args}')
+
+        if fun_info is None:
+            raise Exception(f"Error: Function {fun_name} not defined")
+        else:
+            params = fun_info['params']
+
+            # Count the number of parameters in the function declaration
+            def count_params(param_node):
+                if isinstance(param_node, tuple) and param_node[0] == 'params':
+                    if param_node[1] == 'empty':
+                        return 0
+                    else:
+                        # If the node is a 'params' node, count the identifier and recursively count the rest of the
+                        # parameters
+                        return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
+
+            num_params = count_params(params)
+            print(f'params: {params}')
+            print(f'Number of params: {num_params}')
+            if num_args != num_params:
+                raise Exception(
+                    f"Error: Number of arguments in function call ({num_args}) does not match the number of parameters in function declaration ({num_params})")
+        # Analyze statements inside the function declaration
+        push_scope()
+
     elif node_type == 'return_stmt':
         print(f'return: {node[1]}')
-        # Analyze the return expression
+
+        # TODO Check if the return statement is inside a function
+
+        # TODO Check if the type of the returned expression matches the function's return type
         analyze_semantics(node[1])
 
-    # Add more semantic analysis rules for other language constructs
+    elif node_type == 'break_stmt':
+        if in_loop is False:
+            raise Exception("Error: break statement not inside loop or switch")
+        else:
+            print(f'break: {node[1]}')
+
+    # Add more semantic analysis rules for other language construct
+
+
+def is_type(symbol_table, type_candidate):
+    # Check if a given string is a type in the symbol table.
+    for symbol, attributes in symbol_table.items():
+        if attributes['type'] == type_candidate:
+            return True
+    return False
+
+
+def get_expression_type(expr):
+    # Determine the type of an expression.
+    expr_type = expr[0]
+
+    if expr_type == 'expression':
+        # Assuming the type of an expression is the type of its first operand
+        return get_expression_type(expr[1])
+
+    elif expr_type == 'digit':
+        return 'int' or 'float'
+
+    elif expr_type == 'boolean':
+        return 'boolean'
+
+    elif expr_type == 'identifier':
+        # Look up the identifier in the symbol table
+        identifier = expr[1]
+        if identifier in symbol_table:
+            return symbol_table[identifier]['type']
+        else:
+            raise NameError(f"Identifier {identifier} is not defined")
+    else:
+        pass
+
+
+def get_assignment_type(assignment):
+    """
+    Determine the type of an assignment.
+    """
+    assignment_type = assignment[0]
+
+    if assignment_type == 'assignment':
+        var_name = assignment[2]
+        if var_name in symbol_table:
+            return symbol_table[var_name]['type']
+        # else:
+        # raise NameError(f"Variable {var_name} is not defined")
+    else:
+        pass
+
+
+# Add more semantic analysis rules for other language constructs
 
 
 # Integrate semantic analysis into the parser
@@ -251,3 +362,5 @@ def parse_and_analyze(program):
     print(ast)
     analyze_semantics(ast)
     return ast
+
+# ... rest of your code ...

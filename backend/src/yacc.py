@@ -38,7 +38,9 @@ def p_stmt(p):
          | control_structure
          | return_stmt
          | function_call
+         | break_stmt
          | empty
+         | comment stmt
     """
     p[0] = p[1]
 
@@ -50,11 +52,44 @@ def p_class_declaration(p):
     p[0] = ('class_declaration', p[2], p[4])
 
 
+def p_print_stmt(p):
+    """
+    print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
+    """
+    p[0] = ('print_stmt', p[3])
+
+
 def p_fun_declaration(p):
     """
-    fun_declaration : FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+       fun_declaration : general_type FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+                       | FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
     """
-    p[0] = ('fun_declaration', p[2], p[4], p[7])
+    if len(p) == 10:
+        # Accounting for return type specification
+        p[0] = ('fun_declaration', p[1], p[3], p[5], p[8])
+    else:
+        p[0] = ('fun_declaration', p[2], p[4], p[7])
+
+
+def p_function_call(p):
+    """
+    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
+    """
+    p[0] = ('function_call', p[1], p[3])
+
+
+def p_return_stmt(p):
+    """
+    return_stmt : RETURN expression SEMICOLON
+    """
+    p[0] = ('return_stmt', p[2])
+
+
+def p_break_stmt(p):
+    """
+    break_stmt : BREAK SEMICOLON
+    """
+    p[0] = (f'{p[1]}_stmt',)
 
 
 def p_params(p):
@@ -102,13 +137,6 @@ def p_assignment(p):
         p[0] = ('assignment', p[1], p[3])
 
 
-def p_print_stmt(p):
-    """
-    print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
-    """
-    p[0] = ('print_stmt', p[3])
-
-
 def p_control_structure(p):
     """
     control_structure : if_stmt
@@ -119,29 +147,16 @@ def p_control_structure(p):
     p[0] = ('control_structure', p[1])
 
 
-def p_function_call(p):
-    """
-    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
-    """
-    p[0] = ('function_call', p[1], p[3])
-
-
 def p_arg_list(p):
     """
     arg_list : expression COMMA arg_list
              | expression
+             | empty
     """
     if len(p) == 4:
         p[0] = ('arg_list', p[1], p[3])
     else:
         p[0] = ('arg_list', p[1])
-
-
-def p_return_stmt(p):
-    """
-    return_stmt : RETURN expression SEMICOLON
-    """
-    p[0] = ('return_stmt', p[2])
 
 
 def p_if_stmt(p):
@@ -160,7 +175,8 @@ def p_if_stmt(p):
 
 def p_for_stmt(p):
     """
-    for_stmt : FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+       for_stmt : FOR LPAREN variable_declaration SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+                | FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
     """
     p[0] = ('for_stmt', p[3], p[5], p[7], p[10])
 
@@ -223,6 +239,23 @@ def p_expression(p):
                | identifier LBRACKET expression RBRACKET
                | identifier LBRACE expression RBRACE
     """
+
+    left = p[1]
+    right = p[3] if len(p) > 3 else None
+    operator = p[2] if len(p) > 3 else None
+
+    if operator in ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'MODULUS', 'POW']:
+        # For mathematical operations, check if operands are numerical
+        if not isinstance(left, (int, float)) or not isinstance(right, (int, float)):
+            raise TypeError("Error: Mathematical operations can only be performed on numerical values")
+    elif operator in ['AND', 'OR', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN', 'LESSTHANEQUAL', 'GREATERTHANEQUAL']:
+        # For logical and comparison operations, operands can be of any type
+        pass
+    elif operator in ['INCREMENT', 'DECREMENT']:
+        # For increment and decrement operations, check if operand is numerical
+        if not isinstance(left, (int, float)):
+            raise TypeError("Error: Increment and decrement operations can only be performed on numerical values")
+
     if len(p) == 5:
         p[0] = ('expression', p[1], p[3])
     elif len(p) == 4:
@@ -231,7 +264,6 @@ def p_expression(p):
         p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
-
 
 def p_digit(p):
     """
@@ -287,6 +319,13 @@ def p_identifier(p):
     p[0] = ('identifier', p[1])
 
 
+def p_comment(p):
+    """
+    comment : COMMENT
+    """
+    p[0] = ('comment', p[1])
+
+
 def p_string_literal(p):
     """
     string : STRING_LITERAL
@@ -302,7 +341,10 @@ def p_empty(p):
 
 
 def p_error(p):
-    print(f'Syntax error at {p.value!r}')
+    if p:
+        print(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
+    else:
+        print("Syntax error at EOF")
 
 
 # Build the parser

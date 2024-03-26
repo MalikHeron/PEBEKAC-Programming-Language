@@ -21,7 +21,6 @@ reserved = {
     'int': 'INT',
     'float': 'FLOAT',
     'double': 'DOUBLE',
-    'boolean': 'BOOLEAN',
     'string': 'STRING',
     'intArray': 'INTARRAY',
     'floatArray': 'FLOATARRAY',
@@ -46,7 +45,7 @@ tokens = list(reserved.values()) + [
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION'
+    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT', 'ARGS', 'CONTINUE'
 ]
 
 # Token matching rules are written as regexs
@@ -105,9 +104,22 @@ def t_IDENTIFIER(t):
     return t
 
 
+# Defining float Values
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
+
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
+    return t
+
+
+def t_BOOLEAN(t):
+    r'true|false'
+    t.value = (t.value == 'true')  # Convert the string to a Python boolean
     return t
 
 
@@ -116,6 +128,10 @@ def t_STRING_LITERAL(t):
     t.value = t.value[1:-1]  # Remove the quotation marks
     return t
 
+# Start of a comment
+def t_COMMENT(t):
+    r'(/\*(.|\n)*?\*/)|(//.*?\n)|(\#.*?\n)'
+    pass  # No return value. Token discarded
 
 # Ignored token with an action associated with it
 def t_ignore_newline(t):
@@ -123,10 +139,11 @@ def t_ignore_newline(t):
     t.lexer.lineno += t.value.count('\n')
 
 
-# Error handler for illegal characters
-def t_error(t):
-    print(f'Illegal character {t.value[0]!r}')
-    t.lexer.skip(1)
+def find_column(t):
+    line_start = t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    if line_start < 0:
+        line_start = 0
+    return (t.lexpos - line_start) + 1
 
 
 # Build the lexer object

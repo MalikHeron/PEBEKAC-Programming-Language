@@ -20,9 +20,9 @@ def generate_code(node):
 
     elif node_type == 'params':
         if len(node) == 2:
-            return ''
+            return generate_code(node[1])
         else:
-            return ', '.join(generate_code(param) for param in node[1])
+            return node[2][1] + ', ' + generate_code(node[3]) if len(node) > 3 else node[2][1]
 
     elif node_type == 'variable_declaration':
         var_type = generate_code(node[1])
@@ -67,7 +67,7 @@ def generate_code(node):
         condition = generate_code(node[2])
         increment = generate_code(node[3])
         loop_body = generate_code(node[4])
-        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n    {increment}'
+        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n  {increment}'
 
     elif node_type == 'switch_stmt':
         expression = generate_code(node[1])
@@ -86,10 +86,8 @@ def generate_code(node):
 
     elif node_type == 'expression':
         if len(node) == 2:
-            if node[1][0] == 'string_literal':
-                return f'"{node[1][1]}"'  # Treat literals as string literals
-            else:
-                return f'{node[1][1]}'
+            return generate_code(node[1])
+
         elif len(node) == 3:
             op = node[1]
             right = generate_code(node[2])
@@ -98,25 +96,56 @@ def generate_code(node):
             left = generate_code(node[1])
             op = node[2]
             right = generate_code(node[3])
-            return f'{left} {op} {right}'
+            if op == '+':
+                if isinstance(left, str) and isinstance(right, str):
+                    # Both operands are strings, generate code for string concatenation
+                    return f'{left} + {right}'
+                elif isinstance(left, str) and isinstance(right, int) or isinstance(right, float):
+                    return f'{left} + str({right})'
+                # Check if left is number and right is string
+                elif isinstance(left, int) and isinstance(left, float) or isinstance(right, str):
+                    return f'str({left}) + {right}'
+                else:
+                    return f'{left} + {right}'
+            else:
+                return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
 
+    elif node_type == 'digit':
+        return node[1]
+
+    elif node_type == 'identifier':
+        return node[1]
+
+    elif node_type == 'string_literal':
+        return f'"{node[1]}"'
+
+    elif node_type == 'boolean':
+        return str(node[1]).lower()
+
     elif node_type == 'function_call':
-        fun_name = node[1]
-        args = generate_code(node[2])
+        fun_name = node[1][1]
+        args = generate_code(node[2])  # Generate code for all arguments
         return f'{fun_name}({args})'
 
-    elif node_type == 'args':
+    elif node_type == 'arg_list':
         if len(node) == 2:
             return generate_code(node[1])
         else:
-            return generate_code(node[1]) + ', ' + generate_code(node[2])
+            return ', '.join(generate_code(arg) for arg in node[1:])
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
 
-    elif node_type == 'empty':
+    elif node_type == 'break_stmt':
+        return 'break'
+
+    elif node_type == 'comment':
+        comment_text = node[1]
+        return f'{comment_text}'
+
+    elif node_type == 'empty' or node_type == 'e':
         return ''
 
     else:
