@@ -43,12 +43,18 @@ def generate_code(node):
     elif node_type == 'assignment':
         if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
             var_name = node[2][1]
-            expr = generate_code(node[3])
-            return f'{var_name} = {expr}'  # Correct assignment syntax
+            if node[3] == 'null':
+                return f'{var_name} = None'
+            else:
+                expr = generate_code(node[3])
+                return f'{var_name} = {expr}'  # Correct assignment syntax
         else:
             var_name = node[1][1]
-            expr = generate_code(node[2])
-            return f'{var_name} = {expr}'
+            if node[2] == 'null':
+                return f'{var_name} = None'
+            else:
+                expr = generate_code(node[2])
+                return f'{var_name} = {expr}'
 
     elif node_type == 'print_stmt':
         expr = generate_code(node[1])  # Extract expression node directly
@@ -74,21 +80,6 @@ def generate_code(node):
         increment = generate_code(node[3][1]) + generate_code(node[3][2])
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
-
-    # elif node_type == 'switch_stmt':
-    #     expression = generate_code(node[1])
-    #     case_stmts = generate_code(node[2])
-    #     default_stmt = generate_code(node[3])
-    #     return f'switch {expression}:\n{indent(case_stmts)}\n{indent(default_stmt)}'
-
-    # elif node_type == 'case_stmts':
-    #     if len(node) == 2:
-    #         return generate_code(node[1])
-    #     else:
-    #         return generate_code(node[1]) + '\n' + generate_code(node[2])
-    #
-    # elif node_type == 'default_stmt':
-    #     return generate_code(node[1])
 
     elif node_type == 'expression':
         if len(node) == 2:

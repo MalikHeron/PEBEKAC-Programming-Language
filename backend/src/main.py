@@ -4,7 +4,7 @@ from semantic_analyzer import parse_and_analyze
 # Read the program code from a file or define it here...
 program_code = """   
     fun main() { 
-        int graph;
+        int graph = null;
              
         fun add(int a, int c, int s) {
             return a + s + c;
@@ -25,7 +25,7 @@ program_code = """
         int b = 7;
         int values = add(a, c, b);
         
-        # print(add(a,c,b));
+        #print(add(a,c,b));
             
         int a = 10;
         int b = 5;
