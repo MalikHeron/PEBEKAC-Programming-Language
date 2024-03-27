@@ -124,6 +124,12 @@ def t_BOOLEAN(t):
     return t
 
 
+def t_INPUT(t):
+    r'input'
+    t.value = 'input'
+    return t
+
+
 def t_VOID(t):
     r'void'
     t.value = 'void'

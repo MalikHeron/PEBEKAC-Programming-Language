@@ -346,13 +346,30 @@ def analyze_semantics(node):
 
         elif node_type == 'return_stmt':
             print(f'return: {node[1]}')
+    elif node_type == 'input_stmt':
+        var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
+        prompt = node[2][1] # Extract the prompt from the input statement
+        print(f'input var_name: {var_name}')
+
+        # Check if the variable being assigned is declared
+        if not lookup_symbol(var_name):
+            raise Exception(f"Error: Variable {var_name} not declared")
+
+        # check if prompt is a string
+        if isinstance(prompt, str):
+            raise Exception(f"Error: Prompt must be a string")
+
+
+
+    elif node_type == 'return_stmt':
+        print(f'return: {node[1]}')
 
             if in_function is False:
                 raise Exception(
                     f" Values may only be returned from a function")
 
-            # TODO Check if the type of the returned expression matches the function's return type
-            analyze_semantics(node[1])
+        # TODO Check if the type of the returned expression matches the function's return type
+        analyze_semantics(node[1])
 
         elif node_type == 'break_stmt':
             if in_loop is False:

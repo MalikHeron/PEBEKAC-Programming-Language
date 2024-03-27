@@ -14,6 +14,7 @@ def main():
     values = add(a, c, b)
     a = 10
     b = 5
+    b = "h"
     x = 5
     code = "John"
     print("Hello World, my name is ")

@@ -38,10 +38,18 @@ def p_stmt(p):
          | return_stmt
          | function_call
          | break_stmt
+         | input_stmt
          | empty
          | comment stmt
     """
     p[0] = p[1]
+
+
+def p_input_stmt(p):
+    """
+    input_stmt : identifier ASSIGN INPUT LPAREN string RPAREN SEMICOLON
+    """
+    p[0] = ('input_stmt', p[1], p[5])
 
 
 def p_print_stmt(p):
@@ -131,17 +139,23 @@ def p_variable_declaration(p):
 def p_assignment(p):
     """
     assignment : general_type identifier ASSIGN expression SEMICOLON
+               | general_type identifier ASSIGN NULL SEMICOLON
                | general_type identifier ASSIGN function_call
+               | list_type identifier ASSIGN NULL SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call
                | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call
                | list_type identifier ASSIGN function_call
+               | array_type identifier ASSIGN NULL SEMICOLON
+               | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN function_call
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
                | array_type identifier ASSIGN function_call
                | identifier ASSIGN expression SEMICOLON
                | identifier ASSIGN function_call
+               | identifier ASSIGN NULL SEMICOLON
     """
     if len(p) == 4:
         p[0] = ('assignment', p[1], p[3])
