@@ -108,8 +108,17 @@ def analyze_semantics(node):
         # Analyze statements inside the function declaration
         push_scope()
         is_in_function(True)
-        pop_scope()
+        # First analyze all declarations and initializations
+        for stmt in node[3]:
+            if stmt[0] in ['variable_declaration', 'assignment']:
+                print(f'var or assign: {stmt[0]}')
+                analyze_semantics(stmt)
+            if stmt[0] not in ['variable_declaration', 'assignment']:
+                print(f'not var or assign: {stmt[0]}')
+                analyze_semantics(stmt)
+
         is_in_function(False)
+        pop_scope()
 
     elif node_type == 'params':
         # Analyze each parameter in the parameter list

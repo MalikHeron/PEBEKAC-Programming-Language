@@ -30,6 +30,7 @@ program_code = """
             
         int a = 10;
         int b = 5;
+        b = "h";
         int x = 5;
         string code = "John";
         print("Hello World, my name is ");
