@@ -11,6 +11,12 @@ scope_stack = []
 
 assigned_value = None
 in_loop = False
+in_function = False
+
+
+def is_in_function(boolean):
+    global in_function
+    in_function = boolean
 
 
 def looping(value):
@@ -40,6 +46,12 @@ def lookup_symbol(name):
             return scope[name]
     return None
 
+
+# Define functions to manage the symbol table and scope stack
+def reset_symbol_table_and_scope_stack():
+    global symbol_table, scope_stack
+    symbol_table = {}
+    scope_stack = []
 
 # Define a function for semantic analysis
 def analyze_semantics(node):
@@ -72,10 +84,20 @@ def analyze_semantics(node):
 
     elif node_type == 'fun_declaration':
         # Add function information to the symbol table
-        fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
-        print(f'fun_name: {fun_name}')
-        params = node[2]
-        print(f'params: {params}')
+        fun_name = None
+        params = None
+
+        if len(node) == 4:
+            fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
+            print(f'fun_name: {fun_name}')
+            params = node[2]
+            print(f'params: {params}')
+        elif len(node) == 5:
+            print(f'Node Values now: {node[3]}')
+            fun_name = node[2][1]  # Extract the actual function name from the identifier non-terminal
+            print(f'fun_name: {fun_name}')
+            params = node[3]
+            print(f'params: {params}')
 
         if lookup_symbol(fun_name):
             raise Exception(f"Error: Function {fun_name} already defined")
@@ -85,6 +107,9 @@ def analyze_semantics(node):
 
         # Analyze statements inside the function declaration
         push_scope()
+        is_in_function(True)
+        pop_scope()
+        is_in_function(False)
 
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
@@ -126,7 +151,6 @@ def analyze_semantics(node):
         global assigned_value
         if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
             # Check if the variable being assigned is declared
-            print(f'Node in: {node[2]}')
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
             print(f'assignment var_name: {var_name}')
             # Check if the assigned value matches the type of the variable
@@ -240,11 +264,11 @@ def analyze_semantics(node):
         looping(False)
         pop_scope()
 
-    elif node_type == 'class_method':
-        # Analyze statements inside the method
-        push_scope()
-        analyze_semantics(node[2])
-        pop_scope()
+    # elif node_type == 'class_method':
+    #     # Analyze statements inside the method
+    #     push_scope()
+    #     analyze_semantics(node[2])
+    #     pop_scope()
 
     elif node_type == 'print_stmt':
         # Analyze expression(s) in print statement
@@ -264,7 +288,10 @@ def analyze_semantics(node):
         # Check if the arguments are expressions
         def count_args(arg_node):
             if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
-                return sum(count_args(arg) for arg in arg_node[1:])
+                if arg_node[1] == 'empty':
+                    return 0
+                else:
+                    return sum(count_args(arg) for arg in arg_node[1:])
             else:
                 return 1
 
@@ -301,7 +328,8 @@ def analyze_semantics(node):
     elif node_type == 'return_stmt':
         print(f'return: {node[1]}')
 
-        # TODO Check if the return statement is inside a function
+        if in_function is False:
+            raise Exception(f" Values may only be returned from a function")
 
         # TODO Check if the type of the returned expression matches the function's return type
         analyze_semantics(node[1])
@@ -347,5 +375,7 @@ def get_expression_type(expr):
 def parse_and_analyze(program):
     ast = parser.parse(program)
     print(ast)
+    # Reset the symbol table and scope stack before each analysis
+    reset_symbol_table_and_scope_stack()
     analyze_semantics(ast)
     return ast

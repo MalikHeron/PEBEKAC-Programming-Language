@@ -8,18 +8,22 @@ program_code = """
     fun add(int a, int c, int s) {
         return a + s + c;
     }
-    
-    
-    int fun subtract(int d, int e, int f ) {
-        return d - e - f; 
+      
+    fun int subtract(int d, int e, int f ) {
+      return d - e - f; 
     }
+    
+    fun void test() {
+     print("Testing void return type");
+    }
+  
+    test();
     
     int a = 5;
     int c = 6;
     int b = 7;
-    string s = "hello world";
-    
     int values = add(a, c, b);
+    # print(add(a,c,b));
     
     fun main() {     
         int a = 10;
@@ -27,13 +31,13 @@ program_code = """
         int x = 5;
         string code = "John";
         print("Hello World, my name is ");
-
+    
         if (x == 10) {
             print("x = 10");
         } else {
             print("x != 10");
         }
-
+    
         while(x) {
             print("x is not zero");
             break;

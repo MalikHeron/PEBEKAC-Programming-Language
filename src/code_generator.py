@@ -75,20 +75,20 @@ def generate_code(node):
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
-    elif node_type == 'switch_stmt':
-        expression = generate_code(node[1])
-        case_stmts = generate_code(node[2])
-        default_stmt = generate_code(node[3])
-        return f'switch {expression}:\n{indent(case_stmts)}\n{indent(default_stmt)}'
+    # elif node_type == 'switch_stmt':
+    #     expression = generate_code(node[1])
+    #     case_stmts = generate_code(node[2])
+    #     default_stmt = generate_code(node[3])
+    #     return f'switch {expression}:\n{indent(case_stmts)}\n{indent(default_stmt)}'
 
-    elif node_type == 'case_stmts':
-        if len(node) == 2:
-            return generate_code(node[1])
-        else:
-            return generate_code(node[1]) + '\n' + generate_code(node[2])
-
-    elif node_type == 'default_stmt':
-        return generate_code(node[1])
+    # elif node_type == 'case_stmts':
+    #     if len(node) == 2:
+    #         return generate_code(node[1])
+    #     else:
+    #         return generate_code(node[1]) + '\n' + generate_code(node[2])
+    #
+    # elif node_type == 'default_stmt':
+    #     return generate_code(node[1])
 
     elif node_type == 'expression':
         if len(node) == 2:
@@ -141,10 +141,10 @@ def generate_code(node):
         else:
             return ', '.join(generate_code(arg) for arg in node[1:])
 
-    elif(node_type == '+'):
+    elif node_type == '+':
         return ' += 1'
 
-    elif (node_type == '-'):
+    elif node_type == '-':
         return ' -= 1'
 
     elif node_type == 'return_stmt':

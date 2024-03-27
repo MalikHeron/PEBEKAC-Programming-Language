@@ -34,7 +34,8 @@ reserved = {
     'case': 'CASE',
     'default': 'DEFAULT',
     'break': 'BREAK',
-    'params': 'PARAMS'
+    'params': 'PARAMS',
+    'void': 'VOID'
 }
 
 # All tokens must be named in advance.
@@ -120,6 +121,12 @@ def t_NUMBER(t):
 def t_BOOLEAN(t):
     r'true|false'
     t.value = (t.value == 'true')  # Convert the string to a Python boolean
+    return t
+
+
+def t_VOID(t):
+    r'void'
+    t.value = 'void'
     return t
 
 
