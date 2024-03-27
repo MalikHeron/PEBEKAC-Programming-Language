@@ -80,6 +80,7 @@ def p_return_stmt(p):
     """
     p[0] = ('return_stmt', p[2])
 
+
 def p_return_type(p):
     """
     return_type : general_type
@@ -88,6 +89,7 @@ def p_return_type(p):
                 | VOID
     """
     p[0] = ('return_type', p[1])
+
 
 def p_break_stmt(p):
     """
@@ -357,9 +359,9 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        print(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
+        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
     else:
-        print("Syntax error at EOF")
+        raise SyntaxError("Syntax error at EOF")
 
 
 # Build the parser

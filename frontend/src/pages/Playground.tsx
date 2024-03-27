@@ -10,11 +10,14 @@ function Playground() {
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
    const defaultCode = `fun main() {
     print("Hello World!");
-}`;
+}
+
+main();`;
    const [chatActive, setChatActive] = useState(true);
    const [terminalActive, setTerminalActive] = useState(false);
    const [code, setCode] = useState(defaultCode);
    const [reset, setReset] = useState(false);
+   const [running, setRunning] = useState(false);
 
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
@@ -120,16 +123,99 @@ function Playground() {
       document.body.removeChild(element);
    }
 
-   // Function to handle running the code
+   // Update the runCode function to start and stop the program execution
    const runCode = async () => {
-      const terminal = terminalRef.current;
-      if (!terminal) return;
-      
-      const response = await compileAndRunCode(code);
-      console.log(response); // Log the response to the console
-      if (terminalInstance) {
-         terminalInstance.writeln(response); // Write the response to the terminal
-         terminalInstance.write('$ '); // Write the prompt
+      try {
+         if (!terminalActive && terminalInstance) {
+            setTerminalActive(true); // Show the terminal if it's hidden
+         }
+
+         terminalInstance?.reset(); // Clear the terminal
+         setRunning(true); // Set running state to true
+         // Execute the code and handle user input prompts
+         const condition = true;
+         while (condition) {
+            const response = await compileAndRunCode(code);
+            const outputLines = response.split('\n');
+
+            for (const line of outputLines) {
+               if (terminalInstance) {
+                  terminalInstance.writeln(line);
+               }
+            }
+
+            // Check if execution is complete or stopped
+            if (response.execution_complete || stopRequested()) {
+               if (terminalInstance) {
+                  if (response.execution_complete) {
+                     terminalInstance.writeln('Program execution complete.');
+                     terminalInstance.write('$ ');
+                  } else {
+                     terminalInstance.writeln('Program execution stopped.');
+                     terminalInstance.write('$ ');
+                  }
+               }
+               break;  // Exit the loop
+            }
+
+            // Handle user input prompts
+            const inputRequest = await fetch('/get_input');
+            const inputResponse = await inputRequest.json();
+            const userInput = inputResponse.input;
+
+            if (!userInput) {
+               // No more input prompts, break the loop
+               break;
+            }
+
+            // Send user input to the server
+            await provideUserInput(userInput);
+         }
+      } catch (error) {
+         // Handle errors
+         console.error('Error:', error);
+      } finally {
+         setRunning(false); // Set running state to false after execution
+      }
+   };
+
+   // Function to request stopping the program execution
+   const stopExecution = async () => {
+      try {
+         // Send a request to the server to stop execution
+         const response = await fetch('/stop_execution', { method: 'POST' });
+         if (!response.ok) {
+            throw new Error('Failed to stop execution.');
+         }
+      } catch (error) {
+         console.error('Error:', error);
+      }
+   };
+
+   // Function to check if the program execution should be stopped
+   const stopRequested = () => {
+      // Implement your logic to determine if the execution should be stopped
+      // For example, check if the stop button is clicked or a specific condition is met
+      // In this example, I'm checking the global variable `running`
+      return !running;
+   };
+
+   // Function to provide user input to the server
+   const provideUserInput = async (input) => {
+      try {
+         const response = await fetch('/provide_input', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input }),
+         });
+
+         if (!response.ok) {
+            throw new Error('Failed to provide user input.');
+         }
+      } catch (error) {
+         console.error('Error:', error);
       }
    };
 
@@ -159,9 +245,7 @@ function Playground() {
          // Return the generated Python code from the API response
          return data.output;
       } catch (error) {
-         // Log and return an error message if there's an error
-         console.error('Error compiling and running code:', error);
-         return 'Error compiling and running code.';
+         return error;
       }
    };
 
@@ -205,16 +289,11 @@ function Playground() {
             } else {
                // New line
                terminal.writeln('');
-               if (commandBuffer.trim() === 'save') {
-                  saveFile();
-                  terminal.writeln('File saved successfully.');
-                  terminal.write('$ '); // Write prompt
-               } else if (commandBuffer.trim() === 'help') {
+               if (commandBuffer.trim() === 'help') {
                   // Display help information
                   terminal.writeln('Available commands:');
                   terminal.writeln('clear - Clear the terminal');
                   terminal.writeln('cls   - Clear the terminal');
-                  terminal.writeln('save  - Save the current file');
                   terminal.writeln('help  - Display this help information');
                   terminal.write('$ '); // Write prompt
                } else {
@@ -355,7 +434,7 @@ function Playground() {
                      </div>
                      <span className="tooltip">Run code</span>
                   </button>
-                  <button className='stop-btn' disabled={true}>
+                  <button className='stop-btn' disabled={!running} onClick={stopExecution}>
                      <div className='icon'>
                         <i className='bi-stop'></i>
                      </div>
