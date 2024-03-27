@@ -29,9 +29,8 @@ def p_stmt_list(p):
 
 def p_stmt(p):
     """
-    stmt : class_declaration
+    stmt : import_declaration
          | fun_declaration
-         | import_declaration
          | assignment
          | variable_declaration
          | print_stmt
@@ -45,28 +44,25 @@ def p_stmt(p):
     p[0] = p[1]
 
 
-def p_class_declaration(p):
-    """
-    class_declaration : CLASS identifier LBRACE stmt_list RBRACE
-    """
-    p[0] = ('class_declaration', p[2], p[4])
-
-
 def p_print_stmt(p):
     """
     print_stmt : PRINT LPAREN expression RPAREN SEMICOLON
+                | PRINT LPAREN expression PLUS function_call PLUS expression RPAREN SEMICOLON
+                | PRINT LPAREN expression PLUS function_call RPAREN SEMICOLON
+                | PRINT LPAREN function_call RPAREN SEMICOLON
+
     """
     p[0] = ('print_stmt', p[3])
 
 
 def p_fun_declaration(p):
     """
-       fun_declaration : general_type FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+       fun_declaration : FUN return_type identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
                        | FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
     """
     if len(p) == 10:
         # Accounting for return type specification
-        p[0] = ('fun_declaration', p[1], p[3], p[5], p[8])
+        p[0] = ('fun_declaration', p[2], p[3], p[5], p[8])
     else:
         p[0] = ('fun_declaration', p[2], p[4], p[7])
 
@@ -84,6 +80,14 @@ def p_return_stmt(p):
     """
     p[0] = ('return_stmt', p[2])
 
+def p_return_type(p):
+    """
+    return_type : general_type
+                | array_type
+                | list_type
+                | VOID
+    """
+    p[0] = ('return_type', p[1])
 
 def p_break_stmt(p):
     """
