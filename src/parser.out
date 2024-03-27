@@ -1,0 +1,256 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    APOSTROPHE
+    ARGS
+    ARROW
+    AT
+    BACKSLASH
+    CONTINUE
+    DIVIDEASSIGN
+    DOT
+    DOUBLEQUOTE
+    HASH
+    INPUT
+    MINUSASSIGN
+    MODASSIGN
+    NEW
+    NULL
+    PARAMS
+    PIPE
+    PLUSASSIGN
+    SLASH
+    SWITCH
+    TIMESASSIGN
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> stmt_list
+Rule 2     stmt_list -> stmt stmt_list
+Rule 3     stmt_list -> stmt
+Rule 4     stmt_list -> empty
+Rule 5     stmt -> class_declaration
+Rule 6     stmt -> fun_declaration
+Rule 7     stmt -> import_declaration
+Rule 8     stmt -> assignment
+Rule 9     stmt -> variable_declaration
+Rule 10    stmt -> print_stmt
+Rule 11    stmt -> control_structure
+Rule 12    stmt -> return_stmt
+Rule 13    stmt -> function_call
+Rule 14    stmt -> break_stmt
+Rule 15    stmt -> empty
+Rule 16    stmt -> comment stmt
+Rule 17    class_declaration -> CLASS identifier LBRACE stmt_list RBRACE
+Rule 18    print_stmt -> PRINT LPAREN expression RPAREN SEMICOLON
+Rule 19    fun_declaration -> general_type FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+Rule 20    fun_declaration -> FUN identifier LPAREN params RPAREN LBRACE stmt_list RBRACE
+Rule 21    function_call -> identifier LPAREN arg_list RPAREN SEMICOLON
+Rule 22    return_stmt -> RETURN expression SEMICOLON
+Rule 23    break_stmt -> BREAK SEMICOLON
+Rule 24    params -> general_type identifier COMMA params
+Rule 25    params -> general_type identifier
+Rule 26    params -> empty
+Rule 27    import_declaration -> IMPORT STRING_LITERAL
+Rule 28    variable_declaration -> general_type identifier SEMICOLON
+Rule 29    variable_declaration -> list_type identifier LBRACKET RBRACKET SEMICOLON
+Rule 30    variable_declaration -> array_type identifier LBRACE RBRACE SEMICOLON
+Rule 31    assignment -> general_type identifier ASSIGN expression SEMICOLON 6
+Rule 32    assignment -> general_type identifier ASSIGN function_call 5
+Rule 33    assignment -> list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON 9
+Rule 34    assignment -> list_type identifier LBRACKET digit RBRACKET ASSIGN function_call 8
+Rule 35    assignment -> list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON 8
+Rule 36    assignment -> list_type identifier ASSIGN function_call 5
+Rule 37    assignment -> array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON 9
+Rule 38    assignment -> array_type identifier LBRACE digit RBRACE ASSIGN function_call 8
+Rule 39    assignment -> array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON 8
+Rule 40    assignment -> array_type identifier ASSIGN function_call 5
+Rule 41    assignment -> identifier ASSIGN expression SEMICOLON 5
+Rule 42    assignment -> identifier ASSIGN function_call 4
+Rule 43    control_structure -> if_stmt
+Rule 44    control_structure -> for_stmt
+Rule 45    control_structure -> while_stmt
+Rule 46    arg_list -> expression COMMA arg_list
+Rule 47    arg_list -> expression
+Rule 48    arg_list -> empty
+Rule 49    if_stmt -> IF LPAREN expression RPAREN LBRACE stmt_list RBRACE
+Rule 50    if_stmt -> IF LPAREN expression RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE
+Rule 51    if_stmt -> expression QUESTION expression COLON expression SEMICOLON
+Rule 52    for_stmt -> FOR LPAREN variable_declaration expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+Rule 53    for_stmt -> FOR LPAREN assignment expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+Rule 54    while_stmt -> WHILE LPAREN expression RPAREN LBRACE stmt_list RBRACE
+Rule 55    case_stmts -> CASE expression COLON stmt_list case_stmts
+Rule 56    case_stmts -> empty
+Rule 57    default_stmt -> DEFAULT COLON stmt_list
+Rule 58    default_stmt -> empty
+Rule 59    expression -> expression PLUS expression
+Rule 60    expression -> expression MINUS expression
+Rule 61    expression -> expression MULTIPLY expression
+Rule 62    expression -> expression DIVIDE expression
+Rule 63    expression -> expression MODULUS expression
+Rule 64    expression -> expression AND expression
+Rule 65    expression -> expression OR expression
+Rule 66    expression -> expression EQUAL expression
+Rule 67    expression -> expression NOTEQUAL expression
+Rule 68    expression -> expression LESSTHAN expression
+Rule 69    expression -> expression GREATERTHAN expression
+Rule 70    expression -> expression LESSTHANEQUAL expression
+Rule 71    expression -> expression GREATERTHANEQUAL expression
+Rule 72    expression -> expression COMMA expression
+Rule 73    expression -> expression POW expression
+Rule 74    expression -> LPAREN expression RPAREN
+Rule 75    expression -> expression INCREMENT
+Rule 76    expression -> expression DECREMENT
+Rule 77    expression -> NOT expression
+Rule 78    expression -> identifier
+Rule 79    expression -> digit
+Rule 80    expression -> string
+Rule 81    expression -> boolean
+Rule 82    expression -> identifier LBRACKET expression RBRACKET
+Rule 83    expression -> identifier LBRACE expression RBRACE
+Rule 84    digit -> NUMBER
+Rule 85    boolean -> TRUE
+Rule 86    boolean -> FALSE
+Rule 87    general_type -> INT
+Rule 88    general_type -> FLOAT
+Rule 89    general_type -> DOUBLE
+Rule 90    general_type -> STRING
+Rule 91    general_type -> BOOLEAN
+Rule 92    general_type -> identifier
+Rule 93    array_type -> INTARRAY
+Rule 94    array_type -> FLOATARRAY
+Rule 95    array_type -> STRINGARRAY
+Rule 96    array_type -> DOUBLEARRAY
+Rule 97    list_type -> INTLIST
+Rule 98    list_type -> FLOATLIST
+Rule 99    list_type -> STRINGLIST
+Rule 100   list_type -> DOUBLELIST
+Rule 101   identifier -> IDENTIFIER
+Rule 102   comment -> COMMENT
+Rule 103   string -> STRING_LITERAL
+Rule 104   empty -> <empty>
+
+Terminals, with rules where they appear
+
+AND                  : 64
+APOSTROPHE           : 
+ARGS                 : 
+ARROW                : 
+ASSIGN               : 31 32 33 34 35 36 37 38 39 40 41 42
+AT                   : 
+BACKSLASH            : 
+BOOLEAN              : 91
+BREAK                : 23
+CASE                 : 55
+CLASS                : 17
+COLON                : 51 55 57
+COMMA                : 24 46 72
+COMMENT              : 102
+CONTINUE             : 
+DECREMENT            : 76
+DEFAULT              : 57
+DIVIDE               : 62
+DIVIDEASSIGN         : 
+DOT                  : 
+DOUBLE               : 89
+DOUBLEARRAY          : 96
+DOUBLELIST           : 100
+DOUBLEQUOTE          : 
+ELSE                 : 50
+EQUAL                : 66
+FALSE                : 86
+FLOAT                : 88
+FLOATARRAY           : 94
+FLOATLIST            : 98
+FOR                  : 52 53
+FUN                  : 19 20
+GREATERTHAN          : 69
+GREATERTHANEQUAL     : 71
+HASH                 : 
+IDENTIFIER           : 101
+IF                   : 49 50
+IMPORT               : 27
+INCREMENT            : 75
+INPUT                : 
+INT                  : 87
+INTARRAY             : 93
+INTLIST              : 97
+LBRACE               : 17 19 20 30 37 38 39 49 50 50 52 53 54 83
+LBRACKET             : 29 33 34 35 82
+LESSTHAN             : 68
+LESSTHANEQUAL        : 70
+LPAREN               : 18 19 20 21 49 50 52 53 54 74
+MINUS                : 60
+MINUSASSIGN          : 
+MODASSIGN            : 
+MODULUS              : 63
+MULTIPLY             : 61
+NEW                  : 
+NOT                  : 77
+NOTEQUAL             : 67
+NULL                 : 
+NUMBER               : 84
+OR                   : 65
+PARAMS               : 
+PIPE                 : 
+PLUS                 : 59
+PLUSASSIGN           : 
+POW                  : 73
+PRINT                : 18
+QUESTION             : 51
+RBRACE               : 17 19 20 30 37 38 39 49 50 50 52 53 54 83
+RBRACKET             : 29 33 34 35 82
+RETURN               : 22
+RPAREN               : 18 19 20 21 49 50 52 53 54 74
+SEMICOLON            : 18 21 22 23 28 29 30 31 33 35 37 39 41 51 52 53
+SLASH                : 
+STRING               : 90
+STRINGARRAY          : 95
+STRINGLIST           : 99
+STRING_LITERAL       : 27 103
+SWITCH               : 
+TIMESASSIGN          : 
+TRUE                 : 85
+WHILE                : 54
+error                : 
+
+Nonterminals, with rules where they appear
+
+4                    : 42
+5                    : 32 36 40 41
+6                    : 31
+8                    : 34 35 38 39
+9                    : 33 37
+arg_list             : 21 46
+array_type           : 30 37 38 39 40
+assignment           : 8 53
+boolean              : 81
+break_stmt           : 14
+case_stmts           : 55
+class_declaration    : 5
+comment              : 16
+control_structure    : 11
+default_stmt         : 
+digit                : 33 34 37 38 79
+empty                : 4 15 26 48 56 58
+expression           : 18 22 31 33 35 37 39 41 46 47 49 50 51 51 51 52 52 53 53 54 55 59 59 60 60 61 61 62 62 63 63 64 64 65 65 66 66 67 67 68 68 69 69 70 70 71 71 72 72 73 73 74 75 76 77 82 83
+for_stmt             : 44
+fun_declaration      : 6
+function_call        : 13 32 34 36 38 40 42
+general_type         : 19 24 25 28 31 32
+identifier           : 17 19 20 21 24 25 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 78 82 83 92
+if_stmt              : 43
+import_declaration   : 7
+list_type            : 29 33 34 35 36
+params               : 19 20 24
+print_stmt           : 10
+program              : 0
+return_stmt          : 12
+stmt                 : 2 3 16
+stmt_list            : 1 2 17 19 20 49 50 50 52 53 54 55 57
+string               : 80
+variable_declaration : 9 52
+while_stmt           : 45
+

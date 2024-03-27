@@ -148,7 +148,10 @@ def find_column(t):
     return (t.lexpos - line_start) + 1
 
 
+<<<<<<< HEAD:backend/src/lex.py
 # Error handler for illegal characters
+=======
+>>>>>>> 742bb8e7dc3f358898e5d5ccaccb2d4a31613c2a:src/lex.py
 def t_error(t):
     print(f'Illegal character {t.value[0]!r}')
     t.lexer.skip(1)

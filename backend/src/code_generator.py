@@ -13,9 +13,15 @@ def generate_code(node):
         return f'class {class_name}:\n{indent(stmts)}'
 
     elif node_type == 'fun_declaration':
-        fun_name = node[1][1]
-        params = generate_code(node[2])
-        stmts = generate_code(node[3])
+        if (len(node)) == 5:
+            fun_name = node[2][1]
+            params = generate_code(node[3])
+            stmts = generate_code(node[4])
+        else:
+            fun_name = node[1][1]
+            params = generate_code(node[2])
+            stmts = generate_code(node[3])
+
         return f'def {fun_name}({params}):\n{indent(stmts)}'
 
     elif node_type == 'params':
@@ -65,9 +71,9 @@ def generate_code(node):
     elif node_type == 'for_stmt':
         init = generate_code(node[1])
         condition = generate_code(node[2])
-        increment = generate_code(node[3])
+        increment = generate_code(node[3][1]) + generate_code(node[3][2])
         loop_body = generate_code(node[4])
-        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n  {increment}'
+        return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
     elif node_type == 'switch_stmt':
         expression = generate_code(node[1])
@@ -134,6 +140,12 @@ def generate_code(node):
             return generate_code(node[1])
         else:
             return ', '.join(generate_code(arg) for arg in node[1:])
+
+    elif(node_type == '+'):
+        return ' += 1'
+
+    elif (node_type == '-'):
+        return ' -= 1'
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'

@@ -125,16 +125,34 @@ def p_variable_declaration(p):
 def p_assignment(p):
     """
     assignment : general_type identifier ASSIGN expression SEMICOLON
+               | general_type identifier ASSIGN function_call
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call
                | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
+               | list_type identifier ASSIGN function_call
                | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
+               | array_type identifier LBRACE digit RBRACE ASSIGN function_call
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
+               | array_type identifier ASSIGN function_call
                | identifier ASSIGN expression SEMICOLON
+               | identifier ASSIGN function_call
     """
-    if len(p) == 6:
-        p[0] = ('assignment', p[1], p[2], p[4])
-    else:
+    if len(p) == 4:
         p[0] = ('assignment', p[1], p[3])
+    elif len(p) == 5:
+        if p[4][0] == 'function_call':
+            p[0] = ('assignment', p[1], p[2], p[4])
+        else:
+            p[0] = ('assignment', p[1], p[3])
+    elif len(p) == 6:
+        p[0] = ('assignment', p[1], p[2], p[4])
+    elif len(p) == 8:
+        if p[7][0] == 'function_call':
+            p[0] = ('assignment', p[1], p[2], p[7])
+        else:
+            p[0] = ('assignment', p[1], p[2], p[5])
+    elif len(p) == 9:
+        p[0] = ('assignment', p[1], p[2], p[7])
 
 
 def p_control_structure(p):
@@ -142,7 +160,6 @@ def p_control_structure(p):
     control_structure : if_stmt
                       | for_stmt
                       | while_stmt
-                      | switch_stmt
     """
     p[0] = ('control_structure', p[1])
 
@@ -175,10 +192,10 @@ def p_if_stmt(p):
 
 def p_for_stmt(p):
     """
-       for_stmt : FOR LPAREN variable_declaration SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
-                | FOR LPAREN assignment SEMICOLON expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+       for_stmt : FOR LPAREN variable_declaration expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
+                | FOR LPAREN assignment expression SEMICOLON expression RPAREN LBRACE stmt_list RBRACE
     """
-    p[0] = ('for_stmt', p[3], p[5], p[7], p[10])
+    p[0] = ('for_stmt', p[3], p[4], p[6], p[9])
 
 
 def p_while_stmt(p):
@@ -186,13 +203,6 @@ def p_while_stmt(p):
     while_stmt : WHILE LPAREN expression RPAREN LBRACE stmt_list RBRACE
     """
     p[0] = ('while_stmt', p[3], p[6])
-
-
-def p_switch_stmt(p):
-    """
-    switch_stmt : SWITCH LPAREN expression RPAREN LBRACE case_stmts default_stmt RBRACE
-    """
-    p[0] = ('switch_stmt', p[3], p[6], p[7])
 
 
 def p_case_stmts(p):
@@ -226,12 +236,12 @@ def p_expression(p):
                | expression GREATERTHAN expression
                | expression LESSTHANEQUAL expression
                | expression GREATERTHANEQUAL expression
-               | expression INCREMENT
-               | expression DECREMENT
                | expression COMMA expression
                | expression POW expression
-               | NOT expression
                | LPAREN expression RPAREN
+               | expression INCREMENT
+               | expression DECREMENT
+               | NOT expression
                | identifier
                | digit
                | string
@@ -264,6 +274,7 @@ def p_expression(p):
         p[0] = ('expression', p[1], p[2])
     else:
         p[0] = ('expression', p[1])
+
 
 def p_digit(p):
     """

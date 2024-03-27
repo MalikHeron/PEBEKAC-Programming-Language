@@ -3,13 +3,24 @@ from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
 program_code = """  
-    fun add(int a, int c, string s) {
-        return 0;
+
+    int graph;
+    fun add(int a, int c, int s) {
+        return a + s + c;
     }
+    
+    
+    int fun subtract(int d, int e, int f ) {
+        return d - e - f; 
+    }
+    
     int a = 5;
     int c = 6;
+    int b = 7;
     string s = "hello world";
-    add(a, c, s);
+    
+    int values = add(a, c, b);
+    
     fun main() {     
         int a = 10;
         int b = 5;
@@ -28,20 +39,21 @@ program_code = """
             print("x is not zero");
             break;
         }
-
+        
         print("x = " + 5);
         
+         for (int i = 0; i < 10; i++){
+            print("x = " + 5);
+        }
            
         /*
-            I still see your shadows in my room
-            Can't take back the love that I gave you
-            It's to the point where I love and I hate you
-            And I cannot change you, so I must replace you, oh
-            Easier said than done, I thought you were the one
-            Listenin' to my heart instead of my head
+            This is a comment
+            This is a comment
+            This is a comment
+            This is a comment
+            This is a comment
             
-            changed my mind about saving tokens for comments, I just throw 
-            them away now. Ignore them.
+            Comment tokens are not saved. Once recognized they are ignore them.
         */   
     }    
 """

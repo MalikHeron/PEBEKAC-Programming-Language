@@ -41,10 +41,6 @@ def lookup_symbol(name):
     return None
 
 
-# For example, when entering a function or class declaration, push a new scope, and when exiting, pop the scope.
-# When declaring a variable, use the declare_symbol function.
-# When looking up a variable, use the lookup_symbol function.
-
 # Define a function for semantic analysis
 def analyze_semantics(node):
     node_type = node[0]
@@ -130,9 +126,15 @@ def analyze_semantics(node):
         global assigned_value
         if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
             # Check if the variable being assigned is declared
+            print(f'Node in: {node[2]}')
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
             print(f'assignment var_name: {var_name}')
             # Check if the assigned value matches the type of the variable
+
+            if node[3][0] == 'function_call':
+                print(f'assigned_value is a: {node[3][0]}')
+                analyze_semantics(node[3])
+
             assigned_value = node[3][1][1]
             print(f'assigned_value: {assigned_value}')
             # Extract variable information
@@ -156,21 +158,28 @@ def analyze_semantics(node):
                 raise Exception(f"Error: Variable {var_name} not declared")
             elif lookup_symbol(var_name):
                 # Check if the assigned value matches the type of the variable
+                if node[2][0] == 'function_call':
+                    print(f'assigned_value is a: {node[3][0]}')
+                    analyze_semantics(node[2])
+
                 assigned_value = node[2][1][1]
                 print(f'assigned_value: {assigned_value}')
                 var_type = lookup_symbol(var_name)['type']
                 print(f'assigned var_type: {var_type}')
 
-        if isinstance(assigned_value, str) and var_type != 'string':
-            raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
-        elif isinstance(assigned_value, int) and var_type != 'int':
-            raise Exception(f"Error: Type mismatch. Expected {var_type}, got int")
-        elif isinstance(assigned_value, float) and (var_type != 'float' and var_type != 'double'):
-            raise Exception(f"Error: Type mismatch. Expected {var_type}, got float")
-        elif isinstance(assigned_value, bool) and var_type != 'boolean':
-            raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
-        elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
-            raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
+        if len(node) == 3 and node[2][0] == 'function_call' or len(node) == 4 and node[3][0] == 'function_call':
+            pass  # allow the return type checking to be done by python compiler
+        else:
+            if isinstance(assigned_value, str) and var_type != 'string':
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
+            elif isinstance(assigned_value, int) and var_type != 'int':
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got int")
+            elif isinstance(assigned_value, float) and (var_type != 'float' and var_type != 'double'):
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got float")
+            elif isinstance(assigned_value, bool) and var_type != 'boolean':
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
+            elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
 
     elif node_type == 'control_structure':
         # Analyze the control structure
@@ -223,6 +232,7 @@ def analyze_semantics(node):
         analyze_semantics(node[1])
         analyze_semantics(node[2])
         analyze_semantics(node[3])
+
         # Analyze statements in the for loop body
         push_scope()
         looping(True)
@@ -283,7 +293,8 @@ def analyze_semantics(node):
             print(f'Number of params: {num_params}')
             if num_args != num_params:
                 raise Exception(
-                    f"Error: Number of arguments in function call ({num_args}) does not match the number of parameters in function declaration ({num_params})")
+                    f"Error: Number of arguments in function call ({num_args}) does not match the number of "
+                    f"parameters in function declaration ({num_params})")
         # Analyze statements inside the function declaration
         push_scope()
 
@@ -302,14 +313,6 @@ def analyze_semantics(node):
             print(f'break: {node[1]}')
 
     # Add more semantic analysis rules for other language construct
-
-
-def is_type(symbol_table, type_candidate):
-    # Check if a given string is a type in the symbol table.
-    for symbol, attributes in symbol_table.items():
-        if attributes['type'] == type_candidate:
-            return True
-    return False
 
 
 def get_expression_type(expr):
@@ -337,22 +340,6 @@ def get_expression_type(expr):
         pass
 
 
-def get_assignment_type(assignment):
-    """
-    Determine the type of an assignment.
-    """
-    assignment_type = assignment[0]
-
-    if assignment_type == 'assignment':
-        var_name = assignment[2]
-        if var_name in symbol_table:
-            return symbol_table[var_name]['type']
-        # else:
-        # raise NameError(f"Variable {var_name} is not defined")
-    else:
-        pass
-
-
 # Add more semantic analysis rules for other language constructs
 
 
@@ -362,5 +349,3 @@ def parse_and_analyze(program):
     print(ast)
     analyze_semantics(ast)
     return ast
-
-# ... rest of your code ...
