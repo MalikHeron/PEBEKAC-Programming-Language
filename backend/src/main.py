@@ -2,11 +2,18 @@ from code_generator import generate_code
 from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
-program_code = """   
+program_code = """  
+     int graph = null;
+     print(graph);
+     fun add(int a, int b){
+        print (a + b);
+     }
+     
     fun main() { 
         int graph = null;
-        graph = input("What is a graph?");
+        # graph = input("What is a graph?");
         
+         
         fun add(int a, int c, int s) {
             return a + s + c;
         }
@@ -26,7 +33,7 @@ program_code = """
         int b = 7;
         int values = add(a, c, b);
         
-        #print(add(a,c,b));
+        print(add(a, c, b);); # Semicolon in function call grammar specification 
             
         int a = 10;
         int b = 5;

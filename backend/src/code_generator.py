@@ -77,10 +77,10 @@ def generate_code(node):
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
-    elif node_type == 'input_stmt':
-        var_name = generate_code(node[1])
-        prompt = generate_code(node[2])
-        return f'{var_name} = input({prompt})'
+    # elif node_type == 'input_stmt':
+    #     var_name = generate_code(node[1])
+    #     prompt = generate_code(node[2])
+    #     return f'{var_name} = input({prompt})'
 
     elif node_type == 'print_stmt':
         expr = generate_code(node[1])  # Extract expression node directly

@@ -1,3 +1,4 @@
+a = 1
 def main():
     graph = None
     graph = input("What is a graph?")
@@ -12,6 +13,7 @@ def main():
     c = 6
     b = 7
     values = add(a, c, b)
+    print(add(a, c, b))
     a = 10
     b = 5
     b = "h"

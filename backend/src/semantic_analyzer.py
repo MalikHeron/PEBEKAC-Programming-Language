@@ -47,7 +47,7 @@ def lookup_symbol(name):
     return None
 
 
-# Define functions to manage the symbol table and scope stack
+# # Define functions to manage the symbol table and scope stack
 def reset_symbol_table_and_scope_stack():
     global symbol_table, scope_stack
     symbol_table = {}
@@ -67,20 +67,6 @@ def analyze_semantics(node):
         # Analyze each statement in the statement list
         for stmt in node[1:]:
             analyze_semantics(stmt)
-
-    elif node_type == 'class_declaration':
-        # Add class information to the symbol table
-        class_name = node[1]
-        if lookup_symbol(class_name):
-            raise Exception(f"Error: Class {class_name} already defined")
-        else:
-            declare_symbol(class_name, {'type': 'class'})
-            print(f'added to symbol_table: {class_name}')
-
-        # Analyze statements inside the class declaration
-        push_scope()
-        analyze_semantics(node[2])
-        pop_scope()
 
     elif node_type == 'fun_declaration':
         # Add function information to the symbol table
@@ -152,17 +138,19 @@ def analyze_semantics(node):
         if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
             # Check if the variable being assigned is declared
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
-            print(f'assignment var_name: {var_name}')
-            # Check if the assigned value matches the type of the variable
+            var_type = node[1][1]
 
             if node[3][0] == 'function_call':
                 print(f'assigned_value is a: {node[3][0]}')
                 analyze_semantics(node[3])
+            elif node[3] == 'null':
+                assigned_value = node[3]
+            else:
+                assigned_value = node[3][1][1]
 
-            assigned_value = node[3][1][1]
-            print(f'assigned_value: {assigned_value}')
             # Extract variable information
-            var_type = node[1][1]
+            print(f'assignment var_name: {var_name}')
+            print(f'assigned_value: {assigned_value}')
             print(f'assigned var_type: {var_type}')
 
             if not lookup_symbol(var_name):
@@ -173,11 +161,10 @@ def analyze_semantics(node):
         else:
             # Extract variable information
             var_type = lookup_symbol(node[1][1])['type']
-
-            # Check if the variable being assigned is declared
             var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
             print(f'assignment var_name: {var_name}')
 
+            # Check if the variable being assigned is declared
             if not lookup_symbol(var_name):
                 raise Exception(f"Error: Variable {var_name} not declared")
             elif lookup_symbol(var_name):
@@ -185,14 +172,19 @@ def analyze_semantics(node):
                 if node[2][0] == 'function_call':
                     print(f'assigned_value is a: {node[3][0]}')
                     analyze_semantics(node[2])
-
-                assigned_value = node[2][1][1]
+                elif node[2] == 'null':
+                    assigned_value = node[2]
+                else:
+                    assigned_value = node[2][1][1]
                 print(f'assigned_value: {assigned_value}')
                 var_type = lookup_symbol(var_name)['type']
                 print(f'assigned var_type: {var_type}')
 
+        # Check if the assigned value matches the type of the variable
         if len(node) == 3 and node[2][0] == 'function_call' or len(node) == 4 and node[3][0] == 'function_call':
-            pass  # allow the return type checking to be done by python compiler
+            pass  # Allow the return type checking to be done by python compiler
+        elif assigned_value == 'null':
+            pass
         else:
             if isinstance(assigned_value, str) and var_type != 'string':
                 raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
@@ -264,12 +256,6 @@ def analyze_semantics(node):
         looping(False)
         pop_scope()
 
-    # elif node_type == 'class_method':
-    #     # Analyze statements inside the method
-    #     push_scope()
-    #     analyze_semantics(node[2])
-    #     pop_scope()
-
     elif node_type == 'print_stmt':
         # Analyze expression(s) in print statement
         for expr in node[1:]:
@@ -325,20 +311,20 @@ def analyze_semantics(node):
         # Analyze statements inside the function declaration
         push_scope()
 
-    elif node_type == 'input_stmt':
-        var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
-        prompt = node[2][1] # Extract the prompt from the input statement
-        print(f'input var_name: {var_name}')
-
-        # Check if the variable being assigned is declared
-        if not lookup_symbol(var_name):
-            raise Exception(f"Error: Variable {var_name} not declared")
-
-        # check if prompt is a string
-        if isinstance(prompt, str):
-            raise Exception(f"Error: Prompt must be a string")
-
-
+    # elif node_type == 'input_stmt':
+    #     var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
+    #     prompt = node[2][0] # Extract the prompt from the input statement
+    #     print(f'input var_name: {var_name}')
+    #     # Check if the variable being assigned is declared
+    #     if not lookup_symbol(var_name):
+    #         raise Exception(f"Error: Variable {var_name} not declared")
+    #
+    #     # check if prompt is a string
+    #     if not isinstance(prompt, str):
+    #         raise Exception(f"Error: Prompt must be a string")
+    #         # Handle the assignment of a value to the variable
+    #     var_type = lookup_symbol(var_name)['type']
+    #     declare_symbol(var_name, {'type': var_type, 'value': None})  # Assign None as a placeholder value
 
     elif node_type == 'return_stmt':
         print(f'return: {node[1]}')
@@ -375,15 +361,14 @@ def get_expression_type(expr):
     elif expr_type == 'identifier':
         # Look up the identifier in the symbol table
         identifier = expr[1]
-        if identifier in symbol_table:
-            return symbol_table[identifier]['type']
+        print(f'Identifier type is: {expr[1]}')
+        print(f'Expression is: {scope_stack}')
+        if lookup_symbol(identifier):
+            return lookup_symbol(identifier)
         else:
             raise NameError(f"Identifier {identifier} is not defined")
     else:
         pass
-
-
-# Add more semantic analysis rules for other language constructs
 
 
 # Integrate semantic analysis into the parser

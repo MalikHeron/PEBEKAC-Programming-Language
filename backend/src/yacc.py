@@ -38,18 +38,10 @@ def p_stmt(p):
          | return_stmt
          | function_call
          | break_stmt
-         | input_stmt
          | empty
          | comment stmt
     """
     p[0] = p[1]
-
-
-def p_input_stmt(p):
-    """
-    input_stmt : identifier ASSIGN INPUT LPAREN string RPAREN SEMICOLON
-    """
-    p[0] = ('input_stmt', p[1], p[5])
 
 
 def p_print_stmt(p):
@@ -58,7 +50,6 @@ def p_print_stmt(p):
                 | PRINT LPAREN expression PLUS function_call PLUS expression RPAREN SEMICOLON
                 | PRINT LPAREN expression PLUS function_call RPAREN SEMICOLON
                 | PRINT LPAREN function_call RPAREN SEMICOLON
-
     """
     p[0] = ('print_stmt', p[3])
 
@@ -261,6 +252,8 @@ def p_expression(p):
                | LPAREN expression RPAREN
                | expression INCREMENT
                | expression DECREMENT
+               | INCREMENT expression
+               | DECREMENT expression
                | NOT expression
                | identifier
                | digit

@@ -1,6 +1,9 @@
+graph = None
+print(graph)
+def add(a, b):
+    print(a + b)
 def main():
     graph = None
-    graph = input("What is a graph?")
     def add(a, c, s):
         return a + s + c
     def subtract(d, e, f):
@@ -12,8 +15,10 @@ def main():
     c = 6
     b = 7
     values = add(a, c, b)
+    print(add(a, c, b))
     a = 10
     b = 5
+    b = "h"
     x = 5
     code = "John"
     print("Hello World, my name is ")
