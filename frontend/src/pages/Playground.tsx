@@ -434,7 +434,7 @@ main();`;
                      </div>
                      <span className="tooltip">Run code</span>
                   </button>
-                  <button className='stop-btn' disabled={!running} onClick={stopExecution}>
+                  <button className='stop-btn' style={{display: running ? 'flex' : 'none'}} onClick={stopExecution}>
                      <div className='icon'>
                         <i className='bi-stop'></i>
                      </div>
