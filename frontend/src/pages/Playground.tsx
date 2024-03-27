@@ -20,11 +20,58 @@ function Playground() {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
          inherit: true,
-         rules: [
-            //{ token: 'comment', foreground: 'ffa500', fontStyle: 'italic' },
-            //{ token: 'keyword', foreground: '00ff00' },
-         ],
+         rules: [],
          colors: {},
+      });
+
+      monaco.languages.register({ id: 'PEBEKAC' });
+
+      monaco.languages.setMonarchTokensProvider('PEBEKAC', {
+         keywords: [
+            'fun', 'import', 'if', 'else', 'while', 'for', 'return', 'print',
+            'int', 'float', 'double', 'string', 'boolean', 'intArray', 'floatArray',
+            'stringArray', 'doubleArray', 'intList', 'floatList', 'stringList', 'doubleList',
+            'switch', 'case', 'default', 'break', 'True', 'False'
+         ],
+         tokenizer: {
+            root: [
+               // Comments
+               [/\/\*/, 'comment', '@comment'], // Block comments
+               [/\/\/.*$/, 'comment'], // Line comments
+
+               // Keywords and identifiers
+               [/[a-zA-Z_$][\w$]*/, {
+                  cases: {
+                     '@keywords': 'keyword',
+                     '@default': 'identifier'
+                  }
+               }],
+
+               // Numeric literals
+               [/\b\d+\b/, 'number'],
+
+               // String literals
+               [/"/, 'string', '@string'],
+
+               // Operators and punctuation
+               [/[+\-*/=<>!]+/, 'operator'],
+               [/[()[\]{}.,;]/, 'delimiter'],
+
+               // Whitespace
+               { include: '@whitespace' },
+            ],
+            whitespace: [
+               [/\s+/, 'white']
+            ],
+            comment: [
+               [/\*\//, 'comment', '@pop'],
+               [/./, 'comment']
+            ],
+            string: [
+               [/[^\\"]+/, 'string'],
+               [/"/, 'string', '@pop']
+            ]
+         }
       });
    };
 
@@ -71,37 +118,48 @@ function Playground() {
       element.click();
       // Remove the element from the document body
       document.body.removeChild(element);
-   }   
-   
+   }
+
    // Function to handle running the code
    const runCode = async () => {
       const terminal = terminalRef.current;
       if (!terminal) return;
-
+      
       const response = await compileAndRunCode(code);
+      console.log(response); // Log the response to the console
       if (terminalInstance) {
          terminalInstance.writeln(response); // Write the response to the terminal
          terminalInstance.write('$ '); // Write the prompt
       }
    };
 
-   // Simulate compiling and running code (Replace with actual API calls)
+   // Function to compile and run code
    const compileAndRunCode = async (code) => {
-      // Here you would send the code to your compiler API
-      // and receive the response containing the output
-      // For demonstration purposes, let's just return a static output
       try {
-         // Assuming you have an API endpoint for compilation and execution
-         const response = await fetch('/api/compile', {
+         // Local Flask backend URL
+         const apiUrl = 'http://localhost:5000/compile_code';
+
+         // Fetch data from the local endpoint
+         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ code }),
+            body: JSON.stringify({ program_code: code }),
          });
+
+         // Check if the response is successful
+         if (!response.ok) {
+            throw new Error('Network response was not ok');
+         }
+
+         // Parse the JSON response
          const data = await response.json();
-         return data.output; // Return the output from the API response
+
+         // Return the generated Python code from the API response
+         return data.output;
       } catch (error) {
+         // Log and return an error message if there's an error
          console.error('Error compiling and running code:', error);
          return 'Error compiling and running code.';
       }
@@ -220,7 +278,7 @@ function Playground() {
             e.preventDefault(); // Prevent default browser behavior
             // Ctrl + K to toggle terminal visibility
             toggleTerminal();
-         } else if (e.ctrlKey && e.key === 'c') {
+         } else if (e.ctrlKey && e.key === 'q') {
             // Ctrl + C to toggle chat visibility
             setChatActive((prev) => !prev); // Toggle chat visibility
             toggleSidePane(); // Toggle side pane visibility
@@ -262,7 +320,7 @@ function Playground() {
                   </div>
                </div>
                <hr className="divider" />
-               {chatActive && <Assistant reset={reset} setReset={setReset} />}
+               <Assistant reset={reset} setReset={setReset} />
             </div>
          </div>
          {/* editor pane */}
@@ -310,7 +368,7 @@ function Playground() {
                <div className="editor-container">
                   <Editor
                      height="100%"
-                     defaultLanguage="kotlin"
+                     defaultLanguage="PEBEKAC"
                      defaultValue={defaultCode}
                      onChange={editorValue => { setCode(editorValue || '') }}
                      theme="myTheme"

@@ -40,7 +40,12 @@ def lookup_symbol(name):
             return scope[name]
     return None
 
-
+# Define functions to manage the symbol table and scope stack
+def reset_symbol_table_and_scope_stack():
+    global symbol_table, scope_stack
+    symbol_table = {}
+    scope_stack = []
+    
 # Define a function for semantic analysis
 def analyze_semantics(node):
     node_type = node[0]
@@ -347,5 +352,7 @@ def get_expression_type(expr):
 def parse_and_analyze(program):
     ast = parser.parse(program)
     print(ast)
+    # Reset the symbol table and scope stack before each analysis
+    reset_symbol_table_and_scope_stack()
     analyze_semantics(ast)
     return ast

@@ -38,7 +38,7 @@ export class ChatService {
       ];
 
       const parts = [
-         { text: `You are a code assistant for the python programming language. You shouldn't answer any query that isn't related to python. When asked to write a program, you should only provide the raw code.\nQuery: ${query}` },
+         { text: `You are a code assistant for the python programming language. You shouldn't answer any query that isn't related to python.\nQuery: ${query}` },
       ];
 
       const result = await model.generateContent({

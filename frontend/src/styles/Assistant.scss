@@ -87,7 +87,7 @@
                   margin: 0;
                   white-space: pre-wrap;
                   word-break: break-word;
-                  font-size: 0.95em;
+                  font-size: 0.85em;
                }
 
                .message-text a {
@@ -148,50 +148,6 @@
                }
             }
          }
-
-         .loading-message {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            width: 80%;
-            margin-bottom: 1.5em;
-
-            .message-header {
-               display: flex;
-               align-items: center;
-
-               .user-avatar {
-                  .icon {
-                     width: 30px;
-                  }
-               }
-
-               .message-author {
-                  margin-left: 0.5em;
-                  font-weight: bold;
-                  font-size: 1em;
-               }
-            }
-
-            .content {
-               display: flex;
-               justify-content: start;
-               align-items: center;
-               color: white;
-               padding: 0 0 0 2em;
-               margin: 0.5em;
-               width: 150px;
-
-               @media screen and (max-width: 850px) {
-                  padding: 0;
-               }
-
-               .spinner-border {
-                  width: 20px;
-                  height: 20px;
-               }
-            }
-         }
       }
 
       .prompt-container {
@@ -237,6 +193,7 @@
                background: transparent;
                transition: all 0.3s ease-in-out;
                margin-right: 10px;
+               font-size: 0.85em;
                resize: none;
             }
 
@@ -366,126 +323,5 @@
       font-size: 0.8em;
       font-weight: 500;
       z-index: 1;
-   }
-
-   .button-group {
-      display: flex;
-      justify-content: right;
-      margin: 10px;
-      margin-bottom: 15px;
-
-      .cancel-button {
-         background-color: var(--primary-gray-dark);
-         margin-right: 10px;
-         font-weight: normal;
-      }
-
-      .delete-button {
-         color: var(--white-light);
-         background-color: rgb(235, 52, 52);
-         margin-right: 10px;
-         font-weight: normal;
-
-         &:hover {
-            background-color: rgb(172, 37, 37);
-         }
-      }
-   }
-
-   /*!
-   * three-dots - v0.3.2
-   * CSS loading animations made with single element
-   * https://nzbin.github.io/three-dots/
-   *
-   * Copyright (c) 2018 nzbin
-   * Released under MIT License
-   */
-
-   /**
-   * ==============================================
-   * Dot Pulse
-   * ==============================================
-   */
-   .dot-pulse {
-      position: relative;
-      left: -9999px;
-      width: 6px;
-      height: 6px;
-      border-radius: 5px;
-      background-color: whitesmoke;
-      color: whitesmoke;
-      box-shadow: 9999px 0 0 -5px;
-      animation: dot-pulse 1.8s infinite linear;
-      animation-delay: 0.25s;
-   }
-
-   .dot-pulse::before,
-   .dot-pulse::after {
-      content: "";
-      display: inline-block;
-      position: absolute;
-      top: 0;
-      width: 6px;
-      height: 6px;
-      border-radius: 5px;
-      background-color: whitesmoke;
-      color: whitesmoke;
-   }
-
-   .dot-pulse::before {
-      box-shadow: 9984px 0 0 -5px;
-      animation: dot-pulse-before 1.8s infinite linear;
-      animation-delay: 0s;
-   }
-
-   .dot-pulse::after {
-      box-shadow: 10014px 0 0 -5px;
-      animation: dot-pulse-after 1.8s infinite linear;
-      animation-delay: 0.5s;
-   }
-
-   @keyframes dot-pulse-before {
-      0% {
-         box-shadow: 9984px 0 0 -5px;
-      }
-
-      30% {
-         box-shadow: 9984px 0 0 2px;
-      }
-
-      60%,
-      100% {
-         box-shadow: 9984px 0 0 -5px;
-      }
-   }
-
-   @keyframes dot-pulse {
-      0% {
-         box-shadow: 9999px 0 0 -5px;
-      }
-
-      30% {
-         box-shadow: 9999px 0 0 2px;
-      }
-
-      60%,
-      100% {
-         box-shadow: 9999px 0 0 -5px;
-      }
-   }
-
-   @keyframes dot-pulse-after {
-      0% {
-         box-shadow: 10014px 0 0 -5px;
-      }
-
-      30% {
-         box-shadow: 10014px 0 0 2px;
-      }
-
-      60%,
-      100% {
-         box-shadow: 10014px 0 0 -5px;
-      }
    }
 }
