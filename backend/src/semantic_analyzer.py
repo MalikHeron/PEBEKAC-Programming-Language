@@ -46,8 +46,6 @@ def lookup_symbol(name):
             return scope[name]
     return None
 
-<<<<<<< HEAD
-=======
 
 >>>>>>> origin/semantic_updates
 # Define functions to manage the symbol table and scope stack
