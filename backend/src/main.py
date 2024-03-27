@@ -5,7 +5,8 @@ from semantic_analyzer import parse_and_analyze
 program_code = """   
     fun main() { 
         int graph = null;
-             
+        graph = input("What is a graph?");
+        
         fun add(int a, int c, int s) {
             return a + s + c;
         }

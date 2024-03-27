@@ -38,10 +38,18 @@ def p_stmt(p):
          | return_stmt
          | function_call
          | break_stmt
+         | input_stmt
          | empty
          | comment stmt
     """
     p[0] = p[1]
+
+
+def p_input_stmt(p):
+    """
+    input_stmt : identifier ASSIGN INPUT LPAREN string RPAREN SEMICOLON
+    """
+    p[0] = ('input_stmt', p[1], p[5])
 
 
 def p_print_stmt(p):
@@ -80,6 +88,7 @@ def p_return_stmt(p):
     """
     p[0] = ('return_stmt', p[2])
 
+
 def p_return_type(p):
     """
     return_type : general_type
@@ -88,6 +97,7 @@ def p_return_type(p):
                 | VOID
     """
     p[0] = ('return_type', p[1])
+
 
 def p_break_stmt(p):
     """
