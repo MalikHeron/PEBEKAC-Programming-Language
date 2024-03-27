@@ -2,30 +2,31 @@ from code_generator import generate_code
 from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
-program_code = """  
-
-    int graph;
-    fun add(int a, int c, int s) {
-        return a + s + c;
-    }
+program_code = """   
+    fun main() { 
+        int graph;
+             
+        fun add(int a, int c, int s) {
+            return a + s + c;
+        }
+          
+        fun int subtract(int d, int e, int f ) {
+          return d - e - f; 
+        }
+        
+        fun void test() {
+         print("Testing void return type");
+        }
       
-    fun int subtract(int d, int e, int f ) {
-      return d - e - f; 
-    }
-    
-    fun void test() {
-     print("Testing void return type");
-    }
-  
-    test();
-    
-    int a = 5;
-    int c = 6;
-    int b = 7;
-    int values = add(a, c, b);
-    # print(add(a,c,b));
-    
-    fun main() {     
+        test();
+        
+        int a = 5;
+        int c = 6;
+        int b = 7;
+        int values = add(a, c, b);
+        
+        # print(add(a,c,b));
+            
         int a = 10;
         int b = 5;
         int x = 5;
@@ -48,7 +49,7 @@ program_code = """
          for (int i = 0; i < 10; i++){
             print("x = " + 5);
         }
-           
+               
         /*
             This is a comment
             This is a comment
