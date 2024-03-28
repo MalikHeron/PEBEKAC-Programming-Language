@@ -4,14 +4,17 @@ from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
 program_code = """ 
-int x = 10;
-
-fun int reduce(int x) {
-    int y = 5 * 10;
-    return x + y;
+fun int fact(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        int x = fact(n - 1);
+        return n * x;
+    }
+    return 0;
 }
 
-print("x = ", reduce(x);); 
+print(fact(6););
 """
 
 # Parse and analyze the program

@@ -12,6 +12,7 @@ scope_stack = []
 assigned_value = None
 in_loop = False
 in_function = False
+expr = None
 
 
 def is_in_function(boolean):
@@ -26,8 +27,12 @@ def looping(value):
 
 # Modify push_scope() and pop_scope() functions to include the current function name
 def push_scope(function_name=None):
+    if function_name:
+        # Push a new scope onto the stack
+        scope_stack.append({'function_name': function_name})
+        return
     # Push a new scope onto the stack
-    scope_stack.append({'function_name': function_name})
+    scope_stack.append({})
 
 
 def pop_scope():
@@ -56,7 +61,7 @@ def reset_symbol_table_and_scope_stack():
 
 
 # Define a function for semantic analysis
-def analyze_semantics(node):
+def analyze_semantics(node, function_name=None):
     node_type = node[0]
 
     if node_type == 'program':
@@ -88,12 +93,16 @@ def analyze_semantics(node):
         if lookup_symbol(fun_name):
             raise Exception(f"Error: Function {fun_name} already defined")
         else:
+            push_scope(function_name=fun_name)
             declare_symbol(fun_name, {'type': 'function', 'return_type': return_type, 'params': params})
+
+        # Analyze parameters
+        analyze_semantics(params, function_name=fun_name)
 
         # Analyze statements inside the function declaration
         push_scope(function_name=fun_name)
         is_in_function(True)
-        analyze_semantics(node[-1])  # Changed to analyze last part of the function declaration
+        analyze_semantics(node[-1], function_name=fun_name)  # Changed to analyze last part of the function declaration
         pop_scope()
         is_in_function(False)
 
@@ -102,21 +111,27 @@ def analyze_semantics(node):
             if not has_return_statement(node[-1]):
                 raise Exception(f"Error: Function {fun_name} has a return type but no return statement")
 
-
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
         for param in node[1:]:
-            analyze_semantics(param)
+            analyze_semantics(param, function_name=function_name)
 
-        # Check if there are multiple parameters with the same name and datatype
-        param_names = [param[1] for param in node[1:]]
-        param_types = [param[0] for param in node[1:]]
+    elif node_type == 'param':
+        # Extract parameter information
+        param_type = node[1][1]
+        param_name = node[2][1]
 
-        print(param_names)
-        print(param_types)
+        # print('param:', node, 'param_type:', param_type, 'param_name:', param_name)
 
-        if len(param_names) != len(set(param_names)) or len(param_types) != len(set(param_types)):
-            raise Exception("Error: Function has multiple parameters with the same name and datatype")
+        # Check if the parameter is already declared
+        if lookup_symbol(param_name):
+            raise Exception(f"Error: Parameter {param_name} already declared")
+        else:
+            # Add parameter to the symbol table
+            declare_symbol(param_name, {'type': param_type})
+
+        if len(node) > 3:
+            analyze_semantics(node[3])
 
     elif node_type == 'variable_declaration':
         # Extract variable information
@@ -179,16 +194,27 @@ def analyze_semantics(node):
         elif assigned_value == 'null':
             pass
         else:
-            if isinstance(assigned_value, str) and var_type != 'string':
-                raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
-            elif isinstance(assigned_value, int) and var_type != 'int':
-                raise Exception(f"Error: Type mismatch. Expected {var_type}, got int")
-            elif isinstance(assigned_value, float) and (var_type != 'float' and var_type != 'double'):
-                raise Exception(f"Error: Type mismatch. Expected {var_type}, got float")
-            elif isinstance(assigned_value, bool) and var_type != 'boolean':
-                raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
-            elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
-                raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
+            # Check if the assigned_value is in the lookup_symbol table
+            if lookup_symbol(assigned_value):
+                assigned_value_type = lookup_symbol(assigned_value)['type']
+            else:
+                # print('assigned_value:', assigned_value, 'var_type:', var_type)
+
+                # If not in the lookup_symbol table, get the type of the assigned_value directly
+                if isinstance(assigned_value, str):
+                    assigned_value_type = 'string'
+                elif isinstance(assigned_value, int):
+                    assigned_value_type = 'int'
+                elif isinstance(assigned_value, float):
+                    assigned_value_type = 'float' if var_type != 'double' else 'double'
+                elif isinstance(assigned_value, bool):
+                    assigned_value_type = 'boolean'
+                else:
+                    assigned_value_type = 'non-string'
+
+            # Now you can use assigned_value_type for the comparison
+            if assigned_value_type != var_type:
+                raise Exception(f"Error: Type mismatch. Expected {var_type}, got {assigned_value_type}")
 
     elif node_type == 'expression':
         # Handle expression nodes
@@ -208,14 +234,15 @@ def analyze_semantics(node):
         analyze_semantics(node[1])
 
         # Analyze statements in the if block
-        push_scope()
-        analyze_semantics(node[2])
+        push_scope(function_name=function_name)
+        analyze_semantics(node[2], function_name=function_name)
         pop_scope()
 
         # If there's an else block, analyze its statements too
         if node_type == 'if_stmt' and len(node) == 4:
-            push_scope()
-            analyze_semantics(node[3])
+            # print('node:', node)
+            push_scope(function_name=function_name)
+            analyze_semantics(node[3], function_name=function_name)
             pop_scope()
 
     elif node_type == 'while_stmt':
@@ -236,9 +263,9 @@ def analyze_semantics(node):
         analyze_semantics(node[3])
 
         # Analyze statements in the for loop body
-        push_scope()
+        push_scope(function_name=function_name)
         looping(True)
-        analyze_semantics(node[4])
+        analyze_semantics(node[4], function_name=function_name)
         looping(False)
         pop_scope()
 
@@ -281,10 +308,26 @@ def analyze_semantics(node):
 
             # Count the number of parameters in the function declaration
             def count_params(param_node):
+                # print('param_node[0]:', param_node[0])
                 if isinstance(param_node, tuple) and param_node[0] == 'params':
+                    # print('If param_node:', param_node)
                     if param_node[1] == 'empty':
+                        # print('empty')
                         return 0
                     else:
+                        # print('param_node[1]:', param_node[1])
+                        # print(len(param_node[1]))
+                        # If the node is a 'params' node, count the identifier and recursively count the rest of the
+                        # parameters
+                        return 1 + count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
+                elif isinstance(param_node, tuple) and param_node[0] == 'param':
+                    # print('ELse param_node:', param_node)
+                    if param_node[1] == 'empty':
+                        # print('empty')
+                        return 0
+                    else:
+                        # print('param_node[0]:', param_node[0])
+                        # print(len(param_node))
                         # If the node is a 'params' node, count the identifier and recursively count the rest of the
                         # parameters
                         return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
@@ -297,14 +340,22 @@ def analyze_semantics(node):
 
     elif node_type == 'return_stmt':
         # First, find out the current function's name from the scope stack
-        current_function_name = scope_stack[-1]['function_name']
+        # print('scope_stack:', scope_stack[-2])
+        current_function_name = function_name if function_name is not None else scope_stack[-2]['function_name']
 
         # Find the function's expected return type
         function_info = lookup_symbol(current_function_name)
-        expected_return_type = function_info['return_type'][1]
+        # print('function_info:', function_info)
+        expected_return_type = function_info['return_type'][1] if function_info is not None else 'void'
 
         # Then, check the type of the return expression
-        return_expr_type = get_expression_type(node[1])['type']
+        return_expr_type = get_expression_type(node[1])
+
+        if isinstance(return_expr_type, dict):
+            return_expr_type = return_expr_type['type']
+
+        # print('return_expr_type:', return_expr_type, 'expected_return_type:', expected_return_type)
+
         if return_expr_type != expected_return_type:
             raise Exception(
                 f"Return type mismatch in function {current_function_name}: Expected {'void' if expected_return_type == 'o' else expected_return_type}, got {return_expr_type}"
@@ -371,6 +422,7 @@ def get_expression_type(expr):
     else:
         pass
 
+
 def has_return_statement(node):
     # Base case: if the node is a return statement, return True
     if node[0] == 'return_stmt':
@@ -389,6 +441,7 @@ def has_return_statement(node):
 
     # If none of the above conditions are met, return False
     return False
+
 
 # Integrate semantic analysis into the parser
 def parse_and_analyze(program):

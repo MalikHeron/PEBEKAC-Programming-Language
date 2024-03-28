@@ -16,7 +16,6 @@ reserved = {
     'print': 'PRINT',
     'input': 'INPUT',
     'fun': 'FUN',
-    'new': 'NEW',
     'import': 'IMPORT',
     'int': 'INT',
     'float': 'FLOAT',
@@ -30,23 +29,46 @@ reserved = {
     'floatList': 'FLOATLIST',
     'stringList': 'STRINGLIST',
     'doubleList': 'DOUBLELIST',
-    'switch': 'SWITCH',
-    'case': 'CASE',
-    'default': 'DEFAULT',
     'break': 'BREAK',
     'params': 'PARAMS',
-    'void': 'VOID'
+    'void': 'VOID',
+    'False': 'FALSE',
+    'def': 'DEF',
+    'raise': 'RAISE',
+    'None': 'NONE',
+    'del': 'DEL',
+    'return': 'RETURN',
+    'True': 'TRUE',
+    'elif': 'ELIF',
+    'in': 'IN',
+    'try': 'TRY',
+    'and': 'AND',
+    'is': 'IS',
+    'as': 'AS',
+    'except': 'EXCEPT',
+    'lambda': 'LAMBDA',
+    'with': 'WITH',
+    'assert': 'ASSERT',
+    'finally': 'FINALLY',
+    'nonlocal': 'NONLOCAL',
+    'yield': 'YIELD',
+    'not': 'NOT',
+    'from': 'FROM',
+    'or': 'OR',
+    'continue': 'CONTINUE',
+    'global': 'GLOBAL',
+    'pass': 'PASS'
 }
 
 # All tokens must be named in advance.
 tokens = list(reserved.values()) + [
     'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN', 'ASSIGN',
     'IDENTIFIER', 'STRING_LITERAL', 'NUMBER', 'MODULUS', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN',
-    'LESSTHANEQUAL', 'GREATERTHANEQUAL', 'AND', 'OR', 'NOT', 'SEMICOLON',
+    'LESSTHANEQUAL', 'GREATERTHANEQUAL', 'SEMICOLON',
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT', 'ARGS', 'CONTINUE'
+    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT'
 ]
 
 # Token matching rules are written as regexs

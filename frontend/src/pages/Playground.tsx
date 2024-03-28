@@ -31,10 +31,10 @@ main();`;
 
       monaco.languages.setMonarchTokensProvider('PEBEKAC', {
          keywords: [
-            'fun', 'import', 'if', 'else', 'while', 'for', 'return', 'print',
-            'int', 'float', 'double', 'string', 'boolean', 'intArray', 'floatArray',
-            'stringArray', 'doubleArray', 'intList', 'floatList', 'stringList', 'doubleList',
-            'switch', 'case', 'default', 'break', 'True', 'False'
+            'fun', 'return', 'if', 'for', 'while', 'void', 'break',
+            'intList', 'floatList', 'stringList', 'doubleList',
+            'intArray', 'floatArray', 'stringArray', 'doubleArray',
+            'int', 'float', 'double', 'string', 'boolean'
          ],
          tokenizer: {
             root: [
@@ -434,7 +434,7 @@ main();`;
                      </div>
                      <span className="tooltip">Run code</span>
                   </button>
-                  <button className='stop-btn' style={{display: running ? 'flex' : 'none'}} onClick={stopExecution}>
+                  <button className='stop-btn' style={{ display: running ? 'flex' : 'none' }} onClick={stopExecution}>
                      <div className='icon'>
                         <i className='bi-stop'></i>
                      </div>

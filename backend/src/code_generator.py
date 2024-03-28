@@ -20,10 +20,10 @@ def generate_code(node):
         return f'def {fun_name}({params}):\n{indent(stmts)}'
 
     elif node_type == 'params':
-        if len(node) == 2:
-            return generate_code(node[1])
-        else:
-            return node[2][1] + ', ' + generate_code(node[3]) if len(node) > 3 else node[2][1]
+        return generate_code(node[1])
+
+    elif node_type == 'param':
+        return node[2][1] + ', ' + generate_code(node[3]) if len(node) > 3 else node[2][1]
 
     elif node_type == 'variable_declaration':
         var_type = generate_code(node[1])
@@ -107,7 +107,6 @@ def generate_code(node):
         return str(node[1]).lower()
 
     elif node_type == 'function_call':
-        print(node)
         fun_name = node[1][1]
         args = generate_code(node[2])  # Generate code for all arguments
         return f'{fun_name}({args})'
@@ -116,7 +115,7 @@ def generate_code(node):
         if len(node) == 2:
             return generate_code(node[1])
         else:
-            return ', '.join(generate_code(arg) for arg in node[1:])
+            return ', '.join(str(generate_code(arg)) for arg in node[1:])
 
     elif node_type == '+':
         return ' += 1'

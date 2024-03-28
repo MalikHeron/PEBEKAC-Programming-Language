@@ -57,16 +57,24 @@ def p_fun_declaration(p):
 
 def p_params(p):
     """
-    params : general_type identifier COMMA params
-           | general_type identifier
+    params : param
            | empty
     """
+    p[0] = ('params', p[1])
+
+
+def p_param(p):
+    """
+    param : general_type identifier COMMA param
+          | general_type identifier
+          | empty
+    """
     if len(p) == 5:
-        p[0] = ('params', p[1], p[2], p[4])
+        p[0] = ('param', p[1], p[2], p[4])
     elif len(p) == 3:
-        p[0] = ('params', p[1], p[2])
+        p[0] = ('param', p[1], p[2])
     else:
-        p[0] = ('params', p[1])
+        p[0] = ('param', p[1])
 
 
 def p_print_stmt(p):
@@ -257,7 +265,8 @@ def p_expression(p):
     right = p[3] if len(p) > 3 else None
     operator = p[2] if len(p) > 3 else None
 
-    if operator in ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'MODULUS', 'POW', 'TIMESASSIGN', 'PLUSASSIGN', 'MINUSASSIGN', 'DIVIDEASSIGN', 'MODASSIGN']:
+    if operator in ['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'MODULUS', 'POW', 'TIMESASSIGN', 'PLUSASSIGN', 'MINUSASSIGN',
+                    'DIVIDEASSIGN', 'MODASSIGN']:
         # For mathematical operations, check if operands are numerical
         if not isinstance(left, (int, float)) or not isinstance(right, (int, float)):
             raise TypeError("Error: Mathematical operations can only be performed on numerical values")
