@@ -223,7 +223,7 @@ main();`;
    const compileAndRunCode = async (code) => {
       try {
          // Local Flask backend URL
-         const apiUrl = 'http://localhost:5000/compile_code';
+         const apiUrl = 'https://green-desert-0cea902885754424a56c0b70bb0688b3.azurewebsites.net/compile_code';
 
          // Fetch data from the local endpoint
          const response = await fetch(apiUrl, {
