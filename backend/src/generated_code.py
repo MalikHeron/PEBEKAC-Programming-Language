@@ -1,4 +1,6 @@
 x = 10
-while x != 0:
-    print(x)
-    x = 1
+def reduce(x):
+    while x != 0:
+        print(x)
+        x = x - 1
+print("x = ", reduce(x))

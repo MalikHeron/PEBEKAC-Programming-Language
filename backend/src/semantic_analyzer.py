@@ -100,7 +100,7 @@ def analyze_semantics(node):
         # Check if the function has a return type but no return statement
         if return_type != 'void':
             has_return_stmt = False
-            for stmt in node[-1][1:]:
+            for stmt in node[-1][-1]:
                 if stmt[0] == 'return_stmt':
                     has_return_stmt = True
                     break
@@ -314,13 +314,11 @@ def analyze_semantics(node):
         if in_loop is False:
             raise Exception("Error: break statement not inside loop or switch")
 
-    # Add more semantic analysis rules for other language constructs
-
 
 def get_expression_type(expr):
     # Determine the type of expression.
     expr_type = expr[0]
-    print('expr_type:', expr_type, ', expr:', expr)
+    # print('expr_type:', expr_type, ', expr:', expr)
 
     if expr_type == 'expression':
         analyze_semantics(expr)  # Analyze right operand
@@ -353,25 +351,6 @@ def get_expression_type(expr):
             raise NameError(f"Function {fun_name} is not defined")
     else:
         pass
-
-
-def analyze_expression(expr_node):
-    expr_type = expr_node[0]
-
-    if expr_type in ('EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN', 'LESSTHANEQUAL', 'GREATERTHANEQUAL'):
-        # Analyze comparison expressions
-        analyze_comparison_expression(expr_node)
-    elif expr_type == 'identifier':
-        # Look up the identifier in the symbol table
-        identifier = expr_node[1]
-        if not lookup_symbol(identifier):
-            raise NameError(f"Identifier '{identifier}' is not defined")
-
-
-def analyze_comparison_expression(expr_node):
-    # Analyze the operands of the comparison expression
-    analyze_semantics(expr_node[1])
-    analyze_semantics(expr_node[3])
 
 
 # Integrate semantic analysis into the parser

@@ -10,8 +10,6 @@ from semantic_analyzer import parse_and_analyze
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-# Global variable to store user inputs
-user_input_queue = []
 # Global variable to track whether the program should stop
 stop_program = False
 

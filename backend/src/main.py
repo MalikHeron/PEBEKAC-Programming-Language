@@ -11,7 +11,7 @@ fun int reduce(int x) {
         print(x);
         x = x - 1;
     }
-    //return x;
+    return x;
 }
 
 print("x = ", reduce(x););
