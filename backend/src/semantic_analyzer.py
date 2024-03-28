@@ -200,17 +200,20 @@ def analyze_semantics(node, function_name=None):
             else:
                 # print('assigned_value:', assigned_value, 'var_type:', var_type)
 
-                # If not in the lookup_symbol table, get the type of the assigned_value directly
-                if isinstance(assigned_value, str):
-                    assigned_value_type = 'string'
-                elif isinstance(assigned_value, int):
-                    assigned_value_type = 'int'
-                elif isinstance(assigned_value, float):
-                    assigned_value_type = 'float' if var_type != 'double' else 'double'
-                elif isinstance(assigned_value, bool):
-                    assigned_value_type = 'boolean'
+                if isinstance(assigned_value, tuple):
+                    assigned_value_type = var_type
                 else:
-                    assigned_value_type = 'non-string'
+                    # If not in the lookup_symbol table, get the type of the assigned_value directly
+                    if isinstance(assigned_value, str):
+                        assigned_value_type = 'string'
+                    elif isinstance(assigned_value, int):
+                        assigned_value_type = 'int'
+                    elif isinstance(assigned_value, float):
+                        assigned_value_type = 'float' if var_type != 'double' else 'double'
+                    elif isinstance(assigned_value, bool):
+                        assigned_value_type = 'boolean'
+                    else:
+                        assigned_value_type = 'non-string'
 
             # Now you can use assigned_value_type for the comparison
             if assigned_value_type != var_type:
@@ -250,9 +253,9 @@ def analyze_semantics(node, function_name=None):
         analyze_semantics(node[1])
 
         # Analyze statements in the while loop body
-        push_scope()
+        push_scope(function_name=function_name)
         looping(True)
-        analyze_semantics(node[2])
+        analyze_semantics(node[2], function_name=function_name)
         looping(False)
         pop_scope()
 
@@ -369,6 +372,7 @@ def analyze_semantics(node, function_name=None):
         # Analyze the identifier to ensure it's defined
         array_name = node[1]
         array_info = lookup_symbol(array_name)
+
         if not array_info:
             raise NameError(f"Array {array_name} is not defined")
 

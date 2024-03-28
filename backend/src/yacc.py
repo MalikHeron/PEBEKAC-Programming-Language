@@ -34,7 +34,7 @@ def p_stmt(p):
          | assignment
          | print_stmt
          | control_structure
-         | function_call
+         | function_call SEMICOLON
          | return_stmt
          | break_stmt
          | comment stmt
@@ -96,7 +96,7 @@ def p_print_stmt(p):
 
 def p_function_call(p):
     """
-    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
+    function_call : identifier LPAREN arg_list RPAREN
     """
     p[0] = ('function_call', p[1], p[3])
 
@@ -133,21 +133,21 @@ def p_assignment(p):
     """
     assignment : general_type identifier ASSIGN expression SEMICOLON
                | general_type identifier ASSIGN NULL SEMICOLON
-               | general_type identifier ASSIGN function_call
+               | general_type identifier ASSIGN function_call SEMICOLON
                | list_type identifier ASSIGN NULL SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
                | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call
-               | list_type identifier ASSIGN function_call
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
+               | list_type identifier ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN NULL SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN function_call
+               | array_type identifier LBRACE digit RBRACE ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
-               | array_type identifier ASSIGN function_call
+               | array_type identifier ASSIGN function_call SEMICOLON
                | identifier ASSIGN expression SEMICOLON
-               | identifier ASSIGN function_call
+               | identifier ASSIGN function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
     """
     if len(p) == 4:
@@ -258,6 +258,7 @@ def p_expression(p):
                | string
                | boolean
                | array_access
+               | function_call
                | NULL
     """
 

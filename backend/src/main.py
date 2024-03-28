@@ -4,17 +4,20 @@ from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
 program_code = """ 
-fun int fact(int n) {
-    if (n == 0) {
-        return 1;
-    } else {
-        int x = fact(n - 1);
-        return n * x;
+fun int stringLength(string str) {
+    int length = 0;
+    while (str[length] != null) {
+        length = length + 1;
     }
-    return 0;
+    return length;
 }
 
-print(fact(6););
+fun void main() {
+    string myString = "Hello, World!";
+    print(stringLength(myString));
+}
+
+main();
 """
 
 # Parse and analyze the program

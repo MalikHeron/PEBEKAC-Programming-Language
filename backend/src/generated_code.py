@@ -1,8 +1,9 @@
-def fact(n):
-    if n == 0:
-        return 1
-    else:
-        x = fact(n - 1)
-        return n * x
-    return 0
-print(fact(6))
+def stringLength(str):
+    length = 0
+    while str[length] != None:
+        length = length + 1
+    return length
+def main():
+    myString = "Hello, World!"
+    print(stringLength(myString))
+main()

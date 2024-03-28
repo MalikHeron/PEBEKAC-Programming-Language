@@ -56,7 +56,7 @@ export class ChatService {
          <stmt> 
                : <fun_declaration>
                | <print_stmt>
-               | <function_call>
+               | <function_call> ';'
                | <return_stmt>
                | <variable_declaration>
                | <assignment>
@@ -70,7 +70,11 @@ export class ChatService {
                ;
          
          <params>
-               : <general_type> <identifier> ',' <params>
+               : <param>
+               ;
+         
+         <param>
+               : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
                ;
          
@@ -80,7 +84,7 @@ export class ChatService {
                ;
          
          <function_call>
-               : <identifier> '(' <arg_list> ')' ';'
+               : <identifier> '(' <arg_list> ')'
                ;
          
          <arg_list>
@@ -100,22 +104,22 @@ export class ChatService {
          
          <assignment>
                : <general_type> <identifier> '=' <expression> ';'
-               | <general_type> <identifier> '=' <function_call>
+               | <general_type> <identifier> '=' <function_call> ';'
                | <general_type> <identifier> '=' <null> ';'
                | <list_type> <identifier> '=' <null> ';'
                | <list_type> <identifier> '[' <digit> ']' '=' <null> ';'
                | <list_type> <identifier> '[' <digit> ']' '=' <expression> ';'
-               | <list_type> <identifier> '[' <digit> ']' '=' <function_call>
+               | <list_type> <identifier> '[' <digit> ']' '=' <function_call> ';'
                | <list_type> <identifier> '=' '[' <expression> ']' ';'
-               | <list_type> <identifier> '=' <function_call>
+               | <list_type> <identifier> '=' <function_call> ';'
                | <array_type> <identifier> '=' <null> ';'
                | <array_type> <identifier> '{' <digit> '}' '=' <null> ';'
                | <array_type> <identifier> '{' <digit> '}' '=' <expression> ';'
                | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
                | <array_type> <identifier> '=' '{' <expression> '}' ';'
-               | <array_type> <identifier> '=' <function_call>
+               | <array_type> <identifier> '=' <function_call> ';'
                | <identifier> '=' <expression> ';'
-               | <identifier> '=' <function_call>
+               | <identifier> '=' <function_call> ';'
                | <identifier> '=' <null> ';'
                ;
          
