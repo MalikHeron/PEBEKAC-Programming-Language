@@ -4,7 +4,7 @@ function Navbar() {
    return (
       <header className="Header">
          <span className="header fw-bold" >
-            PEBEKOC Compiler
+            PEBEKAC Compiler
          </span>
          <div className='theme-switch-btn'>
             <i className='bi-sun'></i>

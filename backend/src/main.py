@@ -1,31 +1,23 @@
+
 from code_generator import generate_code
 from semantic_analyzer import parse_and_analyze
 
 # Read the program code from a file or define it here...
-program_code = """
-    fun add() {
-        return 0;
+program_code = """ 
+fun int stringLength(string str) {
+    int length = 0;
+    while (str[length] != null) {
+        length = length + 1;
     }
-    
-    fun main() {
-        int a = 10;
-        int b = 5;
-        b = "h";
-        int x = 5;
-        string code = "John";
-        print("Hello World, my name is ");
-        
-        if (x == 10) {
-            print("x = 10");
-        } else {
-            print("x != 10");
-        }
-        
-        while(x) {
-            print("x is not zero");
-        }
-        
-    }
+    return length;
+}
+
+fun void main() {
+    string myString = "Hello, World!";
+    print(stringLength(myString));
+}
+
+main();
 """
 
 # Parse and analyze the program

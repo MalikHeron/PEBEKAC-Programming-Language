@@ -16,12 +16,10 @@ reserved = {
     'print': 'PRINT',
     'input': 'INPUT',
     'fun': 'FUN',
-    'new': 'NEW',
     'import': 'IMPORT',
     'int': 'INT',
     'float': 'FLOAT',
     'double': 'DOUBLE',
-    'boolean': 'BOOLEAN',
     'string': 'STRING',
     'intArray': 'INTARRAY',
     'floatArray': 'FLOATARRAY',
@@ -31,22 +29,46 @@ reserved = {
     'floatList': 'FLOATLIST',
     'stringList': 'STRINGLIST',
     'doubleList': 'DOUBLELIST',
-    'switch': 'SWITCH',
-    'case': 'CASE',
-    'default': 'DEFAULT',
     'break': 'BREAK',
-    'params': 'PARAMS'
+    'params': 'PARAMS',
+    'void': 'VOID',
+    'False': 'FALSE',
+    'def': 'DEF',
+    'raise': 'RAISE',
+    'None': 'NONE',
+    'del': 'DEL',
+    'return': 'RETURN',
+    'True': 'TRUE',
+    'elif': 'ELIF',
+    'in': 'IN',
+    'try': 'TRY',
+    'and': 'AND',
+    'is': 'IS',
+    'as': 'AS',
+    'except': 'EXCEPT',
+    'lambda': 'LAMBDA',
+    'with': 'WITH',
+    'assert': 'ASSERT',
+    'finally': 'FINALLY',
+    'nonlocal': 'NONLOCAL',
+    'yield': 'YIELD',
+    'not': 'NOT',
+    'from': 'FROM',
+    'or': 'OR',
+    'continue': 'CONTINUE',
+    'global': 'GLOBAL',
+    'pass': 'PASS'
 }
 
 # All tokens must be named in advance.
 tokens = list(reserved.values()) + [
     'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN', 'ASSIGN',
     'IDENTIFIER', 'STRING_LITERAL', 'NUMBER', 'MODULUS', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN',
-    'LESSTHANEQUAL', 'GREATERTHANEQUAL', 'AND', 'OR', 'NOT', 'SEMICOLON',
+    'LESSTHANEQUAL', 'GREATERTHANEQUAL', 'SEMICOLON',
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION'
+    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT'
 ]
 
 # Token matching rules are written as regexs
@@ -105,9 +127,28 @@ def t_IDENTIFIER(t):
     return t
 
 
+# Defining float Values
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
+
 def t_NUMBER(t):
     r'\d+'
     t.value = int(t.value)
+    return t
+
+
+def t_BOOLEAN(t):
+    r'true|false'
+    t.value = (t.value == 'true')  # Convert the string to a Python boolean
+    return t
+
+
+def t_VOID(t):
+    r'void'
+    t.value = 'void'
     return t
 
 
@@ -117,13 +158,25 @@ def t_STRING_LITERAL(t):
     return t
 
 
+# Start of a comment
+def t_COMMENT(t):
+    r'(/\*(.|\n)*?\*/)|(//.*?\n)|(\#.*?\n)'
+    pass  # No return value. Token discarded
+
+
 # Ignored token with an action associated with it
 def t_ignore_newline(t):
     r'\n+'
     t.lexer.lineno += t.value.count('\n')
 
 
-# Error handler for illegal characters
+def find_column(t):
+    line_start = t.lexer.lexdata.rfind('\n', 0, t.lexpos)
+    if line_start < 0:
+        line_start = 0
+    return (t.lexpos - line_start) + 1
+
+
 def t_error(t):
     print(f'Illegal character {t.value[0]!r}')
     t.lexer.skip(1)
@@ -131,3 +184,20 @@ def t_error(t):
 
 # Build the lexer object
 lexer = lex()
+
+# Test the lexer
+data = """
+class MyClass:
+    def __init__(self):
+        self.my_var = 42
+
+    def my_method(self, x, y):
+        print(x + y)
+        y++;
+
+obj = MyClass()
+obj.my_method(10, 20)
+"""
+# lexer.input(data)
+# for token in lexer:
+#     print(token)

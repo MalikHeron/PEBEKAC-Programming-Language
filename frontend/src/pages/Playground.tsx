@@ -6,26 +6,75 @@ import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 
 function Playground() {
-   const terminalRef = useRef<HTMLElement | null>(null);
+   const terminalRef = useRef<HTMLDivElement>(null);
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
    const defaultCode = `fun main() {
     print("Hello World!");
-}`;
+}
+
+main();`;
    const [chatActive, setChatActive] = useState(true);
    const [terminalActive, setTerminalActive] = useState(false);
    const [code, setCode] = useState(defaultCode);
-   const [output, setOutput] = useState('');
    const [reset, setReset] = useState(false);
+   const [running, setRunning] = useState(false);
 
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
          base: 'vs-dark',
          inherit: true,
-         rules: [
-            //{ token: 'comment', foreground: 'ffa500', fontStyle: 'italic' },
-            //{ token: 'keyword', foreground: '00ff00' },
-         ],
+         rules: [],
          colors: {},
+      });
+
+      monaco.languages.register({ id: 'PEBEKAC' });
+
+      monaco.languages.setMonarchTokensProvider('PEBEKAC', {
+         keywords: [
+            'fun', 'return', 'if', 'for', 'while', 'void', 'break',
+            'intList', 'floatList', 'stringList', 'doubleList',
+            'intArray', 'floatArray', 'stringArray', 'doubleArray',
+            'int', 'float', 'double', 'string', 'boolean'
+         ],
+         tokenizer: {
+            root: [
+               // Comments
+               [/\/\*/, 'comment', '@comment'], // Block comments
+               [/\/\/.*$/, 'comment'], // Line comments
+
+               // Keywords and identifiers
+               [/[a-zA-Z_$][\w$]*/, {
+                  cases: {
+                     '@keywords': 'keyword',
+                     '@default': 'identifier'
+                  }
+               }],
+
+               // Numeric literals
+               [/\b\d+\b/, 'number'],
+
+               // String literals
+               [/"/, 'string', '@string'],
+
+               // Operators and punctuation
+               [/[+\-*/=<>!]+/, 'operator'],
+               [/[()[\]{}.,;]/, 'delimiter'],
+
+               // Whitespace
+               { include: '@whitespace' },
+            ],
+            whitespace: [
+               [/\s+/, 'white']
+            ],
+            comment: [
+               [/\*\//, 'comment', '@pop'],
+               [/./, 'comment']
+            ],
+            string: [
+               [/[^\\"]+/, 'string'],
+               [/"/, 'string', '@pop']
+            ]
+         }
       });
    };
 
@@ -33,6 +82,9 @@ function Playground() {
    const toggleSidePane = () => {
       const sidePane = document.querySelector('.side-pane');
       const editorPane = document.querySelector('.editor-pane') as HTMLElement;
+      const editorContainer = document.querySelector('.editor-container') as HTMLElement;
+      const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
+      const navTabs = document.querySelector('.nav-tabs') as HTMLElement;
 
       if (sidePane) {
          sidePane.classList.toggle('hide');
@@ -40,8 +92,14 @@ function Playground() {
          if (editorPane) {
             if (sidePane.classList.contains('hide')) {
                editorPane.style.width = '100%'; // Expand editor pane to full width
+               editorContainer.style.borderRadius = '0px 10px 10px 0px';
+               terminalContainer.style.borderRadius = '0px 0px 10px 0px';
+               navTabs.style.setProperty('--bs-nav-tabs-border-radius', '0px');
             } else {
                editorPane.style.width = 'calc(100% - 450px)'; // Shrink editor pane to accommodate side pane
+               editorContainer.style.borderRadius = '0px 10px 10px 10px';
+               terminalContainer.style.borderRadius = '0px 10px 10px 10px';
+               navTabs.style.setProperty('--bs-nav-tabs-border-radius', '');
             }
          }
       }
@@ -64,6 +122,143 @@ function Playground() {
       // Remove the element from the document body
       document.body.removeChild(element);
    }
+
+   // Update the runCode function to start and stop the program execution
+   const runCode = async () => {
+      try {
+         if (!terminalActive && terminalInstance) {
+            setTerminalActive(true); // Show the terminal if it's hidden
+         }
+
+         terminalInstance?.reset(); // Clear the terminal
+         setRunning(true); // Set running state to true
+         // Execute the code and handle user input prompts
+         const condition = true;
+         while (condition) {
+            const response = await compileAndRunCode(code);
+            const outputLines = response.split('\n');
+
+            for (const line of outputLines) {
+               if (terminalInstance) {
+                  terminalInstance.writeln(line);
+               }
+            }
+
+            // Check if execution is complete or stopped
+            if (response.execution_complete || stopRequested()) {
+               if (terminalInstance) {
+                  if (response.execution_complete) {
+                     terminalInstance.writeln('Program execution complete.');
+                     terminalInstance.write('$ ');
+                  } else {
+                     terminalInstance.writeln('Program execution stopped.');
+                     terminalInstance.write('$ ');
+                  }
+               }
+               break;  // Exit the loop
+            }
+
+            // Handle user input prompts
+            const inputRequest = await fetch('/get_input');
+            const inputResponse = await inputRequest.json();
+            const userInput = inputResponse.input;
+
+            if (!userInput) {
+               // No more input prompts, break the loop
+               break;
+            }
+
+            // Send user input to the server
+            await provideUserInput(userInput);
+         }
+      } catch (error) {
+         // Handle errors
+         console.error('Error:', error);
+      } finally {
+         setRunning(false); // Set running state to false after execution
+      }
+   };
+
+   // Function to request stopping the program execution
+   const stopExecution = async () => {
+      try {
+         // Send a request to the server to stop execution
+         const response = await fetch('/stop_execution', { method: 'POST' });
+         if (!response.ok) {
+            throw new Error('Failed to stop execution.');
+         }
+      } catch (error) {
+         console.error('Error:', error);
+      }
+   };
+
+   // Function to check if the program execution should be stopped
+   const stopRequested = () => {
+      // Implement your logic to determine if the execution should be stopped
+      // For example, check if the stop button is clicked or a specific condition is met
+      // In this example, I'm checking the global variable `running`
+      return !running;
+   };
+
+   // Function to provide user input to the server
+   const provideUserInput = async (input) => {
+      try {
+         const response = await fetch('/provide_input', {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ input }),
+         });
+
+         if (!response.ok) {
+            throw new Error('Failed to provide user input.');
+         }
+      } catch (error) {
+         console.error('Error:', error);
+      }
+   };
+
+   // Function to compile and run code
+   const compileAndRunCode = async (code) => {
+      try {
+         // Local Flask backend URL
+         const apiUrl = 'http://localhost:5000/compile_code';
+
+         // Fetch data from the local endpoint
+         const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+               'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ program_code: code }),
+         });
+
+         // Check if the response is successful
+         if (!response.ok) {
+            throw new Error('Network response was not ok');
+         }
+
+         // Parse the JSON response
+         const data = await response.json();
+
+         // Return the generated Python code from the API response
+         return data.output;
+      } catch (error) {
+         return error;
+      }
+   };
+
+   // Function to toggle the terminal visibility
+   const toggleTerminal = () => {
+      setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
+   };
+
+   // Function to toggle the chat visibility
+   const toggleChat = () => {
+      setChatActive((prevChatActive) => !prevChatActive); // Toggle chat active state
+      toggleSidePane(); // Toggle side pane visibility
+   };
 
    useEffect(() => {
       const terminal = new Terminal({
@@ -88,29 +283,18 @@ function Playground() {
       const handleInput = async (data) => {
          const charCode = data.charCodeAt(0);
          if (charCode === 13) { // Enter key pressed
-            if (commandBuffer.trim() === 'clear' || commandBuffer.trim() === 'cls' ) {
+            if (commandBuffer.trim() === 'clear' || commandBuffer.trim() === 'cls') {
                terminal.reset(); // Clear the terminal
                terminal.write('$ '); // Write prompt
             } else {
                // New line
-               terminal.writeln('');               
-               if (commandBuffer.trim() === 'run') {
-                  // Simulate compiling and running code
-                  const response = await compileAndRunCode(defaultCode);
-                  setOutput(response);
-                  terminal.writeln(response); // Display output
-                  terminal.write('$ '); // Write prompt
-               } else if (commandBuffer.trim() === 'save') {
-                  saveFile();
-                  terminal.writeln('File saved successfully.');
-                  terminal.write('$ '); // Write prompt
-               } else if (commandBuffer.trim() === 'help') {
+               terminal.writeln('');
+               if (commandBuffer.trim() === 'help') {
                   // Display help information
                   terminal.writeln('Available commands:');
-                  terminal.writeln('run - Compile and run the code');
-                  terminal.writeln('save - Save the current file');
                   terminal.writeln('clear - Clear the terminal');
-                  terminal.writeln('help - Display this help information');
+                  terminal.writeln('cls   - Clear the terminal');
+                  terminal.writeln('help  - Display this help information');
                   terminal.write('$ '); // Write prompt
                } else {
                   terminal.writeln(`Command not found: ${commandBuffer}`);
@@ -137,54 +321,32 @@ function Playground() {
       return () => {
          terminal.dispose(); // Cleanup terminal instance on unmount
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
-   // Function to handle running the code
-   const runCode = async () => {
-      const terminal = terminalRef.current;
-      if (!terminal) return;
+   useEffect(() => {
+      const editorContainer = document.querySelector('.editor-container') as HTMLElement;
+      const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
 
-      const response = await compileAndRunCode(code);
-      if (terminalInstance) {
-         terminalInstance.write('run'); // New line
-         terminalInstance.writeln(''); // New line
-         terminalInstance.writeln(response); // Write the response to the terminal
-         terminalInstance.write('$ '); // Write the prompt
+      if (terminalActive && chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 0px 0px';
+         terminalContainer.style.borderRadius = '0px 0px 10px 10px';
+      } else if (terminalActive && !chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 0px 0px';
+         terminalContainer.style.borderRadius = '0px 0px 10px 0px';
+      } else if (!terminalActive && chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 10px 10px';
+      } else if (!terminalActive && !chatActive) {
+         editorContainer.style.borderRadius = '0px 10px 10px 0px';
       }
-   };
-
-   // Simulate compiling and running code (Replace with actual API calls)
-   const compileAndRunCode = async (code) => {
-      // Here you would send the code to your compiler API
-      // and receive the response containing the output
-      // For demonstration purposes, let's just return a static output
-      try {
-         // Assuming you have an API endpoint for compilation and execution
-         const response = await fetch('/api/compile', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code }),
-         });
-         const data = await response.json();
-         return data.output; // Return the output from the API response
-      } catch (error) {
-         console.error('Error compiling and running code:', error);
-         return 'Error compiling and running code.';
-      }
-   };
-
-   // Function to toggle the terminal visibility
-   const toggleTerminal = () => {
-      setTerminalActive((prevTerminalActive) => !prevTerminalActive); // Toggle terminal active state
-   };
+   }, [terminalActive, chatActive]);
 
    // Add event listener for keyboard shortcuts
    useEffect(() => {
       const handleKeyDown = (e) => {
          // Handle keyboard shortcuts
          if (e.ctrlKey && e.key === 'e') {
+            e.preventDefault(); // Prevent default browser behavior
             // Ctrl + E to run code
             runCode();
          } else if (e.ctrlKey && e.key === 's') {
@@ -195,7 +357,7 @@ function Playground() {
             e.preventDefault(); // Prevent default browser behavior
             // Ctrl + K to toggle terminal visibility
             toggleTerminal();
-         } else if (e.ctrlKey && e.key === 'c') {
+         } else if (e.ctrlKey && e.key === 'q') {
             // Ctrl + C to toggle chat visibility
             setChatActive((prev) => !prev); // Toggle chat visibility
             toggleSidePane(); // Toggle side pane visibility
@@ -209,24 +371,14 @@ function Playground() {
       return () => {
          window.removeEventListener('keydown', handleKeyDown);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
-
 
    return (
       <div className="Playground">
          {/* side pane mini */}
-         <div className='side-pane-mini' style={{
-            marginRight: chatActive ? '' : '1.5em',
-            borderRadius: chatActive ? '0px' : '',
-            borderRight: chatActive ? 'none' : ''
-         }}>
-            <div
-               className={`chat-btn ${chatActive ? 'active' : ''}`}
-               onClick={() => {
-                  setChatActive(!chatActive);
-                  toggleSidePane();
-               }}
-            >
+         <div className='side-pane-mini'>
+            <div className={`chat-btn ${chatActive ? 'active' : ''}`} onClick={() => { toggleChat(); }}>
                <div className="indicator" />
                <div className='icon'>
                   <i className='bi-chat'></i>
@@ -238,20 +390,16 @@ function Playground() {
          <div className="side-pane">
             <div className="content">
                <div className="header">
-                  {chatActive &&
-                     <>
-                        <h6>Chat</h6>
-                        <div className='action-buttons'>
-                           <div className='reset-btn' onClick={() => setReset(true)}>
-                              <i className='bi-arrow-clockwise'></i>
-                              <span className="tooltip">Reset</span>
-                           </div>
-                        </div>
-                     </>
-                  }
+                  <h6>Chat</h6>
+                  <div className='action-buttons'>
+                     <div className='reset-btn' onClick={() => setReset(true)}>
+                        <i className='bi-arrow-clockwise'></i>
+                        <span className="tooltip">Reset</span>
+                     </div>
+                  </div>
                </div>
                <hr className="divider" />
-               {chatActive && <Assistant reset={reset} setReset={setReset} />}
+               <Assistant reset={reset} setReset={setReset} />
             </div>
          </div>
          {/* editor pane */}
@@ -286,7 +434,7 @@ function Playground() {
                      </div>
                      <span className="tooltip">Run code</span>
                   </button>
-                  <button className='stop-btn' disabled={true}>
+                  <button className='stop-btn' style={{ display: running ? 'flex' : 'none' }} onClick={stopExecution}>
                      <div className='icon'>
                         <i className='bi-stop'></i>
                      </div>
@@ -299,7 +447,7 @@ function Playground() {
                <div className="editor-container">
                   <Editor
                      height="100%"
-                     defaultLanguage="kotlin"
+                     defaultLanguage="PEBEKAC"
                      defaultValue={defaultCode}
                      onChange={editorValue => { setCode(editorValue || '') }}
                      theme="myTheme"
