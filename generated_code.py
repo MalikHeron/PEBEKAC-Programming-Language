@@ -1,5 +1,15 @@
-graph = None
-print(graph)
+i_number = None
+f_number = None
+d_number = None
+s_number = None
+i_number = 1
+f_number = 1.12
+d_number = 1.13
+s_number = "1.14"
+print(i_number)
+print(f_number)
+print(d_number)
+print(s_number)
 def add(a, b):
     print(a + b)
 def main():
@@ -7,18 +17,18 @@ def main():
     def add(a, c, s):
         return a + s + c
     def subtract(d, e, f):
-        return d - e - f
+        
     def test():
         print("Testing void return type")
     test()
-    a = 5
+    a = 500
     c = 6
     b = 7
+    a += 4
     values = add(a, c, b)
     print(add(a, c, b))
     a = 10
     b = 5
-    b = "h"
     x = 5
     code = "John"
     print("Hello World, my name is ")

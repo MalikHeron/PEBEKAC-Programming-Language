@@ -10,6 +10,7 @@ symbol_table = {}
 scope_stack = []
 
 assigned_value = None
+assignment_type = None
 in_loop = False
 in_function = False
 
@@ -52,6 +53,7 @@ def reset_symbol_table_and_scope_stack():
     global symbol_table, scope_stack
     symbol_table = {}
     scope_stack = []
+
 
 # Define a function for semantic analysis
 def analyze_semantics(node):
@@ -134,7 +136,7 @@ def analyze_semantics(node):
             analyze_semantics(('assignment', var_type, var_name, init_value))
 
     elif node_type == 'assignment':
-        global assigned_value
+        global assigned_value, assignment_type
         if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
             # Check if the variable being assigned is declared
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
@@ -169,19 +171,21 @@ def analyze_semantics(node):
                 raise Exception(f"Error: Variable {var_name} not declared")
             elif lookup_symbol(var_name):
                 # Check if the assigned value matches the type of the variable
-                if node[2][0] == 'function_call':
+                if node[3][0] == 'function_call':
                     print(f'assigned_value is a: {node[3][0]}')
-                    analyze_semantics(node[2])
-                elif node[2] == 'null':
-                    assigned_value = node[2]
+                    analyze_semantics(node[3])
+                elif node[3] == 'null':
+                    assigned_value = node[3]
+                elif node[2][0] == 'assignment_sign':
+                    assignment_type = node[2][1]
                 else:
-                    assigned_value = node[2][1][1]
+                    assigned_value = node[3][1][1]
                 print(f'assigned_value: {assigned_value}')
                 var_type = lookup_symbol(var_name)['type']
                 print(f'assigned var_type: {var_type}')
 
         # Check if the assigned value matches the type of the variable
-        if len(node) == 3 and node[2][0] == 'function_call' or len(node) == 4 and node[3][0] == 'function_call':
+        if node[3][0] == 'function_call':
             pass  # Allow the return type checking to be done by python compiler
         elif assigned_value == 'null':
             pass
@@ -196,6 +200,8 @@ def analyze_semantics(node):
                 raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
             elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
                 raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
+            elif assignment_type is not None and assignment_type != 'ASSIGN' and var_type == 'string':
+                raise Exception(f"Error: Invalid assignment on type {var_type}")
 
     elif node_type == 'control_structure':
         # Analyze the control structure
@@ -272,15 +278,6 @@ def analyze_semantics(node):
         fun_info = lookup_symbol(fun_name)
 
         # Check if the arguments are expressions
-        def count_args(arg_node):
-            if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
-                if arg_node[1] == 'empty':
-                    return 0
-                else:
-                    return sum(count_args(arg) for arg in arg_node[1:])
-            else:
-                return 1
-
         num_args = count_args(arg_list)
         print(f'fun_call: {fun_name}')
         print(f'arg_list: {arg_list}')
@@ -290,17 +287,7 @@ def analyze_semantics(node):
             raise Exception(f"Error: Function {fun_name} not defined")
         else:
             params = fun_info['params']
-
             # Count the number of parameters in the function declaration
-            def count_params(param_node):
-                if isinstance(param_node, tuple) and param_node[0] == 'params':
-                    if param_node[1] == 'empty':
-                        return 0
-                    else:
-                        # If the node is a 'params' node, count the identifier and recursively count the rest of the
-                        # parameters
-                        return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
-
             num_params = count_params(params)
             print(f'params: {params}')
             print(f'Number of params: {num_params}')
@@ -311,28 +298,10 @@ def analyze_semantics(node):
         # Analyze statements inside the function declaration
         push_scope()
 
-    # elif node_type == 'input_stmt':
-    #     var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
-    #     prompt = node[2][0] # Extract the prompt from the input statement
-    #     print(f'input var_name: {var_name}')
-    #     # Check if the variable being assigned is declared
-    #     if not lookup_symbol(var_name):
-    #         raise Exception(f"Error: Variable {var_name} not declared")
-    #
-    #     # check if prompt is a string
-    #     if not isinstance(prompt, str):
-    #         raise Exception(f"Error: Prompt must be a string")
-    #         # Handle the assignment of a value to the variable
-    #     var_type = lookup_symbol(var_name)['type']
-    #     declare_symbol(var_name, {'type': var_type, 'value': None})  # Assign None as a placeholder value
-
     elif node_type == 'return_stmt':
         print(f'return: {node[1]}')
-
         if in_function is False:
             raise Exception(f" Values may only be returned from a function")
-
-        # TODO Check if the type of the returned expression matches the function's return type
         analyze_semantics(node[1])
 
     elif node_type == 'break_stmt':
@@ -344,12 +313,34 @@ def analyze_semantics(node):
     # Add more semantic analysis rules for other language construct
 
 
+# Counts number of arguments in a function declaration
+def count_params(param_node):
+    if isinstance(param_node, tuple) and param_node[0] == 'params':
+        if param_node[1] == 'empty':
+            return 0
+        else:
+            # If the node is a 'params' node, count the identifier and recursively count the rest of the
+            # parameters
+            return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
+
+
+# Counts number of arguments in a function call
+def count_args(arg_node):
+    if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
+        if arg_node[1] == 'empty':
+            return 0
+        else:
+            return sum(count_args(arg) for arg in arg_node[1:])
+    else:
+        return 1
+
+
 def get_expression_type(expr):
-    # Determine the type of an expression.
+    # Determine an expression's type.
     expr_type = expr[0]
 
     if expr_type == 'expression':
-        # Assuming the type of an expression is the type of its first operand
+        # Assuming an expression's type is the type of its first operand
         return get_expression_type(expr[1])
 
     elif expr_type == 'digit':
@@ -361,8 +352,6 @@ def get_expression_type(expr):
     elif expr_type == 'identifier':
         # Look up the identifier in the symbol table
         identifier = expr[1]
-        print(f'Identifier type is: {expr[1]}')
-        print(f'Expression is: {scope_stack}')
         if lookup_symbol(identifier):
             return lookup_symbol(identifier)
         else:

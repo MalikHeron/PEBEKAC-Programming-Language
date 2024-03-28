@@ -36,7 +36,7 @@ def p_stmt(p):
          | print_stmt
          | control_structure
          | return_stmt
-         | function_call
+         | function_call SEMICOLON
          | break_stmt
          | empty
          | comment stmt
@@ -68,7 +68,7 @@ def p_fun_declaration(p):
 
 def p_function_call(p):
     """
-    function_call : identifier LPAREN arg_list RPAREN SEMICOLON
+    function_call : identifier LPAREN arg_list RPAREN
     """
     p[0] = ('function_call', p[1], p[3])
 
@@ -131,32 +131,27 @@ def p_assignment(p):
     """
     assignment : general_type identifier ASSIGN expression SEMICOLON
                | general_type identifier ASSIGN NULL SEMICOLON
-               | general_type identifier ASSIGN function_call
+               | general_type identifier ASSIGN function_call SEMICOLON
                | list_type identifier ASSIGN NULL SEMICOLON
+               | list_type identifier ASSIGN function_call SEMICOLON
+               | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
-               | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call
-               | list_type identifier ASSIGN function_call
                | array_type identifier ASSIGN NULL SEMICOLON
+               | array_type identifier ASSIGN function_call SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN function_call
+               | array_type identifier LBRACE digit RBRACE ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
-               | array_type identifier ASSIGN function_call
-               | identifier ASSIGN expression SEMICOLON
-               | identifier ASSIGN function_call
+               | identifier assignment_sign expression SEMICOLON
+               | identifier assignment_sign function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
     """
-    if len(p) == 4:
-        p[0] = ('assignment', p[1], p[3])
-    elif len(p) == 5:
-        if p[4][0] == 'function_call':
-            p[0] = ('assignment', p[1], p[2], p[4])
-        else:
-            p[0] = ('assignment', p[1], p[3])
+    if len(p) == 5:
+        p[0] = ('assignment', p[1], p[2], p[3])  # identifier, sign, value
     elif len(p) == 6:
-        p[0] = ('assignment', p[1], p[2], p[4])
+            p[0] = ('assignment', p[1], p[2], p[4])
     elif len(p) == 8:
         if p[7][0] == 'function_call':
             p[0] = ('assignment', p[1], p[2], p[7])
@@ -164,6 +159,17 @@ def p_assignment(p):
             p[0] = ('assignment', p[1], p[2], p[5])
     elif len(p) == 9:
         p[0] = ('assignment', p[1], p[2], p[7])
+
+
+def p_assignment_sign(p):
+    """
+    assignment_sign : ASSIGN
+                    | DIVIDEASSIGN
+                    | MINUSASSIGN
+                    | MODASSIGN
+                    | PLUSASSIGN
+    """
+    p[0] = ('assignment_sign', p[1])
 
 
 def p_control_structure(p):
@@ -292,8 +298,10 @@ def p_expression(p):
 def p_digit(p):
     """
     digit : NUMBER
+          | FLOAT
     """
     p[0] = ('digit', p[1])
+
 
 
 def p_boolean(p):
@@ -311,7 +319,6 @@ def p_general_type(p):
                  | DOUBLE
                  | STRING
                  | BOOLEAN
-                 | identifier
     """
     p[0] = ('general_type', p[1])
 

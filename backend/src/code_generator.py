@@ -50,8 +50,12 @@ def generate_code(node):
                 return f'{var_name} = {expr}'  # Correct assignment syntax
         else:
             var_name = node[1][1]
-            if node[2] == 'null':
+            if node[3] == 'null':
                 return f'{var_name} = None'
+            elif node[2][0] == 'assignment_sign':
+                expr = generate_code(node[3])
+                sign = generate_code(node[2])
+                return f'{var_name} {sign} {expr}'
             else:
                 expr = generate_code(node[2])
                 return f'{var_name} = {expr}'
@@ -76,11 +80,6 @@ def generate_code(node):
         increment = generate_code(node[3][1]) + generate_code(node[3][2])
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
-
-    # elif node_type == 'input_stmt':
-    #     var_name = generate_code(node[1])
-    #     prompt = generate_code(node[2])
-    #     return f'{var_name} = input({prompt})'
 
     elif node_type == 'print_stmt':
         expr = generate_code(node[1])  # Extract expression node directly
@@ -115,7 +114,8 @@ def generate_code(node):
             return str(node[0])
 
     elif node_type == 'digit':
-        return node[1]
+            return node[1]
+
 
     elif node_type == 'identifier':
         return node[1]
@@ -142,6 +142,9 @@ def generate_code(node):
 
     elif node_type == '-':
         return ' -= 1'
+
+    elif node_type == 'assignment_sign':
+        return f'{node[1]}'
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
