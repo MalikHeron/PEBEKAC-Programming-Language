@@ -54,7 +54,7 @@ def generate_and_execute_code():
             # Reset standard output and standard error
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
-            return jsonify({'output': error_message, 'execution_complete': False}), 500
+            return jsonify({'output': error_message, 'execution_complete': False})
     except Exception as e:
         # Get the captured error message
         error_message = str(e)
@@ -62,40 +62,6 @@ def generate_and_execute_code():
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         return jsonify({'output': error_message, 'execution_complete': False})
-
-
-@app.route('/stop_execution', methods=['POST'])
-def stop_execution():
-    global stop_program  # Access the global variable
-    stop_program = True  # Set the stop flag to True
-    return jsonify({'message': 'Execution stopped successfully'})
-
-
-@app.route('/provide_input', methods=['POST'])
-def provide_input():
-    try:
-        # Read the input from the request
-        user_input = request.json.get('input')
-        # Append the user input to the global list
-        user_input_queue.append(user_input)
-        return jsonify({'message': 'Input received successfully.'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/get_input', methods=['GET'])
-def get_input():
-    try:
-        # Check if there are pending user inputs
-        if user_input_queue:
-            # Pop the first user input from the queue
-            input_value = user_input_queue.pop(0)
-            return jsonify({'input': input_value})
-        else:
-            # Return an empty response if no inputs are available
-            return jsonify({'input': None})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

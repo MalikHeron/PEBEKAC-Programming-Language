@@ -124,12 +124,6 @@ def t_BOOLEAN(t):
     return t
 
 
-def t_INPUT(t):
-    r'input'
-    t.value = 'input'
-    return t
-
-
 def t_VOID(t):
     r'void'
     t.value = 'void'
@@ -168,3 +162,20 @@ def t_error(t):
 
 # Build the lexer object
 lexer = lex()
+
+# Test the lexer
+data = """
+class MyClass:
+    def __init__(self):
+        self.my_var = 42
+
+    def my_method(self, x, y):
+        print(x + y)
+        y++;
+
+obj = MyClass()
+obj.my_method(10, 20)
+"""
+# lexer.input(data)
+# for token in lexer:
+#     print(token)

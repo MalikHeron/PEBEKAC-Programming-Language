@@ -56,6 +56,10 @@ def generate_code(node):
                 expr = generate_code(node[2])
                 return f'{var_name} = {expr}'
 
+    elif node_type == 'print_stmt':
+        expr = ', '.join(generate_code(expr) for expr in node[1:])
+        return f'print({expr})'
+
     elif node_type == 'control_structure':
         return generate_code(node[1])
 
@@ -77,15 +81,6 @@ def generate_code(node):
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
-    elif node_type == 'input_stmt':
-        var_name = generate_code(node[1])
-        prompt = generate_code(node[2])
-        return f'{var_name} = input({prompt})'
-
-    elif node_type == 'print_stmt':
-        expr = generate_code(node[1])  # Extract expression node directly
-        return f'print({expr})'
-
     elif node_type == 'expression':
         if len(node) == 2:
             return generate_code(node[1])
@@ -98,19 +93,7 @@ def generate_code(node):
             left = generate_code(node[1])
             op = node[2]
             right = generate_code(node[3])
-            if op == '+':
-                if isinstance(left, str) and isinstance(right, str):
-                    # Both operands are strings, generate code for string concatenation
-                    return f'{left} + {right}'
-                elif isinstance(left, str) and isinstance(right, int) or isinstance(right, float):
-                    return f'{left} + str({right})'
-                # Check if left is number and right is string
-                elif isinstance(left, int) and isinstance(left, float) or isinstance(right, str):
-                    return f'str({left}) + {right}'
-                else:
-                    return f'{left} + {right}'
-            else:
-                return f'{left} {op} {right}'
+            return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
 
@@ -127,6 +110,7 @@ def generate_code(node):
         return str(node[1]).lower()
 
     elif node_type == 'function_call':
+        print(node)
         fun_name = node[1][1]
         args = generate_code(node[2])  # Generate code for all arguments
         return f'{fun_name}({args})'

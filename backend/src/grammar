@@ -9,63 +9,31 @@
 
 <stmt> 
       : <fun_declaration>
-      | <import_declaration>
-      | <variable_declaration>
-      | <assignment>
       | <print_stmt>
-      | <control_structure>
       | <function_call>
       | <return_stmt>
-      | <comment>
+      | <variable_declaration>
+      | <assignment>
+      | <control_structure>
       | <break_stmt>
+      | <comment>
       ;
 
 <fun_declaration> 
       : 'fun' <return_type>? <identifier> '(' <params> ')' '{' <stmt_list> '}'
       ;
-  
-<params> 
+
+<params>
       : <general_type> <identifier> ',' <params>
       | <general_type> <identifier>
       ;
 
-<import_declaration> 
-      : import <string>
+<print_stmt>
+      : 'print' '(' <expression> (',' <function_call> ',' <expression>)? ')' ';'
+      | 'print' '(' <function_call> ')' ';'
       ;
 
-<variable_declaration> 
-      : <general_type> <identifier> '(' ',' <variable_declaration>+')'? ';'
-      | <list_type> <identifier> '[' ']' '(' ',' <variable_declaration>+')'? ';'
-      | <array_type> <identifier> '{' '}' '(' ',' <variable_declaration>+')'? ';'
-      ;
-
-<assignment> 
-      : <general_type> <identifier> '=' <expression> ';'
-      | <general_type> <identifier> '=' <function_call>
-      | <list_type> <identifier> '[' <digit> ']' '=' <expression> ';'
-      | <list_type> <identifier> '[' <digit> ']' '=' <function_call>
-      | <list_type> <identifier> '=' '[' <expression> ']' ';'
-      | <list_type> <identifier> '=' <function_call>
-      | <array_type> <identifier> '{' <digit> '}' '=' <expression> ';'
-      | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
-      | <array_type> <identifier> '=' '{' <expression> '}' ';'
-      | <array_type> <identifier> '=' <function_call>
-      | <identifier> '=' <expression> ';'
-      | <identifier> '=' <function_call>
-      ;
-
-<print_stmt> 
-      : 'print' '('(<expression> ('+' <expression>)*)? ')' ';'
-      ;  
-
-<control_structure> 
-      : <if_stmt> 
-      | <for_stmt> 
-      | <while_stmt> 
-      | <switch_stmt>
-      ;
-
-<function_call> 
+<function_call>
       : <identifier> '(' <arg_list> ')' ';'
       ;
 
@@ -77,24 +45,70 @@
 <return_stmt>
       : 'return' <expression> ';'
       ;
-   
+
+<variable_declaration>
+      : <general_type> <identifier> '(' ',' <variable_declaration>+')'? ';'
+      | <list_type> <identifier> '[' ']' '(' ',' <variable_declaration>+')'? ';'
+      | <array_type> <identifier> '{' '}' '(' ',' <variable_declaration>+')'? ';'
+      ;
+
+<assignment>
+      : <general_type> <identifier> '=' <expression> ';'
+      | <general_type> <identifier> '=' <function_call>
+      | <general_type> <identifier> '=' <null> ';'
+      | <list_type> <identifier> '=' <null> ';'
+      | <list_type> <identifier> '[' <digit> ']' '=' <null> ';'
+      | <list_type> <identifier> '[' <digit> ']' '=' <expression> ';'
+      | <list_type> <identifier> '[' <digit> ']' '=' <function_call>
+      | <list_type> <identifier> '=' '[' <expression> ']' ';'
+      | <list_type> <identifier> '=' <function_call>
+      | <array_type> <identifier> '=' <null> ';'
+      | <array_type> <identifier> '{' <digit> '}' '=' <null> ';'
+      | <array_type> <identifier> '{' <digit> '}' '=' <expression> ';'
+      | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
+      | <array_type> <identifier> '=' '{' <expression> '}' ';'
+      | <array_type> <identifier> '=' <function_call>
+      | <identifier> '=' <expression> ';'
+      | <identifier> '=' <function_call>
+      | <identifier> '=' <null> ';'
+      ;
+
+<control_structure> 
+      : <if_stmt> 
+      | <for_stmt> 
+      | <while_stmt> 
+      | <switch_stmt>
+      ;
+
 <break_stmt>
       : 'break' ';'
       ;
 
-<if_stmt> 
+<comment>
+      : '//' <identifier>
+      | '#' <identifier>
+      | '/*' <identifier>  '*/'
+      ;
+
+<return_type>
+      : <general_type>
+      | <array_type>
+      | <list_type>
+      ;
+
+<if_stmt>
       : 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' '{' <stmt_list> '}'
       | 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' <if_stmt>
       | 'if' '(' <expression> ')' '{' <stmt_list> '}'
       | <expression> '?' <expression> ':' <expression> ';'
       ;
 
-<for_stmt> 
+<for_stmt>
       : 'for' '(' <variable_declaration> <expression> ';' <expression> ')' '{' <stmt_list> '}'
       | 'for' '(' <assignment> <expression> ';' <expression> ')' '{' <stmt_list> '}'
       ;
 
-<while_stmt> 
+<while_stmt>
       : 'while' '(' <expression> ')' '{' <stmt_list> '}'
       ;
       
@@ -112,6 +126,11 @@
       | <expression> '>' <expression>
       | <expression> '<=' <expression>
       | <expression> '>=' <expression>
+      | <expression> '+=' <expression>
+      | <expression> '-=' <expression>
+      | <expression> '*=' <expression>
+      | <expression> '/=' <expression>
+      | <expression> '%=' <expression>
       | <expression> '++'
       | <expression> '--'
       | '++' <expression>
@@ -153,12 +172,6 @@
       : '"'<identifier>'"'
       ;
 
-<return_type>
-      : <general_type>
-      | <array_type>
-      | <list_type>
-      ;
-
 <general_type> 
       : 'int' 
       | 'float' 
@@ -181,24 +194,12 @@
       | 'doubleList'
       ;
 
-<comment> 
-      : '//' <identifier> 
-      | '#' <identifier>  
-      | '/*' <identifier>  '*/'
-      ;
-
 # Reserved and Keywords
 [
-   'class', 
    'if', 'else', 'while', 'for', 
-   'true', 'false', 
-   'null', 
-   'return', 
-   'print', 
-   'input', 
-   'fun', 'new', 'import', 
+   'true', 'false', 'void'
+   'null', 'return', 'print', 'fun', 'break',
    'int', 'float', 'double', 'string', 
    'intArray', 'floatArray', 'stringArray', 'doubleArray',
-   'intList', 'floatList', 'stringList', 'doubleList', 
-   'switch', 'case', 'default', 'break', 'params'
+   'intList', 'floatList', 'stringList', 'doubleList'
 ]
