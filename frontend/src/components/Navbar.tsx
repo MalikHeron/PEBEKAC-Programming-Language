@@ -6,10 +6,10 @@ function Navbar() {
          <span className="header fw-bold" >
             PEBEKAC Compiler
          </span>
-         <div className='theme-switch-btn'>
+         {/*<div className='theme-switch-btn'>
             <i className='bi-sun'></i>
             Light
-         </div>
+         </div>*/}
       </header >
    )
 }

@@ -1,9 +1,7 @@
 import io
 import sys
-import os
 
-from flask import (Flask, render_template, request,
-                   send_from_directory, jsonify)
+from flask import (Flask, request, jsonify)
 from flask_cors import CORS
 
 from code_generator import generate_code
