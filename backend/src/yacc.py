@@ -140,9 +140,9 @@ def p_assignment(p):
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
                | array_type identifier ASSIGN NULL SEMICOLON
                | array_type identifier ASSIGN function_call SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN function_call SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
                | identifier assignment_sign expression SEMICOLON
                | identifier assignment_sign function_call SEMICOLON

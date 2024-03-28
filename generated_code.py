@@ -10,6 +10,7 @@ print(i_number)
 print(f_number)
 print(d_number)
 print(s_number)
+problems = "Gilpin" , "Heron" , "Horne" , "Johnson"
 def add(a, b):
     print(a + b)
 def main():
@@ -17,7 +18,7 @@ def main():
     def add(a, c, s):
         return a + s + c
     def subtract(d, e, f):
-        
+        return a - e - f
     def test():
         print("Testing void return type")
     test()

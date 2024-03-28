@@ -19,8 +19,9 @@ program_code = """
      print(d_number);
      print(s_number); 
      
+     stringArray problems[6] = "Gilpin", "Heron", "Horne", "Johnson" ;
     
-     fun add(int a, int b){
+    fun add(int a, int b){
         print (a + b);
      }
 
@@ -31,7 +32,7 @@ program_code = """
         }
 
         fun int subtract(int d, int e, int f ) {
-          #return add(d, e, f) - e - f;  # still not possible on this branch
+          return a - e - f;  # still not possible on this branch
         }
 
         fun void test() {
