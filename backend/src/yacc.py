@@ -235,11 +235,6 @@ def p_expression(p):
                | expression NOTEQUAL expression
                | expression LESSTHAN expression
                | expression GREATERTHAN expression
-               | expression DIVIDEASSIGN expression
-               | expression MINUSASSIGN expression
-               | expression MODASSIGN expression
-               | expression PLUSASSIGN expression
-               | expression TIMESASSIGN expression
                | expression LESSTHANEQUAL expression
                | expression GREATERTHANEQUAL expression
                | expression COMMA expression
@@ -254,8 +249,8 @@ def p_expression(p):
                | digit
                | string
                | boolean
-               | identifier LBRACKET expression RBRACKET
-               | identifier LBRACE expression RBRACE
+               | array_access
+               | NULL
     """
 
     left = p[1]
@@ -342,6 +337,13 @@ def p_string_literal(p):
     string : STRING_LITERAL
     """
     p[0] = ('string_literal', p[1])
+
+
+def p_array_access(p):
+    """
+    array_access : identifier LBRACKET expression RBRACKET
+    """
+    p[0] = ('array_access', p[1], p[3])
 
 
 def p_empty(p):

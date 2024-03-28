@@ -99,13 +99,9 @@ def analyze_semantics(node):
 
         # Check if the function has a return type but no return statement
         if return_type != 'void':
-            has_return_stmt = False
-            for stmt in node[-1][-1]:
-                if stmt[0] == 'return_stmt':
-                    has_return_stmt = True
-                    break
-            if not has_return_stmt:
+            if not has_return_statement(node[-1]):
                 raise Exception(f"Error: Function {fun_name} has a return type but no return statement")
+
 
     elif node_type == 'params':
         # Analyze each parameter in the parameter list
@@ -115,6 +111,10 @@ def analyze_semantics(node):
         # Check if there are multiple parameters with the same name and datatype
         param_names = [param[1] for param in node[1:]]
         param_types = [param[0] for param in node[1:]]
+
+        print(param_names)
+        print(param_types)
+
         if len(param_names) != len(set(param_names)) or len(param_types) != len(set(param_types)):
             raise Exception("Error: Function has multiple parameters with the same name and datatype")
 
@@ -314,6 +314,25 @@ def analyze_semantics(node):
         if in_loop is False:
             raise Exception("Error: break statement not inside loop or switch")
 
+    elif node_type == 'array_access':
+        # Analyze the identifier to ensure it's defined
+        array_name = node[1]
+        array_info = lookup_symbol(array_name)
+        if not array_info:
+            raise NameError(f"Array {array_name} is not defined")
+
+        # Analyze the index expression
+        analyze_semantics(node[2])
+
+        # Ensure the index expression evaluates to an integer
+        index_type = get_expression_type(node[2])
+        if index_type != 'int':
+            raise TypeError(f"Array index must be an integer, got {index_type}")
+
+        # Add the type information for the array element to the current node
+        element_type = array_info['type'][:-5]  # Remove the 'ARRAY' suffix
+        node.append({'type': element_type})
+
 
 def get_expression_type(expr):
     # Determine the type of expression.
@@ -352,6 +371,24 @@ def get_expression_type(expr):
     else:
         pass
 
+def has_return_statement(node):
+    # Base case: if the node is a return statement, return True
+    if node[0] == 'return_stmt':
+        return True
+
+    # If the node is a statement list, iterate through its elements
+    if node[0] == 'stmt_list':
+        for sub_node in node[1:]:
+            # Recursively check each sub-node
+            if has_return_statement(sub_node):
+                return True
+
+    # If the node is a control structure, check its body
+    if node[0] == 'control_structure':
+        return has_return_statement(node[1])
+
+    # If none of the above conditions are met, return False
+    return False
 
 # Integrate semantic analysis into the parser
 def parse_and_analyze(program):

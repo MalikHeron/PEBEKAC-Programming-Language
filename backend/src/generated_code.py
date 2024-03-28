@@ -1,6 +1,5 @@
 x = 10
 def reduce(x):
-    while x != 0:
-        print(x)
-        x = x - 1
+    y = 5 * 10
+    return x + y
 print("x = ", reduce(x))

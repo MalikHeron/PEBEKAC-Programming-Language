@@ -7,15 +7,11 @@ program_code = """
 int x = 10;
 
 fun int reduce(int x) {
-    while (x != 0) {
-        print(x);
-        x = x - 1;
-    }
-    return x;
+    int y = 5 * 10;
+    return x + y;
 }
 
-print("x = ", reduce(x););
-
+print("x = ", reduce(x);); 
 """
 
 # Parse and analyze the program

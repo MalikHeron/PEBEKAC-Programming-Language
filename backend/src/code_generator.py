@@ -7,11 +7,6 @@ def generate_code(node):
     elif node_type == 'stmt_list':
         return '\n'.join(generate_code(stmt) for stmt in node[1:])
 
-    elif node_type == 'class_declaration':
-        class_name = node[1]
-        stmts = generate_code(node[2])
-        return f'class {class_name}:\n{indent(stmts)}'
-
     elif node_type == 'fun_declaration':
         if (len(node)) == 5:
             fun_name = node[2][1]
@@ -82,6 +77,8 @@ def generate_code(node):
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
     elif node_type == 'expression':
+        if node[1] == 'null':
+            return 'None'
         if len(node) == 2:
             return generate_code(node[1])
 
@@ -139,6 +136,11 @@ def generate_code(node):
 
     elif node_type == 'empty' or node_type == 'e':
         return ''
+
+    elif node_type == 'array_access':
+        array_name = generate_code(node[1])
+        index = generate_code(node[2])
+        return f'{array_name}[{index}]'
 
     else:
         return f'Unknown node type: {node_type}'
