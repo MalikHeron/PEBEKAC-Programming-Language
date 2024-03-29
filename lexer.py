@@ -12,7 +12,6 @@ reserved = {
     'true': 'TRUE',
     'false': 'FALSE',
     'null': 'NULL',
-    'return': 'RETURN',
     'print': 'PRINT',
     'input': 'INPUT',
     'fun': 'FUN',
@@ -182,8 +181,8 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-# Build the lexer object
-lexer = lex()
+# Create the lexer object
+lexBuilder = lex
 
 # Test the lexer
 data = """

@@ -1,8 +1,8 @@
 from ply.yacc import yacc
-from lex import *
 
 
 # --- Parser
+
 
 # Write functions for each grammar rule which is
 # specified in the docstring.
@@ -364,11 +364,12 @@ def p_empty(p):
 
 
 def p_error(p):
+    print(p)
     if p:
         raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
     else:
         raise SyntaxError("Syntax error at EOF")
 
 
-# Build the parser
-parser = yacc()
+# Create the parser object
+yaccBuilder = yacc
