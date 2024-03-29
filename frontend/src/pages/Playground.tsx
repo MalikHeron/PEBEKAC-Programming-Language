@@ -8,8 +8,22 @@ import 'xterm/css/xterm.css';
 function Playground() {
    const terminalRef = useRef<HTMLDivElement>(null);
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
-   const defaultCode = `fun main() {
-    print("Hello World!");
+   const defaultCode = `# Check if two strings are the same
+fun boolean stringEquals(string string1, string string2) {
+    if (string1 == string2) {
+        print("The strings are equal");
+        return true;
+    } else {
+        print("The strings are not equal");
+        return false;
+    }
+    return false;
+}
+
+# main function
+fun main() {
+    // call the equals function to compare the two strings
+    stringEquals("Hello", "hello");
 }
 
 main();`;
