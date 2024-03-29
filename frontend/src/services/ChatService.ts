@@ -273,7 +273,6 @@ export class ChatService {
       });
 
       const response = result.response;
-      console.log(response.text());
       return response.text();
    }
 }

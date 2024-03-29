@@ -23,7 +23,6 @@
       .chat-btn {
          width: 100%;
          display: flex;
-         flex-wrap: wrap;
          justify-content: space-between;
          align-items: center;
          margin: 0;
@@ -43,7 +42,6 @@
 
          .icon {
             font-size: 1.7em;
-            padding: 0em;
             margin-left: 0.3em;
             color: gray;
          }
@@ -80,7 +78,7 @@
    .side-pane {
       display: flex;
       flex-direction: column;
-      width: clamp(200px, 85vw, 320px);
+      width: clamp(200px, 85vw, 300px);
       min-height: 90vh;
       max-height: 90vh;
       background-color: var(--black-lighter);
