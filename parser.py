@@ -374,7 +374,7 @@ def p_empty(p):
 def p_error(p):
     print(p)
     if p:
-        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
+        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno - 1}, position {p.lexpos}")
     else:
         raise SyntaxError("Syntax error at EOF")
 
