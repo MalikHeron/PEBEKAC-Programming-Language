@@ -1,5 +1,5 @@
 def stringEquals(string1, string2):
-    if string1 == string2:
+    if string1 == None:
         print("the two string are equal")
         return True
     else:

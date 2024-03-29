@@ -32,6 +32,7 @@ main();`;
       monaco.languages.setMonarchTokensProvider('PEBEKAC', {
          keywords: [
             'fun', 'return', 'if', 'else', 'for', 'while', 'void', 'break',
+            'true', 'false', 'True', 'False', 'null',
             'intList', 'floatList', 'stringList', 'doubleList',
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
             'int', 'float', 'double', 'string', 'boolean'

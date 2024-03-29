@@ -11,6 +11,8 @@ reserved = {
     'for': 'FOR',
     'true': 'TRUE',
     'false': 'FALSE',
+    'True': 'TRUE',
+    'False': 'FALSE',
     'null': 'NULL',
     'print': 'PRINT',
     'input': 'INPUT',
@@ -143,15 +145,18 @@ def t_BOOLEAN(t):
     t.value = (t.value == 'true')  # Convert the string to a Python boolean
     return t
 
+
 def t_TRUE(t):
     r'true'
     t.value = True
     return t
 
+
 def t_FALSE(t):
     r'false'
     t.value = False
     return t
+
 
 def t_VOID(t):
     r'void'

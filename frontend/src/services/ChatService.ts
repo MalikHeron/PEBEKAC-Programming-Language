@@ -256,7 +256,7 @@ export class ChatService {
          # Reserved and Keywords
          [
             'if', 'else', 'while', 'for', 
-            'true', 'false', 'void'
+            'true', 'false', 'void', 'True', 'False',
             'null', 'return', 'print', 'fun', 'break',
             'int', 'float', 'double', 'string', 
             'intArray', 'floatArray', 'stringArray', 'doubleArray',

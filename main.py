@@ -1,4 +1,3 @@
-
 from code_generator import generate_code
 from semantic_analyzer import SemanticAnalyzer
 
