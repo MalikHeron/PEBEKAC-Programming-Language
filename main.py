@@ -4,19 +4,12 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun int factorial(int n){
-   if(n == 1) {
-   return 1;
-   }
-   return n * factorial(n-1);
+fun double area(double r) {
+    double val = 3.14 * r * r;
+    return val;
 }
 
-fun int main(){
-   print(factorial(5));
-   return 0;
-}
-
-main();
+print(area(10));
 """
 
 # Parse and analyze the program
