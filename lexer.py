@@ -15,6 +15,7 @@ reserved = {
     'False': 'FALSE',
     'null': 'NULL',
     'print': 'PRINT',
+    'len': 'LEN',
     'input': 'INPUT',
     'fun': 'FUN',
     'import': 'IMPORT',

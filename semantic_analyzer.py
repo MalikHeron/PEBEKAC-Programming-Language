@@ -147,7 +147,7 @@ class SemanticAnalyzer:
                 var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
                 var_type = node[1][1]
                 if node[3][0] == 'function_call':
-                    # print(f'assigned_value is a: {node[3][0]}')
+                    # print('assigned_value is a: ', node[3][0])
                     self.analyze_semantics(node[3])
                 elif node[3] == 'null':
                     assigned_value = node[3]
@@ -155,9 +155,9 @@ class SemanticAnalyzer:
                     assigned_value = node[3][1][1]
 
                 # Extract variable information
-                # print(f'assignment var_name: {var_name}')
-                # print(f'assigned_value: {assigned_value}')
-                # print(f'assigned var_type: {var_type}')
+                # print('assignment var_name: ', var_name)
+                # print('assigned_value: ', assigned_value)
+                # print('assigned var_type: ', var_type)
 
                 if not self.lookup_symbol(var_name):
                     # Add variable to the symbol table
@@ -168,7 +168,7 @@ class SemanticAnalyzer:
                 # Extract variable information
                 var_type = self.lookup_symbol(node[1][1])['type']
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
-                # print(f'assignment var_name: {var_name}')
+                # print('assignment var_name: ', var_name)
                 # print('node: ', node)
 
                 # Check if the variable being assigned is declared
@@ -177,7 +177,7 @@ class SemanticAnalyzer:
                 elif self.lookup_symbol(var_name):
                     # Check if the assigned value matches the type of the variable
                     if node[3][0] == 'function_call':
-                        # print(f'assigned_value is a: {node[3][0]}')
+                        # print('assigned_value is a: ', node[3][0])
                         self.analyze_semantics(node[3])
                     elif node[3] == 'null':
                         assigned_value = node[3]
@@ -185,9 +185,9 @@ class SemanticAnalyzer:
                         assignment_type = node[2]
                     else:
                         assigned_value = node[3][1][1]
-                    # print(f'assigned_value: {assigned_value}')
+                    # print('assigned_value: ', assigned_value)
                     var_type = self.lookup_symbol(var_name)['type']
-                    # print(f'assigned var_type: {var_type}')
+                    # print('assigned var_type: ', var_type)
 
             # Check if the assigned value matches the type of the variable
             if node[3][0] == 'function_call':
@@ -195,6 +195,10 @@ class SemanticAnalyzer:
             elif assigned_value == 'null':
                 pass
             else:
+                # print('assigned_value:', assigned_value, 'var_type:', var_type)
+                if self.lookup_symbol(assigned_value):
+                    if self.lookup_symbol(assigned_value)['type'] == var_type:
+                        return
                 if isinstance(assigned_value, str) and var_type != 'string':
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
                 elif isinstance(assigned_value, int) and var_type != 'int':
@@ -264,6 +268,22 @@ class SemanticAnalyzer:
         elif node_type == 'print_stmt':
             # Analyze expression(s) in print statement
             for expr in node[1:]:
+                # Check if the expression is an identifier
+                if expr[0] == 'function_call':
+                    # Analyze the function call expression
+                    self.analyze_semantics(expr)
+
+            # Check the type of the expression
+            expr_type = self.get_expression_type(node[1])
+
+            # Check if expression is valid...
+            if expr_type is None:
+                raise ValueError(f"Invalid expression in print statement: {node}")
+
+        elif node_type == 'len_stmt':
+            # Analyze expression(s) in print statement
+            for expr in node[1:]:
+                print('expr:', expr)
                 # Check if the expression is an identifier
                 if expr[0] == 'function_call':
                     # Analyze the function call expression
@@ -428,10 +448,16 @@ class SemanticAnalyzer:
                 return fun_info
             else:
                 raise NameError(f"Function {fun_name} is not defined")
+
+        elif expr_type == 'len_stmt':
+            return 'int'
+
         elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
             return 'boolean'
+
         elif expr_type == '+' or expr_type == '-' or expr_type == '*' or expr_type == '/':
             return 'int' or 'float' or 'double' or 'string'
+
         else:
             pass
 

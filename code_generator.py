@@ -59,6 +59,10 @@ def generate_code(node):
         expr = ', '.join(generate_code(expr) for expr in node[1:])
         return f'print({expr})'
 
+    elif node_type == 'len_stmt':
+        expr = ', '.join(generate_code(expr) for expr in node[1:])
+        return f'len({expr})'
+
     elif node_type == 'control_structure':
         return generate_code(node[1])
 
@@ -120,12 +124,6 @@ def generate_code(node):
             return generate_code(node[1])
         else:
             return ', '.join(str(generate_code(arg)) for arg in node[1:])
-
-    elif node_type == '+':
-        return ' += 1'
-
-    elif node_type == '-':
-        return ' -= 1'
 
     elif node_type == 'assignment_sign':
         return f'{node[1]}'

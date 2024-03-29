@@ -1,3 +1,2 @@
-def square(n):
-    return n * n
-print(square(5))
+str = "Hello, World!"
+print(len(str))

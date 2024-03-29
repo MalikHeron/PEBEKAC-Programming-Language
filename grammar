@@ -10,6 +10,7 @@
 <stmt> 
       : <fun_declaration>
       | <print_stmt>
+      | <len_stmt> ';'
       | <function_call> ';'
       | <return_stmt>
       | <variable_declaration>
@@ -30,6 +31,10 @@
 <param>
       : <general_type> <identifier> ',' <param>
       | <general_type> <identifier>
+      ;
+
+<len_stmt>
+      : 'len' '(' <identifier> ')'
       ;
 
 <print_stmt>
@@ -75,6 +80,7 @@
       | <identifier> <assignment_sign> <expression> ';'
       | <identifier> <assignment_sign> <function_call> ';'
       | <identifier> '=' <null> ';'
+      | <identifier> '=' <len_stmt> ';'
       ;
 
 <control_structure> 
@@ -135,10 +141,6 @@
       | <expression> '*=' <expression>
       | <expression> '/=' <expression>
       | <expression> '%=' <expression>
-      | <expression> '++'
-      | <expression> '--'
-      | '++' <expression>
-      | '--' <expression>
       | <expression> ',' <expression>
       | <expression> '**' <expression>
       | '!' <expression>

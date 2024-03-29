@@ -33,6 +33,7 @@ def p_stmt(p):
          | variable_declaration
          | assignment
          | print_stmt
+         | len_stmt SEMICOLON
          | control_structure
          | function_call SEMICOLON
          | return_stmt
@@ -79,6 +80,13 @@ def p_param(p):
         p[0] = ('param', p[1], p[2])
     else:
         p[0] = ('param', p[1])
+
+
+def p_len_stmt(p):
+    """
+    len_stmt : LEN LPAREN identifier RPAREN
+    """
+    p[0] = ('len_stmt', p[3])
 
 
 def p_print_stmt(p):
@@ -153,6 +161,7 @@ def p_assignment(p):
                | identifier assignment_sign expression SEMICOLON
                | identifier assignment_sign function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
+               | identifier ASSIGN len_stmt SEMICOLON
     """
     if len(p) == 5:
         p[0] = ('assignment', p[1], p[2], p[3])  # identifier, sign, value
@@ -246,11 +255,12 @@ def p_expression(p):
                | expression GREATERTHANEQUAL expression
                | expression COMMA expression
                | expression POW expression
+               | expression PLUSASSIGN expression
+               | expression MINUSASSIGN expression
+               | expression TIMESASSIGN expression
+               | expression DIVIDEASSIGN expression
+               | expression MODASSIGN expression
                | LPAREN expression RPAREN
-               | expression INCREMENT
-               | expression DECREMENT
-               | INCREMENT expression
-               | DECREMENT expression
                | NOT expression
                | identifier
                | digit
@@ -258,6 +268,7 @@ def p_expression(p):
                | boolean
                | array_access
                | function_call
+               | len_stmt
                | NULL
     """
 
