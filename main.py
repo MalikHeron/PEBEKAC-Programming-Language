@@ -3,8 +3,19 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-string str = "Hello, World!";
-print(len(str));
+fun int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+fun main() {
+    int n = 4;
+    print("Factorial of", n, "is", factorial(n), "\n;");
+}
+
+main();
 """
 
 # Parse and analyze the program

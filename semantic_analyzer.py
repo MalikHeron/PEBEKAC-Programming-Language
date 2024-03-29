@@ -268,17 +268,7 @@ class SemanticAnalyzer:
         elif node_type == 'print_stmt':
             # Analyze expression(s) in print statement
             for expr in node[1:]:
-                # Check if the expression is an identifier
-                if expr[0] == 'function_call':
-                    # Analyze the function call expression
-                    self.analyze_semantics(expr)
-
-            # Check the type of the expression
-            expr_type = self.get_expression_type(node[1])
-
-            # Check if expression is valid...
-            if expr_type is None:
-                raise ValueError(f"Invalid expression in print statement: {node}")
+                self.analyze_semantics(expr)
 
         elif node_type == 'len_stmt':
             # Analyze expression(s) in print statement

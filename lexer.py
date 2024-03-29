@@ -166,8 +166,9 @@ def t_VOID(t):
 
 
 def t_STRING_LITERAL(t):
-    r'\".*?\"'
-    t.value = t.value[1:-1]  # Remove the quotation marks
+    r'"(?:\\.|[^\\"])*"'
+    # Remove the quotes and replace escape characters
+    t.value = t.value[1:-1].replace('\n', '\\n')
     return t
 
 
