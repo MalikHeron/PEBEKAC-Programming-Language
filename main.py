@@ -1,27 +1,26 @@
 
 from code_generator import generate_code
-from semantic_analyzer import parse_and_analyze
+from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
-program_code = """ 
-fun int stringLength(string str) {
-    int length = 0;
-    while (str[length] != null) {
-        length = length + 1;
-    }
-    return length;
+program_code = """  
+fun int factorial(int n){
+   if(n == 1) {
+   return 1;
+   }
+   return n * factorial(n-1);
 }
 
-fun void main() {
-    string myString = "Hello, World!";
-    print(stringLength(myString));
+fun int main(){
+   print(factorial(5));
+   return 0;
 }
 
 main();
 """
 
 # Parse and analyze the program
-ast_with_semantics = parse_and_analyze(program_code)
+ast_with_semantics = SemanticAnalyzer().parse_and_analyze(program_code)
 
 # Generate Python code with semantics
 python_code_with_semantics = generate_code(ast_with_semantics)

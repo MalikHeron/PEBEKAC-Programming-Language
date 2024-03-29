@@ -5,7 +5,7 @@ from flask import (Flask, request, jsonify)
 from flask_cors import CORS
 
 from code_generator import generate_code
-from semantic_analyzer import parse_and_analyze
+from semantic_analyzer import SemanticAnalyzer
 
 app = Flask(__name__, static_folder='frontend/dist/', static_url_path='/')
 CORS(app)  # Enable CORS for all routes
@@ -16,13 +16,16 @@ stop_program = False
 
 @app.route('/')
 def index():
-   print('Request for index page received')
-   return app.send_static_file('index.html')
+    print('Request for index page received')
+    return app.send_static_file('index.html')
+
 
 @app.route('/compile_code', methods=['POST'])
 def generate_and_execute_code():
     try:
         global stop_program  # Access the global variable
+        # Create new instances of parse_and_analyze and generate_code for each request
+        semantic_analyzer = SemanticAnalyzer()
 
         # Reset the stop flag for each new request
         stop_program = False
@@ -31,7 +34,7 @@ def generate_and_execute_code():
         program_code = request.json.get('program_code')
 
         # Parse and analyze the program
-        ast_with_semantics = parse_and_analyze(program_code)
+        ast_with_semantics = semantic_analyzer.parse_and_analyze(program_code)
 
         # Generate Python code with semantics
         python_code_with_semantics = generate_code(ast_with_semantics)

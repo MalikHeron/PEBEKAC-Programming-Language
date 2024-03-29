@@ -1,5 +1,5 @@
 # -----------------------------------------------------------------------------
-# ply: lex.py
+# ply: lexer.py
 #
 # Copyright (C) 2001-2018
 # David M. Beazley (Dabeaz LLC)

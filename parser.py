@@ -135,28 +135,23 @@ def p_assignment(p):
                | general_type identifier ASSIGN NULL SEMICOLON
                | general_type identifier ASSIGN function_call SEMICOLON
                | list_type identifier ASSIGN NULL SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | list_type identifier ASSIGN function_call SEMICOLON
                | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
                | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
-               | list_type identifier ASSIGN function_call SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
+               | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
                | array_type identifier ASSIGN NULL SEMICOLON
+               | array_type identifier ASSIGN function_call SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
                | array_type identifier LBRACE digit RBRACE ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
-               | array_type identifier ASSIGN function_call SEMICOLON
-               | identifier ASSIGN expression SEMICOLON
-               | identifier ASSIGN function_call SEMICOLON
+               | identifier assignment_sign expression SEMICOLON
+               | identifier assignment_sign function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
     """
-    if len(p) == 4:
-        p[0] = ('assignment', p[1], p[3])
-    elif len(p) == 5:
-        if p[4][0] == 'function_call':
-            p[0] = ('assignment', p[1], p[2], p[4])
-        else:
-            p[0] = ('assignment', p[1], p[3])
+    if len(p) == 5:
+        p[0] = ('assignment', p[1], p[2], p[3])  # identifier, sign, value
     elif len(p) == 6:
         p[0] = ('assignment', p[1], p[2], p[4])
     elif len(p) == 8:
@@ -289,9 +284,22 @@ def p_expression(p):
         p[0] = ('expression', p[1])
 
 
+def p_assignment_sign(p):
+    """
+    assignment_sign : ASSIGN
+                    | DIVIDEASSIGN
+                    | MINUSASSIGN
+                    | MODASSIGN
+                    | PLUSASSIGN
+                    | TIMESASSIGN
+    """
+    p[0] = ('assignment_sign', p[1])
+
+
 def p_digit(p):
     """
     digit : NUMBER
+          | FLOAT
     """
     p[0] = ('digit', p[1])
 

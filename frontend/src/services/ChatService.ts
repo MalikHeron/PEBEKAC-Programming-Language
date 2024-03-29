@@ -118,8 +118,8 @@ export class ChatService {
                | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
                | <array_type> <identifier> '=' '{' <expression> '}' ';'
                | <array_type> <identifier> '=' <function_call> ';'
-               | <identifier> '=' <expression> ';'
-               | <identifier> '=' <function_call> ';'
+               | <identifier> <assignment_sign> <expression> ';'
+               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <null> ';'
                ;
          
@@ -196,6 +196,15 @@ export class ChatService {
                | <null>
                | <identifier> '[' <expression> ']'
                | <identifier> '{' <expression> '}'
+         
+         <assignment_sign>
+               : '='
+               | '+='
+               | '-='
+               | '*='
+               | '/='
+               | '%='
+               ;
          
          <digit> 
                : '-'?[0-9]+('.'[0-9]+)? 

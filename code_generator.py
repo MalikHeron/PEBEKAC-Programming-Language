@@ -45,8 +45,12 @@ def generate_code(node):
                 return f'{var_name} = {expr}'  # Correct assignment syntax
         else:
             var_name = node[1][1]
-            if node[2] == 'null':
+            if node[3] == 'null':
                 return f'{var_name} = None'
+            elif node[2][0] == 'assignment_sign':
+                expr = generate_code(node[3])
+                sign = generate_code(node[2])
+                return f'{var_name} {sign} {expr}'
             else:
                 expr = generate_code(node[2])
                 return f'{var_name} = {expr}'
@@ -122,6 +126,9 @@ def generate_code(node):
 
     elif node_type == '-':
         return ' -= 1'
+
+    elif node_type == 'assignment_sign':
+        return f'{node[1]}'
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'

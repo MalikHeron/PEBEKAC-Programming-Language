@@ -1,9 +1,8 @@
-def stringLength(str):
-    length = 0
-    while str[length] != None:
-        length = length + 1
-    return length
+def factorial(n):
+    if n == 1:
+        return 1
+    return n * factorial(n - 1)
 def main():
-    myString = "Hello, World!"
-    print(stringLength(myString))
+    print(factorial(5))
+    return 0
 main()
