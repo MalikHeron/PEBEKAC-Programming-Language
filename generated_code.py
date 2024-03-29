@@ -1,9 +1,11 @@
-def stringLength(str):
-    count = 0
-    i = 0
-    while str[i] != None:
-        count = count + 1
-        i += 1
-    return count
-myString = "H" , "e" , "l" , "l" , "o"
-print(myString)
+def stringEquals(string1, string2):
+    if string1 == string2:
+        print("the two string are equal")
+        return True
+    else:
+        print("the two string are not equal")
+        return False
+    return False
+def main():
+    stringEquals("Hello", "Hello")
+main()

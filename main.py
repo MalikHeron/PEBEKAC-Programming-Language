@@ -4,20 +4,24 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun int stringLength(stringList str) {
-    int count = 0;
-    for(int i = 0; str[i] != null; i++) {
-        count = count + 1;
+fun boolean stringEquals(string string1, string string2) {
+    if (string1 == string2) {
+        print("the two string are equal");
+        return true;
+    } else {
+        print("the two string are not equal");
+        return false;
     }
-    return count;
+    return false;
 }
 
-// Assuming a mechanism to initialize a stringList with characters
-// This part is abstract, as direct string manipulation isn't detailed in the language spec
-stringList myString = ["H", "e", "l", "l", "o"];
+// main function
+fun main() {
+    // call the equals function to compare the two strings
+    stringEquals("Hello", "Hello");
+}
 
-// Call the stringLength function and print the result
-print(myString);
+main();
 """
 
 # Parse and analyze the program

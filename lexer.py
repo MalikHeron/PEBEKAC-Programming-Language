@@ -20,6 +20,7 @@ reserved = {
     'float': 'FLOAT',
     'double': 'DOUBLE',
     'string': 'STRING',
+    'boolean': 'BOOLEAN',
     'intArray': 'INTARRAY',
     'floatArray': 'FLOATARRAY',
     'stringArray': 'STRINGARRAY',
@@ -31,13 +32,11 @@ reserved = {
     'break': 'BREAK',
     'params': 'PARAMS',
     'void': 'VOID',
-    'False': 'FALSE',
     'def': 'DEF',
     'raise': 'RAISE',
     'None': 'NONE',
     'del': 'DEL',
     'return': 'RETURN',
-    'True': 'TRUE',
     'elif': 'ELIF',
     'in': 'IN',
     'try': 'TRY',
@@ -67,7 +66,7 @@ tokens = list(reserved.values()) + [
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION', 'BOOLEAN', 'COMMENT'
+    'MODASSIGN', 'COLON', 'QUESTION', 'COMMENT'
 ]
 
 # Token matching rules are written as regexs
@@ -144,6 +143,15 @@ def t_BOOLEAN(t):
     t.value = (t.value == 'true')  # Convert the string to a Python boolean
     return t
 
+def t_TRUE(t):
+    r'true'
+    t.value = True
+    return t
+
+def t_FALSE(t):
+    r'false'
+    t.value = False
+    return t
 
 def t_VOID(t):
     r'void'

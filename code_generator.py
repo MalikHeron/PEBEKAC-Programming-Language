@@ -108,7 +108,7 @@ def generate_code(node):
         return f'"{node[1]}"'
 
     elif node_type == 'boolean':
-        return str(node[1]).lower()
+        return str(node[1]).capitalize()
 
     elif node_type == 'function_call':
         fun_name = node[1][1]
