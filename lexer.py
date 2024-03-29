@@ -130,13 +130,13 @@ def t_IDENTIFIER(t):
 
 # Defining float Values
 def t_FLOAT(t):
-    r'\d+\.\d+'
+    r'-?\d+\.\d+'
     t.value = float(t.value)
     return t
 
 
 def t_NUMBER(t):
-    r'\d+'
+    r'-?\d+'
     t.value = int(t.value)
     return t
 
