@@ -213,7 +213,7 @@
 [
    'if', 'else', 'while', 'for', 
    'true', 'false', 'void'
-   'null', 'return', 'print', 'fun', 'break',
+   'null', 'return', 'print', 'fun', 'break', 'len',
    'int', 'float', 'double', 'string', 
    'intArray', 'floatArray', 'stringArray', 'doubleArray',
    'intList', 'floatList', 'stringList', 'doubleList'

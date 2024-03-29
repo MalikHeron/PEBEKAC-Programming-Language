@@ -56,6 +56,7 @@ export class ChatService {
          <stmt> 
                : <fun_declaration>
                | <print_stmt>
+               | <len_stmt> ';'
                | <function_call> ';'
                | <return_stmt>
                | <variable_declaration>
@@ -76,6 +77,10 @@ export class ChatService {
          <param>
                : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
+               ;
+         
+         <len_stmt>
+               : 'len' '(' <identifier> ')'
                ;
          
          <print_stmt>
@@ -121,6 +126,7 @@ export class ChatService {
                | <identifier> <assignment_sign> <expression> ';'
                | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <null> ';'
+               | <identifier> '=' <len_stmt> ';'
                ;
          
          <control_structure> 
@@ -137,7 +143,7 @@ export class ChatService {
          <comment>
                : '//' <identifier>
                | '#' <identifier>
-               | '/*' <identifier>  '*/'
+               | '/*' <identifier> '*/'
                ;
          
          <return_type>
@@ -181,10 +187,6 @@ export class ChatService {
                | <expression> '*=' <expression>
                | <expression> '/=' <expression>
                | <expression> '%=' <expression>
-               | <expression> '++'
-               | <expression> '--'
-               | '++' <expression>
-               | '--' <expression>
                | <expression> ',' <expression>
                | <expression> '**' <expression>
                | '!' <expression>
@@ -256,8 +258,8 @@ export class ChatService {
          # Reserved and Keywords
          [
             'if', 'else', 'while', 'for', 
-            'true', 'false', 'void', 'True', 'False',
-            'null', 'return', 'print', 'fun', 'break',
+            'true', 'false', 'void'
+            'null', 'return', 'print', 'fun', 'break', 'len',
             'int', 'float', 'double', 'string', 
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
             'intList', 'floatList', 'stringList', 'doubleList'
