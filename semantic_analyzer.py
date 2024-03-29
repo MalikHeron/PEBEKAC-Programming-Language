@@ -430,6 +430,8 @@ class SemanticAnalyzer:
                 raise NameError(f"Function {fun_name} is not defined")
         elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
             return 'boolean'
+        elif expr_type == '+' or expr_type == '-' or expr_type == '*' or expr_type == '/':
+            return 'int' or 'float' or 'double' or 'string'
         else:
             pass
 
