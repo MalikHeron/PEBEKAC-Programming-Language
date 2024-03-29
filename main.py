@@ -4,20 +4,17 @@ from semantic_analyzer import SemanticAnalyzer
 # Read the program code from a file or define it here...
 program_code = """  
 fun boolean stringEquals(string string1, string string2) {
-    if (string1 == string2) {
-        print("the two string are equal");
-        return true;
-    } else {
-        print("the two string are not equal");
-        return false;
-    }
-    return false;
+    return string1 == string2;
 }
 
 // main function
 fun main() {
     // call the equals function to compare the two strings
-    stringEquals("Hello", "Hello");
+    if (stringEquals("Hello", "hello") == true) {
+        print("The strings are equal");
+    } else {
+        print("The strings are not equal");
+    }
 }
 
 main();

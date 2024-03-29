@@ -10,20 +10,17 @@ function Playground() {
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
    const defaultCode = `# Check if two strings are the same
 fun boolean stringEquals(string string1, string string2) {
-    if (string1 == string2) {
-        print("The strings are equal");
-        return true;
-    } else {
-        print("The strings are not equal");
-        return false;
-    }
-    return false;
+    return string1 == string2;
 }
 
-# main function
+// main function
 fun main() {
     // call the equals function to compare the two strings
-    stringEquals("Hello", "hello");
+    if (stringEquals("Hello", "hello") == true) {
+        print("The strings are equal");
+    } else {
+        print("The strings are not equal");
+    }
 }
 
 main();`;

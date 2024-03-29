@@ -1,11 +1,8 @@
 def stringEquals(string1, string2):
-    if string1 == None:
-        print("the two string are equal")
-        return True
-    else:
-        print("the two string are not equal")
-        return False
-    return False
+    return string1 == string2
 def main():
-    stringEquals("Hello", "Hello")
+    if stringEquals("Hello", "hello") == True:
+        print("The strings are equal")
+    else:
+        print("The strings are not equal")
 main()

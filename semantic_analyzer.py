@@ -203,8 +203,8 @@ class SemanticAnalyzer:
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got float")
                 elif isinstance(assigned_value, bool) and var_type != 'boolean':
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
-                elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
-                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
+                # elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
+                #    raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
                 elif assignment_type is not None and assignment_type != 'ASSIGN' and var_type == 'string':
                     raise Exception(f"Error: Invalid assignment on type {var_type}")
 
@@ -386,10 +386,20 @@ class SemanticAnalyzer:
 
     def get_expression_type(self, expr):
         # Determine the type of expression.
-        expr_type = expr[0]
+        if isinstance(expr, tuple):
+            expr_type = expr[0]
+        else:
+            expr_type = expr
+
         # print('expr_type:', expr_type, ', expr:', expr)
 
         if expr_type == 'expression':
+            if len(expr) == 4:
+                # print('expr:', expr)
+                # Binary operation
+                self.analyze_semantics(expr[1])
+                self.analyze_semantics(expr[3])
+                return self.get_expression_type(expr[2])
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
 
@@ -418,6 +428,8 @@ class SemanticAnalyzer:
                 return fun_info
             else:
                 raise NameError(f"Function {fun_name} is not defined")
+        elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
+            return 'boolean'
         else:
             pass
 
