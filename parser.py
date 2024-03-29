@@ -67,6 +67,10 @@ def p_param(p):
     """
     param : general_type identifier COMMA param
           | general_type identifier
+          | list_type identifier COMMA param
+          | list_type identifier
+          | array_type identifier COMMA param
+          | array_type identifier
           | empty
     """
     if len(p) == 5:
@@ -142,9 +146,9 @@ def p_assignment(p):
                | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
                | array_type identifier ASSIGN NULL SEMICOLON
                | array_type identifier ASSIGN function_call SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN NULL SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN expression SEMICOLON
-               | array_type identifier LBRACE digit RBRACE ASSIGN function_call SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | array_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
                | identifier assignment_sign expression SEMICOLON
                | identifier assignment_sign function_call SEMICOLON
@@ -374,7 +378,7 @@ def p_empty(p):
 def p_error(p):
     print(p)
     if p:
-        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno - 1}, position {p.lexpos}")
+        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
     else:
         raise SyntaxError("Syntax error at EOF")
 

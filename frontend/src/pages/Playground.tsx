@@ -31,7 +31,7 @@ main();`;
 
       monaco.languages.setMonarchTokensProvider('PEBEKAC', {
          keywords: [
-            'fun', 'return', 'if', 'for', 'while', 'void', 'break',
+            'fun', 'return', 'if', 'else', 'for', 'while', 'void', 'break',
             'intList', 'floatList', 'stringList', 'doubleList',
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
             'int', 'float', 'double', 'string', 'boolean'
@@ -39,8 +39,9 @@ main();`;
          tokenizer: {
             root: [
                // Comments
-               [/\/\*/, 'comment', '@comment'], // Block comments
-               [/\/\/.*$/, 'comment'], // Line comments
+               [/\/\*/, 'comment', '@comment'],
+               [/\/\/.*/, 'comment'],
+               [/#.*/, 'comment'],
 
                // Keywords and identifiers
                [/[a-zA-Z_$][\w$]*/, {

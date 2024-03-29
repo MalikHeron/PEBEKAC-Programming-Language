@@ -113,9 +113,9 @@ export class ChatService {
                | <list_type> <identifier> '=' '[' <expression> ']' ';'
                | <list_type> <identifier> '=' <function_call> ';'
                | <array_type> <identifier> '=' <null> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <null> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <expression> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
+               | <array_type> <identifier> '[' <digit> ']' '=' <null> ';'
+               | <array_type> <identifier> '[' <digit> ']' '=' <expression> ';'
+               | <array_type> <identifier> '[' <digit> ']' '=' <function_call>
                | <array_type> <identifier> '=' '{' <expression> '}' ';'
                | <array_type> <identifier> '=' <function_call> ';'
                | <identifier> <assignment_sign> <expression> ';'

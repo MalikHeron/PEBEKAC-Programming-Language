@@ -4,12 +4,20 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun double area(double r) {
-    double val = 3.14 * r * r;
-    return val;
+fun int stringLength(stringList str) {
+    int count = 0;
+    for(int i = 0; str[i] != null; i++) {
+        count = count + 1;
+    }
+    return count;
 }
 
-print(area(10));
+// Assuming a mechanism to initialize a stringList with characters
+// This part is abstract, as direct string manipulation isn't detailed in the language spec
+stringList myString = ["H", "e", "l", "l", "o"];
+
+// Call the stringLength function and print the result
+print(myString);
 """
 
 # Parse and analyze the program
