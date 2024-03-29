@@ -5,8 +5,10 @@ import ReactMarkdown from 'react-markdown';
 import { Timestamp } from 'firebase/firestore';
 import useSpeechToText from '@services/SpeechToText';
 import { ChatService } from '@services/ChatService';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-function Assistant( {reset, setReset} ) {
+function Assistant({ reset, setReset }) {
    const [userInput, setUserInput] = useState('');
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isLoading, setIsLoading] = useState(false);
@@ -18,19 +20,22 @@ function Assistant( {reset, setReset} ) {
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
 
    const copyToClipboard = (message: string, index: number) => {
-      navigator.clipboard.writeText(message);
-      setTooltipTexts(prevTooltipTexts => {
-         const newTooltipTexts = [...prevTooltipTexts];
-         newTooltipTexts[index] = 'Copied!';
-         return newTooltipTexts;
-      });
-      setTimeout(() => {
+      const codeBlock = message.match(/```pebekac([\s\S]*?)```/);
+      if (codeBlock) {
+         navigator.clipboard.writeText(codeBlock[1].trim());
          setTooltipTexts(prevTooltipTexts => {
             const newTooltipTexts = [...prevTooltipTexts];
-            newTooltipTexts[index] = 'Copy';
+            newTooltipTexts[index] = 'Copied!';
             return newTooltipTexts;
          });
-      }, 3000);
+         setTimeout(() => {
+            setTooltipTexts(prevTooltipTexts => {
+               const newTooltipTexts = [...prevTooltipTexts];
+               newTooltipTexts[index] = 'Copy';
+               return newTooltipTexts;
+            });
+         }, 3000);
+      }
    };
 
    const sendMessage = async () => {
@@ -154,9 +159,18 @@ function Assistant( {reset, setReset} ) {
                         <div className='message-author' style={{ color: message.author === 'user' ? 'white' : 'var(--sophie-blue)' }}>{message.author === 'user' ? 'You' : 'Assistant'}</div>
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
-                        <ReactMarkdown className="message-text">
-                           {message.text}
-                        </ReactMarkdown>
+                        {message.author === 'user' ?
+                           <ReactMarkdown className="message-text">
+                              {message.text}
+                           </ReactMarkdown>
+                           :
+                           message.text.includes('```pebekac') && message.text.includes('```') ?
+                              <SyntaxHighlighter language="kotlin" style={darcula}>
+                                 {message.text.match(/```pebekac([\s\S]*?)```/) ? message.text.match(/```pebekac([\s\S]*?)```/)![1] : ''}
+                              </SyntaxHighlighter>
+                              :
+                              message.text
+                        }
                         {message.author !== 'user' ?
                            <div className="actions">
                               <div id="copy" className="copy-message" onClick={() => copyToClipboard(message.text, index)}>

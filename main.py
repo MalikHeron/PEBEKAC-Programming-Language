@@ -4,15 +4,13 @@ from semantic_analyzer import SemanticAnalyzer
 # Read the program code from a file or define it here...
 program_code = """  
 fun int factorial(int n) {
-    if (n == 0) {
-        return 1;
-    }
-    return n * factorial(n - 1);
+  return n == 0 ? 1 : n * factorial(n - 1);
 }
 
 fun main() {
-    int n = 4;
-    print("Factorial of", n, "is", factorial(n), "\n;");
+  print("Enter a number: ");
+  int n = int(input());
+  print("Factorial of " + n + " is: " + factorial(n));
 }
 
 main();
