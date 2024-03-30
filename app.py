@@ -1,7 +1,7 @@
 import io
 import sys
 import threading
-import time  # Import the time module
+import time
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -12,11 +12,13 @@ from semantic_analyzer import SemanticAnalyzer
 app = Flask(__name__, static_folder='frontend/dist/', static_url_path='/')
 CORS(app)  # Enable CORS for all routes
 
-# Global variable to track whether the program should stop
+# Global variables to track whether the program should stop and the timeout period
 stop_program = False
+timeout_period = 5  # Timeout period in seconds
 
-# Lock to synchronize access to stop_program
+# Locks to synchronize access to stop_program and timeout_period
 stop_lock = threading.Lock()
+timeout_lock = threading.Lock()
 
 
 @app.route('/')
@@ -30,6 +32,9 @@ def generate_and_execute_code():
     try:
         global stop_program  # Access the global variable
         global stop_lock  # Access the global lock
+        global timeout_period  # Access the global variable
+        global timeout_lock  # Access the global lock
+
         # Create new instances of parse_and_analyze and generate_code for each request
         semantic_analyzer = SemanticAnalyzer()
 
@@ -56,11 +61,19 @@ def generate_and_execute_code():
             exec_thread = threading.Thread(target=execute_code, args=(python_code_with_semantics,))
             exec_thread.start()
 
-            # Wait for the execution to finish or until the stop flag is set
+            # Start the timeout countdown
+            start_time = time.time()
+
+            # Wait for the execution to finish or until the stop flag is set or timeout occurs
             while exec_thread.is_alive():
                 with stop_lock:
                     if stop_program:
                         break
+                with timeout_lock:
+                    if time.time() - start_time >= timeout_period:
+                        # If timeout occurs, set the stop flag to True
+                        stop_program = True
+                        return jsonify({'output': 'Execution stopped due to timeout.', 'execution_complete': False})
                 time.sleep(0.1)  # Check every 0.1 seconds
 
             # If the execution is still running, stop the thread
