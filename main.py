@@ -11,8 +11,8 @@ fun int fact(int n) {
 }
 
 fun main() {
-    int x = fact(5);
-    print("The factorial of ", x ,"is:", fact(5));
+    int x = 5;
+    print("The factorial of ", x ,"is:", fact(x));
 }
 
 main();

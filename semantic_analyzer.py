@@ -387,7 +387,7 @@ class SemanticAnalyzer:
 
         elif node_type == 'return_stmt':
             # First, find out the current function's name from the scope stack
-            print('scope_stack:', self.scope_stack[-2])
+            # print('scope_stack:', self.scope_stack[-2])
 
             if function_name is not None:
                 current_function_name = function_name
@@ -454,6 +454,11 @@ class SemanticAnalyzer:
                 # Binary operation
                 self.analyze_semantics(expr[1])
                 self.analyze_semantics(expr[3])
+                right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
+                left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
+                # Check if the types of the operands match
+                if right_operand_type != left_operand_type:
+                    raise TypeError(f"Type mismatch in binary operation: {left_operand_type} and {right_operand_type}")
                 return self.get_expression_type(expr[2])
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
@@ -477,8 +482,14 @@ class SemanticAnalyzer:
             # Look up the identifier in the symbol table
             identifier = expr[1]
             if self.lookup_symbol(identifier):
-                # print('identifier:', self.lookup_symbol(identifier))
-                return self.lookup_symbol(identifier)
+                # print('identifier:', self.lookup_symbol(identifier)['type'])
+                if self.lookup_symbol(identifier)['type'] == 'int':
+                    return 'int'
+                elif self.lookup_symbol(identifier)['type'] == 'float':
+                    return 'float'
+                elif self.lookup_symbol(identifier)['type'] == 'double':
+                    return 'double'
+                return self.lookup_symbol(identifier)['type']
             else:
                 raise NameError(f"Identifier {identifier} is not defined")
 
@@ -490,12 +501,23 @@ class SemanticAnalyzer:
             # print('call:', expr)
             # print('type:', expr_type)
             if fun_info:
+                # Check if the function has a return type
+                # print('expr:', expr[2][1][1])
                 if expr_type == 'expression':
-                    # print('expr:', expr[2][1][1])
                     if len(expr[2][1][1]) > 2:
                         expr_type = self.get_expression_type(expr[2][1][1])
+                        if expr_type == 'identifier':
+                            # print('expr_type:', self.lookup_symbol(expr))
+                            expr_type = self.lookup_symbol([2][1])
                     else:
                         expr_type = self.get_expression_type(expr[2][1])
+                        if expr_type == 'identifier':
+                            # print('expr_type:', self.lookup_symbol(expr))
+                            expr_type = self.lookup_symbol([2][1])
+                if expr_type == 'identifier':
+                    # print('expr:', expr[2][1][1][1])
+                    # print('expr_type:', self.lookup_symbol(expr[2][1][1][1])['type'])
+                    expr_type = self.lookup_symbol(expr[2][1][1][1])['type']
                 if expr_type != fun_info['return_type'][1]:
                     # print('return_type:', expr_type)
                     raise Exception(
