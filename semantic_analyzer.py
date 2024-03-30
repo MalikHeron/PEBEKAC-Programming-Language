@@ -455,17 +455,22 @@ class SemanticAnalyzer:
         # print('expr_type:', expr_type, ', expr:', expr)
 
         if expr_type == 'expression':
-            if len(expr) == 4:
+            if len(expr) >= 4:
                 # print('expr:', expr)
                 # Binary operation
                 self.analyze_semantics(expr[1])
                 self.analyze_semantics(expr[3])
+                operator = expr[2]
                 right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
                 left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
+                # print('right_operand_type:', right_operand_type, 'left_operand_type:', left_operand_type)
                 # Check if the types of the operands match
                 if right_operand_type != left_operand_type:
                     raise TypeError(f"Type mismatch in binary operation: {left_operand_type} and {right_operand_type}")
-                return self.get_expression_type(expr[2])
+                elif operator == '-' or operator == '*' or operator == '/':
+                    if right_operand_type == 'string' or left_operand_type == 'string':
+                        raise TypeError(f"Invalid operation: {operator} on string")
+                return right_operand_type
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
 
@@ -546,9 +551,6 @@ class SemanticAnalyzer:
 
         elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
             return 'boolean'
-
-        elif expr_type == '+' or expr_type == '-' or expr_type == '*' or expr_type == '/':
-            return 'int' or 'float' or 'double' or 'string'
 
         else:
             pass

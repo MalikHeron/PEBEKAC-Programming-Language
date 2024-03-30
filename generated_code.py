@@ -1,17 +1,7 @@
-def isPalindrome(str):
-    length = len(str)
-    i = 0
-    j = length - 1
-    while i < j:
-        if str[i] != str[j]:
-            return False
-        i = i + 1
-        j = j - 1
-    return True
+def area_of_circle(radius):
+    return 3.14 * radius * radius
 def main():
-    str = "racecar"
-    if isPalindrome(str):
-        print("The string is a palindrome.")
-    else:
-        print("The string is not a palindrome.")
+    radius = 5.0
+    area = area_of_circle(radius)
+    print("The area of the circle is " , area)
 main()
