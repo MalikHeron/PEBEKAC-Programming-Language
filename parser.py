@@ -149,14 +149,14 @@ def p_assignment(p):
                | list_type identifier ASSIGN NULL SEMICOLON
                | list_type identifier ASSIGN function_call SEMICOLON
                | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
-               | list_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
+               | list_type identifier LBRACKET int RBRACKET ASSIGN function_call SEMICOLON
+               | list_type identifier LBRACKET int RBRACKET ASSIGN NULL SEMICOLON
+               | list_type identifier LBRACKET int RBRACKET ASSIGN expression SEMICOLON
                | array_type identifier ASSIGN NULL SEMICOLON
                | array_type identifier ASSIGN function_call SEMICOLON
-               | array_type identifier LBRACKET digit RBRACKET ASSIGN NULL SEMICOLON
-               | array_type identifier LBRACKET digit RBRACKET ASSIGN expression SEMICOLON
-               | array_type identifier LBRACKET digit RBRACKET ASSIGN function_call SEMICOLON
+               | array_type identifier LBRACKET int RBRACKET ASSIGN NULL SEMICOLON
+               | array_type identifier LBRACKET int RBRACKET ASSIGN expression SEMICOLON
+               | array_type identifier LBRACKET int RBRACKET ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
                | identifier assignment_sign expression SEMICOLON
                | identifier assignment_sign function_call SEMICOLON
@@ -263,7 +263,9 @@ def p_expression(p):
                | LPAREN expression RPAREN
                | NOT expression
                | identifier
-               | digit
+               | int
+               | float
+               | double
                | string
                | boolean
                | array_access
@@ -311,12 +313,25 @@ def p_assignment_sign(p):
     p[0] = ('assignment_sign', p[1])
 
 
-def p_digit(p):
+def p_int(p):
     """
-    digit : NUMBER
-          | FLOAT
+    int : INT
     """
-    p[0] = ('digit', p[1])
+    p[0] = ('int', p[1])
+
+
+def p_float(p):
+    """
+    float : FLOAT
+    """
+    p[0] = ('float', p[1])
+
+
+def p_double(p):
+    """
+    double : DOUBLE
+    """
+    p[0] = ('double', p[1])
 
 
 def p_boolean(p):

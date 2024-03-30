@@ -1,13 +1,9 @@
-def is_valid_number(n):
-    n = -5
-    if n <= 0:
-        return False
-    if n > 0:
-        return True
-    return False
-def factorial(n):
-    if is_valid_number(n):
-        print("Valid input")
-    else:
-        print("Invalid")
-factorial(5)
+def fact(n):
+    if n == 0:
+        return 1
+    return n * fact(n - 1)
+def main():
+    m = 5.0
+    x = fact(5)
+    print("The factorial of " , x , "is:" , fact(x))
+main()

@@ -66,15 +66,15 @@
       | <general_type> <identifier> '=' <function_call> ';'
       | <general_type> <identifier> '=' <null> ';'
       | <list_type> <identifier> '=' <null> ';'
-      | <list_type> <identifier> '[' <digit> ']' '=' <null> ';'
-      | <list_type> <identifier> '[' <digit> ']' '=' <expression> ';'
-      | <list_type> <identifier> '[' <digit> ']' '=' <function_call> ';'
+      | <list_type> <identifier> '[' <int> ']' '=' <null> ';'
+      | <list_type> <identifier> '[' <int> ']' '=' <expression> ';'
+      | <list_type> <identifier> '[' <int> ']' '=' <function_call> ';'
       | <list_type> <identifier> '=' '[' <expression> ']' ';'
       | <list_type> <identifier> '=' <function_call> ';'
       | <array_type> <identifier> '=' <null> ';'
-      | <array_type> <identifier> '[' <digit> ']' '=' <null> ';'
-      | <array_type> <identifier> '[' <digit> ']' '=' <expression> ';'
-      | <array_type> <identifier> '[' <digit> ']' '=' <function_call>
+      | <array_type> <identifier> '[' <int> ']' '=' <null> ';'
+      | <array_type> <identifier> '[' <int> ']' '=' <expression> ';'
+      | <array_type> <identifier> '[' <int> ']' '=' <function_call>
       | <array_type> <identifier> '=' '{' <expression> '}' ';'
       | <array_type> <identifier> '=' <function_call> ';'
       | <identifier> <assignment_sign> <expression> ';'
@@ -146,7 +146,8 @@
       | '!' <expression>
       | '(' <expression> ')'
       | <identifier>
-      | <digit>
+      | <int>
+      | <float>
       | <string_literal>
       | <boolean>
       | <null>
@@ -162,8 +163,12 @@
       | '%='
       ;
 
-<digit> 
-      : '-'?[0-9]+('.'[0-9]+)? 
+<int>
+      : '-'?[0-9]+
+      ;
+
+<float>
+      : '-'?[0-9]+'.'[0-9]+
       ;
 
 <string> 
@@ -171,7 +176,7 @@
       ;
 
 <identifier>
-      : ('_')?(<string>|<digit>)+
+      : ('_')?(<string>|<int>)+
       ;
 
 <boolean> 

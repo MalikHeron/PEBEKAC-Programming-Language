@@ -340,6 +340,51 @@ class SemanticAnalyzer:
                         f"Error: Number of arguments in function call ({num_args}) does not match the number of "
                         f"parameters in function declaration ({num_params})")
 
+                # Retrieve parameter types from the function declaration
+                params = fun_info['params']
+                # print('arg_list:', arg_list)
+                param_list = params[1]
+                # print('param_list:', param_list)
+
+                arg_types = []  # List to store the types of arguments
+                param_types = []  # List to store the types of parameters
+
+                def check_arg_type(list_arg):
+                    # Check if the types of arguments match the types of parameters
+                    for arg in list_arg[1:]:
+                        # print('arg:', arg)
+                        if arg[0] == 'expression':
+                            if arg[1][0] == 'function_call':
+                                check_arg_type(arg[1])
+                                self.analyze_semantics(arg[1])
+                            else:
+                                arg_types.append(self.get_expression_type(arg[1]))
+                        if arg[0] == 'function_call':
+                            arg_types.append(self.get_expression_type(arg[1]))
+                        if arg[0] == 'arg_list':
+                            check_arg_type(arg)
+                        # print('arg_types:', arg_types)
+
+                def check_param_type(list_param):
+                    # Check if the types of parameters
+                    for param_ in list_param[1:]:
+                        # print('param:', param_)
+                        if param_[0] == 'general_type':
+                            param_types.append(self.get_expression_type(param_[1]))
+                        if param_[0] == 'function_call':
+                            param_types.append(self.get_expression_type(param_[1]))
+                        if param_[0] == 'param':
+                            check_param_type(param_)
+                        # print('param_types:', param_types)
+
+                check_arg_type(arg_list)  # Check the types of arguments
+                check_param_type(param_list)  # Check the types of parameters
+
+                # Check the types of arguments and parameters
+                for arg_type, param_type in zip(arg_types[0:], param_types[0:]):
+                    if arg_type != param_type:
+                        raise Exception(f"Error: Type mismatch in function call. Expected {param_type}, got {arg_type}")
+
         elif node_type == 'return_stmt':
             # First, find out the current function's name from the scope stack
             print('scope_stack:', self.scope_stack[-2])
@@ -413,8 +458,14 @@ class SemanticAnalyzer:
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
 
-        elif expr_type == 'digit':
-            return 'int' or 'float'
+        elif expr_type == 'int':
+            return 'int'
+
+        elif expr_type == 'float':
+            return 'float'
+
+        elif expr_type == 'double':
+            return 'double'
 
         elif expr_type == 'boolean':
             return 'boolean'

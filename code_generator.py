@@ -102,7 +102,10 @@ def generate_code(node):
         elif len(node) == 1:
             return str(node[0])
 
-    elif node_type == 'digit':
+    elif node_type == 'int':
+        return node[1]
+
+    elif node_type == 'float':
         return node[1]
 
     elif node_type == 'identifier':

@@ -64,7 +64,7 @@ reserved = {
 # All tokens must be named in advance.
 tokens = list(reserved.values()) + [
     'PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE', 'LPAREN', 'RPAREN', 'ASSIGN',
-    'IDENTIFIER', 'STRING_LITERAL', 'NUMBER', 'MODULUS', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN',
+    'IDENTIFIER', 'STRING_LITERAL', 'MODULUS', 'EQUAL', 'NOTEQUAL', 'LESSTHAN', 'GREATERTHAN',
     'LESSTHANEQUAL', 'GREATERTHANEQUAL', 'SEMICOLON',
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
@@ -135,9 +135,15 @@ def t_FLOAT(t):
     return t
 
 
-def t_NUMBER(t):
+def t_INT(t):
     r'-?\d+'
     t.value = int(t.value)
+    return t
+
+
+def t_DOUBLE(t):
+    r'-?\d+\.\d+'
+    t.value = float(t.value)
     return t
 
 
