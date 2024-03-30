@@ -1,7 +1,8 @@
-def area_of_circle(radius):
-    return 3.14 * radius * radius
+def stringEquals(string1, string2):
+    return string1 >= string2
 def main():
-    radius = 5.0
-    area = area_of_circle(radius)
-    print("The area of the circle is " , area)
+    if stringEquals("Hello", "hello") == True:
+        print("The strings are equal")
+    else:
+        print("The strings are not equal")
 main()

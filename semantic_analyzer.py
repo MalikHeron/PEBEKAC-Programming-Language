@@ -470,6 +470,8 @@ class SemanticAnalyzer:
                 elif operator == '-' or operator == '*' or operator == '/':
                     if right_operand_type == 'string' or left_operand_type == 'string':
                         raise TypeError(f"Invalid operation: {operator} on string")
+                elif operator == '==' or operator == '!=' or operator == '<' or operator == '<=' or operator == '>' or operator == '>=':
+                    return 'boolean'
                 return right_operand_type
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
