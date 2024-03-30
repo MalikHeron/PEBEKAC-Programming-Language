@@ -70,5 +70,12 @@ def generate_and_execute_code():
         return jsonify({'output': error_message, 'execution_complete': False})
 
 
+@app.route('/stop_execution', methods=['POST'])
+def stop_execution():
+    global stop_program  # Access the global variable
+    stop_program = True  # Set the stop flag to True
+    return jsonify({'message': 'Execution stopped successfully'})
+
+
 if __name__ == '__main__':
     app.run()
