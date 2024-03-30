@@ -70,7 +70,22 @@ def generate_code(node):
         condition = generate_code(node[1])
         if_body = generate_code(node[2])
         else_body = generate_code(node[3]) if len(node) > 3 else ''
-        return f'if {condition}:\n{indent(if_body)}' + (f'\nelse:\n{indent(else_body)}' if else_body else '')
+        return f'if {condition}:\n{indent(if_body)}' + (f'{else_body}' if else_body else '')
+
+    elif node_type == 'else_stmt':
+        # print(node)
+        if node[1][0] == 'if_stmt':
+            if len(node[1]) > 2:
+                condition = generate_code(node[1][1])
+                if_body = generate_code(node[1][2])
+                else_body = generate_code(node[1][3])
+                # print('condition: ', condition)
+                # print('if_body: ', if_body)
+                # print('else_body: ', else_body)
+                return f'\nelif {condition}:\n{indent(if_body)}' + (f'{else_body}' if else_body else '')
+        else:
+            else_body = generate_code(node[1])
+            return f'\nelse:\n{indent(else_body)}' if else_body else ''
 
     elif node_type == 'while_stmt':
         condition = generate_code(node[1])

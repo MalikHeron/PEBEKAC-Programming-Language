@@ -107,10 +107,14 @@
       ;
 
 <if_stmt>
-      : 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' '{' <stmt_list> '}'
-      | 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' <if_stmt>
-      | 'if' '(' <expression> ')' '{' <stmt_list> '}'
+      : 'if' '(' <expression> ')' '{' <stmt_list> '}'
+      | 'if' '(' <expression> ')' '{' <stmt_list> '}' <else_stmt>
       | <expression> '?' <expression> ':' <expression> ';'
+      ;
+
+<else_stmt>
+      : 'else' '{' <stmt_list> '}'
+      | 'else' <if_stmt>
       ;
 
 <for_stmt>

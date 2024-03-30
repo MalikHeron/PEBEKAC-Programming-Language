@@ -232,6 +232,7 @@ class SemanticAnalyzer:
             self.analyze_semantics(node[1])
 
         elif node_type == 'if_stmt':
+            # print('node:', node)
             # Analyze the condition expression
             self.analyze_semantics(node[1])
 
@@ -241,11 +242,18 @@ class SemanticAnalyzer:
             self.pop_scope()
 
             # If there's an else block, analyze its statements too
-            if node_type == 'if_stmt' and len(node) == 4:
-                # print('node:', node)
+            if node_type == 'if_stmt' and len(node) > 2:
+                # print('if_node:', node[3])
                 self.push_scope(function_name=function_name)
                 self.analyze_semantics(node[3], function_name=function_name)
                 self.pop_scope()
+
+        elif node_type == 'else_stmt':
+            # print('else_node:', node[1])
+            # Analyze the statements in the else block
+            self.push_scope(function_name=function_name)
+            self.analyze_semantics(node[1], function_name=function_name)
+            self.pop_scope()
 
         elif node_type == 'while_stmt':
             # ('node:', node)
@@ -395,6 +403,8 @@ class SemanticAnalyzer:
         elif node_type == 'return_stmt':
             # First, find out the current function's name from the scope stack
             # print('scope_stack:', self.scope_stack[-2])
+            # print('node:', node)
+            self.get_expression_type(node[1])
 
             if function_name is not None:
                 current_function_name = function_name

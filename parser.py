@@ -212,15 +212,26 @@ def p_return_type(p):
 def p_if_stmt(p):
     """
     if_stmt : IF LPAREN expression RPAREN LBRACE stmt_list RBRACE
-            | IF LPAREN expression RPAREN LBRACE stmt_list RBRACE ELSE LBRACE stmt_list RBRACE
+            | IF LPAREN expression RPAREN LBRACE stmt_list RBRACE else_stmt
             | expression QUESTION expression COLON expression SEMICOLON
     """
-    if len(p) == 12:
-        p[0] = ('if_stmt', p[3], p[6], p[10])
+    if len(p) == 9:
+        p[0] = ('if_stmt', p[3], p[6], p[8])
     elif len(p) == 8:
         p[0] = ('if_stmt', p[3], p[6])
     elif len(p) == 7:
         p[0] = ('if_stmt', p[1], p[3], p[5])
+
+
+def p_else_clause(p):
+    """
+    else_stmt : ELSE LBRACE stmt_list RBRACE
+                | ELSE if_stmt
+    """
+    if len(p) == 5:
+        p[0] = ('else_stmt', p[3])
+    else:
+        p[0] = ('else_stmt', p[2])
 
 
 def p_for_stmt(p):

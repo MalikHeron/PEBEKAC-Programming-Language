@@ -3,33 +3,18 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun boolean isPalindrome(string str) {
-    if (str == null) {
-        return false;
-    }
-    int length = len(str);
-    int i = 0;
-    int j = length - 1;
-    while (i < j) {
-        if (str[i] != str[j]) {
-            return false;
-        }
-        i += 1;
-        j -= 1;
-    }
-    return true;
-}
-
-fun main() {
-    string str = "racecar";
-    if (isPalindrome(str)) {
-        print("The string is a palindrome");
+fun int fun7(int a, int b) {
+    if (a > b) {
+        return a;
+    } else if (a < b) {
+        return b;
     } else {
-        print("The string is not a palindrome");
+        return a;
     }
+    return 0;
 }
 
-main();
+print(fun7(5, 2));
 """
 
 # Parse and analyze the program
