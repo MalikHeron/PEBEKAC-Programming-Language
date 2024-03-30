@@ -1,7 +1,9 @@
 import io
 import sys
+import threading
+import time  # Import the time module
 
-from flask import (Flask, request, jsonify)
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from code_generator import generate_code
@@ -12,6 +14,9 @@ CORS(app)  # Enable CORS for all routes
 
 # Global variable to track whether the program should stop
 stop_program = False
+
+# Lock to synchronize access to stop_program
+stop_lock = threading.Lock()
 
 
 @app.route('/')
@@ -24,11 +29,13 @@ def index():
 def generate_and_execute_code():
     try:
         global stop_program  # Access the global variable
+        global stop_lock  # Access the global lock
         # Create new instances of parse_and_analyze and generate_code for each request
         semantic_analyzer = SemanticAnalyzer()
 
         # Reset the stop flag for each new request
-        stop_program = False
+        with stop_lock:
+            stop_program = False
 
         # Read the program code from the request
         program_code = request.json.get('program_code')
@@ -44,14 +51,28 @@ def generate_and_execute_code():
         sys.stderr = io.StringIO()
 
         try:
-            # Execute the generated Python code
+            # Execute the generated Python code in a separate thread
             # Pass stop_program to the execution environment
-            exec(python_code_with_semantics, {'stop_program': stop_program})
+            exec_thread = threading.Thread(target=execute_code, args=(python_code_with_semantics,))
+            exec_thread.start()
+
+            # Wait for the execution to finish or until the stop flag is set
+            while exec_thread.is_alive():
+                with stop_lock:
+                    if stop_program:
+                        break
+                time.sleep(0.1)  # Check every 0.1 seconds
+
+            # If the execution is still running, stop the thread
+            if exec_thread.is_alive():
+                exec_thread.join(timeout=1)
+
             # Get the captured output
             output = sys.stdout.getvalue()
             # Reset standard output and standard error
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
+
             # Indicate execution complete
             return jsonify({'output': output, 'execution_complete': True})
         except Exception as e:
@@ -70,10 +91,19 @@ def generate_and_execute_code():
         return jsonify({'output': error_message, 'execution_complete': False})
 
 
+def execute_code(code):
+    global stop_program
+    try:
+        exec(code, {'stop_program': stop_program})
+    except Exception as e:
+        print(str(e))
+
+
 @app.route('/stop_execution', methods=['POST'])
 def stop_execution():
     global stop_program  # Access the global variable
-    stop_program = True  # Set the stop flag to True
+    with stop_lock:
+        stop_program = True  # Set the stop flag to True
     return jsonify({'message': 'Execution stopped successfully'})
 
 

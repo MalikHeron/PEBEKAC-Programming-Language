@@ -180,9 +180,6 @@ main();`;
                // No more input prompts, break the loop
                break;
             }
-
-            // Send user input to the server
-            await provideUserInput(userInput);
          }
       } catch (error) {
          // Handle errors
@@ -196,7 +193,7 @@ main();`;
    const stopExecution = async () => {
       try {
          // Send a request to the server to stop execution
-         const response = await fetch('/stop_execution', { method: 'POST' });
+         const response = await fetch('https://pebekac.azurewebsites.net/stop_execution', { method: 'POST' });
          if (!response.ok) {
             throw new Error('Failed to stop execution.');
          }
@@ -211,25 +208,6 @@ main();`;
       // For example, check if the stop button is clicked or a specific condition is met
       // In this example, I'm checking the global variable `running`
       return !running;
-   };
-
-   // Function to provide user input to the server
-   const provideUserInput = async (input) => {
-      try {
-         const response = await fetch('/provide_input', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ input }),
-         });
-
-         if (!response.ok) {
-            throw new Error('Failed to provide user input.');
-         }
-      } catch (error) {
-         console.error('Error:', error);
-      }
    };
 
    // Function to compile and run code
