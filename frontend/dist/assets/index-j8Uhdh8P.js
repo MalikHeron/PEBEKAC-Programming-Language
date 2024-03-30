@@ -819,6 +819,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <return_stmt>
                | <variable_declaration>
                | <assignment>
+               | <compound_assignment> ';'
                | <control_structure>
                | <break_stmt>
                | <comment>
@@ -881,8 +882,9 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <array_type> <identifier> '[' <int> ']' '=' <function_call>
                | <array_type> <identifier> '=' '{' <expression> '}' ';'
                | <array_type> <identifier> '=' <function_call> ';'
-               | <identifier> <assignment_sign> <expression> ';'
+               | <identifier> '=' <expression> ';'
                | <identifier> <assignment_sign> <function_call> ';'
+               | <identifier> '=' <function_call> ';'
                | <identifier> '=' <null> ';'
                | <identifier> '=' <len_stmt> ';'
                ;
@@ -944,11 +946,6 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <expression> '>' <expression>
                | <expression> '<=' <expression>
                | <expression> '>=' <expression>
-               | <expression> '+=' <expression>
-               | <expression> '-=' <expression>
-               | <expression> '*=' <expression>
-               | <expression> '/=' <expression>
-               | <expression> '%=' <expression>
                | <expression> ',' <expression>
                | <expression> '**' <expression>
                | '!' <expression>
@@ -958,13 +955,19 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <float>
                | <string_literal>
                | <boolean>
+               | <compound_assignment>
+               | <len_stmt>
                | <null>
                | <identifier> '[' <expression> ']'
                | <identifier> '{' <expression> '}'
          
+         <compound_assignment>
+               : <expression> <assignment_sign> <expression>
+               | <identifier> <assignment_sign> <expression>
+               ;
+         
          <assignment_sign>
-               : '='
-               | '+='
+               : '+='
                | '-='
                | '*='
                | '/='

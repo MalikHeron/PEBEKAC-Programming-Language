@@ -3,18 +3,11 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun int fun7(int a, int b) {
-    if (a > b) {
-        return a;
-    } else if (a < b) {
-        return b;
-    } else {
-        return a;
-    }
-    return 0;
-}
-
-print(fun7(5, 2));
+int x = 10;
+x += 10;
+string y = "Hello, World!";
+y += " Welcome!";
+print(x);
 """
 
 # Parse and analyze the program

@@ -154,10 +154,13 @@ class SemanticAnalyzer:
                     # print('fun_type:', fun_type)
                     if fun_type != var_type:
                         raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
-                if node[3][0] == 'expression':
+                elif node[3][0] == 'expression':
                     # print('assigned_value is: ', node[3][1][1])
                     self.analyze_semantics(node[3])
                     assigned_value = node[3][1][1]
+                elif node[3][0] == 'assignment_sign':
+                    print('node:', node)
+                    assignment_type = node[2]
                 elif node[3] == 'null':
                     assigned_value = node[3]
                 else:
@@ -202,6 +205,7 @@ class SemanticAnalyzer:
                     elif node[3] == 'null':
                         assigned_value = node[3]
                     elif node[2] == 'assignment_sign':
+                        print('node:', node)
                         assignment_type = node[2]
                     else:
                         assigned_value = node[3][1][1]
@@ -450,6 +454,26 @@ class SemanticAnalyzer:
                     f"Return type mismatch in function {current_function_name}: Expected {'void' if expected_return_type == 'o' else expected_return_type}, got {return_expr_type}"
                 )
 
+        elif node_type == 'compound_assignment':
+            # print('node:', node)
+            # Analyze the expression to increment
+            self.analyze_semantics(node[1])
+            self.analyze_semantics(node[3])
+
+            if len(node) > 4:
+                # print('node:', node[1][1])
+                # Ensure the expression to increment is an identifier
+                if node[1][1] != 'identifier':
+                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+            else:
+                # print('node:', node[1][0])
+                # Ensure the expression to increment is an identifier
+                if node[1][0] != 'identifier':
+                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+
+            # Ensure the types match
+            self.get_expression_type(node)
+
         elif node_type == 'break_stmt':
             if self.in_loop is False:
                 raise Exception("Error: break statement not inside loop or switch")
@@ -496,13 +520,14 @@ class SemanticAnalyzer:
                             left_operand_type == 'float' and right_operand_type == 'int'):
                         return 'float'
                     elif (left_operand_type == 'int' and right_operand_type == 'double') or (
-                            left_operand_type == 'double' or right_operand_type == 'int'):
+                            left_operand_type == 'double' and right_operand_type == 'int'):
                         return 'double'
                     elif (left_operand_type == 'float' and right_operand_type == 'double') or (
-                            left_operand_type == 'double' or right_operand_type == 'float'):
+                            left_operand_type == 'double' and right_operand_type == 'float'):
                         return 'double'
                     raise TypeError(f"Type mismatch in binary operation: {left_operand_type} and {right_operand_type}")
-                elif operator == '-' or operator == '*' or operator == '/':
+                elif (operator == '-' or operator == '*' or operator == '/' or operator == '%'
+                      or operator == '-=' or operator == '*=' or operator == '/=' or operator == '%='):
                     if right_operand_type == 'string' or left_operand_type == 'string':
                         raise TypeError(f"Invalid operation: {operator} on string")
                 elif operator == '==' or operator == '!=' or operator == '<' or operator == '<=' or operator == '>' or operator == '>=':
@@ -510,6 +535,32 @@ class SemanticAnalyzer:
                 return right_operand_type
             self.analyze_semantics(expr)  # Analyze right operand
             return self.get_expression_type(expr[1])
+
+        if expr_type == 'compound_assignment':
+            # print('expr:', expr)
+            # Binary operation
+            self.analyze_semantics(expr[1])
+            self.analyze_semantics(expr[3])
+            operator = expr[2][1]
+            right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
+            left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
+            # print('right_operand_type:', right_operand_type, 'operator:', operator, 'left_operand_type:', left_operand_type)
+            # Check if the types of the operands match
+            if right_operand_type != left_operand_type:
+                if (left_operand_type == 'int' and right_operand_type == 'float') or (
+                        left_operand_type == 'float' and right_operand_type == 'int'):
+                    return 'float'
+                elif (left_operand_type == 'int' and right_operand_type == 'double') or (
+                        left_operand_type == 'double' and right_operand_type == 'int'):
+                    return 'double'
+                elif (left_operand_type == 'float' and right_operand_type == 'double') or (
+                        left_operand_type == 'double' and right_operand_type == 'float'):
+                    return 'double'
+                raise TypeError(f"Type mismatch in compound assignment: {left_operand_type} and {right_operand_type}")
+            elif operator == '-=' or operator == '*=' or operator == '/=' or operator == '%=':
+                if left_operand_type == 'string':
+                    raise TypeError(f"Invalid operation: {operator} on string")
+            return left_operand_type
 
         elif expr_type == 'int':
             return 'int'

@@ -32,6 +32,7 @@ def p_stmt(p):
     stmt : fun_declaration
          | variable_declaration
          | assignment
+         | compound_assignment SEMICOLON
          | print_stmt
          | len_stmt SEMICOLON
          | control_structure
@@ -158,8 +159,9 @@ def p_assignment(p):
                | array_type identifier LBRACKET int RBRACKET ASSIGN expression SEMICOLON
                | array_type identifier LBRACKET int RBRACKET ASSIGN function_call SEMICOLON
                | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
-               | identifier assignment_sign expression SEMICOLON
+               | identifier ASSIGN expression SEMICOLON
                | identifier assignment_sign function_call SEMICOLON
+               | identifier ASSIGN function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
                | identifier ASSIGN len_stmt SEMICOLON
     """
@@ -266,11 +268,6 @@ def p_expression(p):
                | expression GREATERTHANEQUAL expression
                | expression COMMA expression
                | expression POW expression
-               | expression PLUSASSIGN expression
-               | expression MINUSASSIGN expression
-               | expression TIMESASSIGN expression
-               | expression DIVIDEASSIGN expression
-               | expression MODASSIGN expression
                | LPAREN expression RPAREN
                | NOT expression
                | identifier
@@ -281,6 +278,7 @@ def p_expression(p):
                | boolean
                | array_access
                | function_call
+               | compound_assignment
                | len_stmt
                | NULL
     """
@@ -312,10 +310,17 @@ def p_expression(p):
         p[0] = ('expression', p[1])
 
 
+def p_compound_assignment(p):
+    """
+    compound_assignment : expression assignment_sign expression
+                        | identifier assignment_sign expression
+    """
+    p[0] = ('compound_assignment', p[1], p[2], p[3])
+
+
 def p_assignment_sign(p):
     """
-    assignment_sign : ASSIGN
-                    | DIVIDEASSIGN
+    assignment_sign : DIVIDEASSIGN
                     | MINUSASSIGN
                     | MODASSIGN
                     | PLUSASSIGN

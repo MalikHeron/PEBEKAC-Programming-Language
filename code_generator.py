@@ -95,24 +95,26 @@ def generate_code(node):
     elif node_type == 'for_stmt':
         init = generate_code(node[1])
         condition = generate_code(node[2])
-        increment = generate_code(node[3][1]) + generate_code(node[3][2])
+        increment = generate_code(node[3][1])
         loop_body = generate_code(node[4])
         return f'{init}\nwhile {condition}:\n{indent(loop_body)}\n{indent(increment)}'
 
     elif node_type == 'expression':
+        # print(node)
         if node[1] == 'null':
             return 'None'
         if len(node) == 2:
             return generate_code(node[1])
-
         elif len(node) == 3:
             op = node[1]
             right = generate_code(node[2])
+            # print('op:', op, 'right:', right)
             return f'{op} {right}'
         elif len(node) == 4:
             left = generate_code(node[1])
             op = node[2]
             right = generate_code(node[3])
+            # print('left:', left, 'op:', op, 'right:', right)
             return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
@@ -145,6 +147,13 @@ def generate_code(node):
 
     elif node_type == 'assignment_sign':
         return f'{node[1]}'
+
+    elif node_type == 'compound_assignment':
+        # print(node)
+        left_expr = generate_code(node[1])
+        increment = generate_code(node[2])
+        right_expr = generate_code(node[3])
+        return f'{left_expr} {increment} {right_expr}'
 
     elif node_type == 'return_stmt':
         return f'return {generate_code(node[1])}'
