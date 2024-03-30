@@ -258,7 +258,7 @@ class SemanticAnalyzer:
             self.pop_scope()
 
             # If there's an else block, analyze its statements too
-            if node_type == 'if_stmt' and len(node) > 2:
+            if node_type == 'if_stmt' and len(node) > 3:
                 # print('if_node:', node[3])
                 self.push_scope(function_name=function_name)
                 self.analyze_semantics(node[3], function_name=function_name)

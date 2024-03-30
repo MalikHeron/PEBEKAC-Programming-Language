@@ -3,18 +3,18 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-int a = 5;
-int b = 2;
-
-if (a > 0) {
-  if (b > 0) {
-    print("a and b are both positive");
-  } else {
-    print("a is positive, but b is not");
-  }
-} else {
-  print("a is not positive");
+fun int fun7(int a, int b) {
+    if (a > b) {
+        return a;
+    } else if (a < b) {
+        return b;
+    } else {
+        return a;
+    }
+    return 0;
 }
+
+print(fun7(5, 2));
 """
 
 # Parse and analyze the program
