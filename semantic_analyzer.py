@@ -477,6 +477,7 @@ class SemanticAnalyzer:
             # Look up the identifier in the symbol table
             identifier = expr[1]
             if self.lookup_symbol(identifier):
+                # print('identifier:', self.lookup_symbol(identifier))
                 return self.lookup_symbol(identifier)
             else:
                 raise NameError(f"Identifier {identifier} is not defined")
@@ -485,8 +486,21 @@ class SemanticAnalyzer:
             # Look up the function in the symbol table
             fun_name = expr[1][1]
             fun_info = self.lookup_symbol(fun_name)
+            expr_type = expr[2][1][1][0]
+            # print('call:', expr)
+            # print('type:', expr_type)
             if fun_info:
-                return fun_info
+                if expr_type == 'expression':
+                    # print('expr:', expr[2][1][1])
+                    if len(expr[2][1][1]) > 2:
+                        expr_type = self.get_expression_type(expr[2][1][1])
+                    else:
+                        expr_type = self.get_expression_type(expr[2][1])
+                if expr_type != fun_info['return_type'][1]:
+                    # print('return_type:', expr_type)
+                    raise Exception(
+                        f"Return type mismatch in function {fun_name}: Expected {'void' if fun_info['return_type'][1] == 'o' else fun_info['return_type'][1]}, got {expr_type}")
+                return fun_info['return_type'][1]
             else:
                 raise NameError(f"Function {fun_name} is not defined")
 
