@@ -3,16 +3,27 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun int fact(int n) {
-    if (n == 0) {
-        return 1;
+fun boolean isPalindrome(string str) {
+  int length = len(str);
+  int i = 0;
+  int j = length - 1;
+  while (i < j) {
+    if (str[i] != str[j]) {
+      return false;
     }
-    return n * fact(n - 1);
+    i = i + 1;
+    j = j - 1;
+  }
+  return true;
 }
 
 fun main() {
-    int x = 5;
-    print("The factorial of ", x ,"is:", fact(x));
+  string str = "racecar";
+  if (isPalindrome(str)) {
+    print("The string is a palindrome.");
+  } else {
+    print("The string is not a palindrome.");
+  }
 }
 
 main();

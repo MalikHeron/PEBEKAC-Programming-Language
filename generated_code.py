@@ -1,8 +1,17 @@
-def fact(n):
-    if n == 0:
-        return 1
-    return n * fact(n - 1)
+def isPalindrome(str):
+    length = len(str)
+    i = 0
+    j = length - 1
+    while i < j:
+        if str[i] != str[j]:
+            return False
+        i = i + 1
+        j = j - 1
+    return True
 def main():
-    x = 5
-    print("The factorial of " , x , "is:" , fact(x))
+    str = "racecar"
+    if isPalindrome(str):
+        print("The string is a palindrome.")
+    else:
+        print("The string is not a palindrome.")
 main()

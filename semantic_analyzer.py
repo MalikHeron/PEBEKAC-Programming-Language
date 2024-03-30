@@ -141,12 +141,16 @@ class SemanticAnalyzer:
                 self.analyze_semantics(('assignment', var_type, var_name, init_value))
 
         elif node_type == 'assignment':
+            # print('node:', node)
             assigned_value, assignment_type = None, None
             if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
                 # Check if the variable being assigned is declared
                 var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
                 var_type = node[1][1]
                 if node[3][0] == 'function_call':
+                    # print('assigned_value is a: ', node[3][0])
+                    self.analyze_semantics(node[3])
+                if node[3][0] == 'expression':
                     # print('assigned_value is a: ', node[3][0])
                     self.analyze_semantics(node[3])
                 elif node[3] == 'null':
@@ -213,6 +217,8 @@ class SemanticAnalyzer:
                     raise Exception(f"Error: Invalid assignment on type {var_type}")
 
         elif node_type == 'expression':
+            # print('expression_node:', node):
+            self.analyze_semantics(node[1])
             # Handle expression nodes
             self.get_expression_type(node[1])  # Analyze left operand
 
@@ -242,6 +248,7 @@ class SemanticAnalyzer:
                 self.pop_scope()
 
         elif node_type == 'while_stmt':
+            # ('node:', node)
             # Analyze the condition expression
             self.analyze_semantics(node[1])
 
@@ -273,7 +280,7 @@ class SemanticAnalyzer:
         elif node_type == 'len_stmt':
             # Analyze expression(s) in print statement
             for expr in node[1:]:
-                print('expr:', expr)
+                # print('expr:', expr)
                 # Check if the expression is an identifier
                 if expr[0] == 'function_call':
                     # Analyze the function call expression
@@ -395,9 +402,11 @@ class SemanticAnalyzer:
             elif len(self.scope_stack[-1]) > 1:
                 current_function_name = self.scope_stack[-1]['function_name']
                 expected_return_type = self.scope_stack[-1]['return_type']
-            else:
+            elif len(self.scope_stack[-2]) == 1:
                 current_function_name = self.scope_stack[-2]['function_name']
                 expected_return_type = self.scope_stack[-2]['return_type']
+            else:
+                return
 
             # Find the function's expected return type
             # function_info = self.lookup_symbol(current_function_name)
@@ -421,7 +430,8 @@ class SemanticAnalyzer:
 
         elif node_type == 'array_access':
             # Analyze the identifier to ensure it's defined
-            array_name = node[1]
+            # print('node:', node)
+            array_name = node[1][1]
             array_info = self.lookup_symbol(array_name)
 
             if not array_info:
@@ -434,10 +444,6 @@ class SemanticAnalyzer:
             index_type = self.get_expression_type(node[2])
             if index_type != 'int':
                 raise TypeError(f"Array index must be an integer, got {index_type}")
-
-            # Add the type information for the array element to the current node
-            element_type = array_info['type'][:-5]  # Remove the 'ARRAY' suffix
-            node.append({'type': element_type})
 
     def get_expression_type(self, expr):
         # Determine the type of expression.
@@ -498,26 +504,35 @@ class SemanticAnalyzer:
             fun_name = expr[1][1]
             fun_info = self.lookup_symbol(fun_name)
             expr_type = expr[2][1][1][0]
+            # print('fun_name:', fun_name)
             # print('call:', expr)
             # print('type:', expr_type)
             if fun_info:
                 # Check if the function has a return type
                 # print('expr:', expr[2][1][1])
-                if expr_type == 'expression':
-                    if len(expr[2][1][1]) > 2:
+                if expr[0] == 'function_call':
+                    # print('expr_call:', expr)
+                    self.analyze_semantics(expr)
+                    return fun_info['return_type'][1]
+                if expr_type == 'expression' or expr_type == 'identifier' or expr_type == 'function_call':
+                    if expr_type == 'expression':
+                        if len(expr[2][1][1]) > 2:
+                            expr_type = self.get_expression_type(expr[2][1][1])
+                            if expr_type == 'identifier':
+                                # print('expr_type:', self.lookup_symbol(expr))
+                                expr_type = self.lookup_symbol([2][1])
+                        else:
+                            expr_type = self.get_expression_type(expr[2][1])
+                            if expr_type == 'identifier':
+                                # print('expr_type:', self.lookup_symbol(expr))
+                                expr_type = self.lookup_symbol([2][1])
+                    if expr_type == 'identifier':
+                        # print('expr:', expr[2][1][1][1])
+                        # print('expr_type:', self.lookup_symbol(expr[2][1][1][1])['type'])
+                        expr_type = self.lookup_symbol(expr[2][1][1][1])['type']
+                    if expr_type == 'function_call':
+                        # print('expr_call:', expr[2][1][1][1])
                         expr_type = self.get_expression_type(expr[2][1][1])
-                        if expr_type == 'identifier':
-                            # print('expr_type:', self.lookup_symbol(expr))
-                            expr_type = self.lookup_symbol([2][1])
-                    else:
-                        expr_type = self.get_expression_type(expr[2][1])
-                        if expr_type == 'identifier':
-                            # print('expr_type:', self.lookup_symbol(expr))
-                            expr_type = self.lookup_symbol([2][1])
-                if expr_type == 'identifier':
-                    # print('expr:', expr[2][1][1][1])
-                    # print('expr_type:', self.lookup_symbol(expr[2][1][1][1])['type'])
-                    expr_type = self.lookup_symbol(expr[2][1][1][1])['type']
                 if expr_type != fun_info['return_type'][1]:
                     # print('return_type:', expr_type)
                     raise Exception(

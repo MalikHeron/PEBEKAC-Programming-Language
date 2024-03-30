@@ -20,23 +20,28 @@ function Assistant({ reset, setReset }) {
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
 
    const copyToClipboard = (message: string, index: number) => {
-      const codeBlock = message.match(/```pebekac([\s\S]*?)```/);
-      if (codeBlock) {
-         navigator.clipboard.writeText(codeBlock[1].trim());
-         setTooltipTexts(prevTooltipTexts => {
-            const newTooltipTexts = [...prevTooltipTexts];
-            newTooltipTexts[index] = 'Copied!';
-            return newTooltipTexts;
-         });
-         setTimeout(() => {
-            setTooltipTexts(prevTooltipTexts => {
-               const newTooltipTexts = [...prevTooltipTexts];
-               newTooltipTexts[index] = 'Copy';
-               return newTooltipTexts;
+      if (message) {
+         navigator.clipboard.writeText(message.trim())
+            .then(() => {
+               setTooltipTexts(prevTooltipTexts => {
+                  const newTooltipTexts = [...prevTooltipTexts];
+                  newTooltipTexts[index] = 'Copied!';
+                  return newTooltipTexts;
+               });
+               setTimeout(() => {
+                  setTooltipTexts(prevTooltipTexts => {
+                     const newTooltipTexts = [...prevTooltipTexts];
+                     newTooltipTexts[index] = 'Copy';
+                     return newTooltipTexts;
+                  });
+               }, 3000);
+            })
+            .catch(err => {
+               console.error('Failed to copy text: ', err);
             });
-         }, 3000);
       }
    };
+
 
    const sendMessage = async () => {
       if (!userInput) return;
@@ -75,30 +80,6 @@ function Assistant({ reset, setReset }) {
          setIsLoading(false);
       }
    };
-
-   textAreaRef.current?.addEventListener('keypress', function (e) {
-      const maxLength = 200;
-
-      if (textAreaRef.current) {
-         if (textAreaRef.current.value.length > maxLength) {
-            e.preventDefault();
-         }
-      }
-   });
-
-   textAreaRef.current?.addEventListener('paste', function (e) {
-      const maxLength = 200;
-
-      if (e.clipboardData && textAreaRef.current) {
-         const pastedText = e.clipboardData.getData('text');
-         if (pastedText.length + textAreaRef.current.value.length > maxLength) {
-            e.preventDefault();
-            const textToPaste = pastedText.slice(0, maxLength - textAreaRef.current.value.length);
-            textAreaRef.current.value += textToPaste;
-            textAreaRef.current.focus();
-         }
-      }
-   });
 
    useEffect(() => {
       const SpeechRecognition =
@@ -159,32 +140,31 @@ function Assistant({ reset, setReset }) {
                         <div className='message-author' style={{ color: message.author === 'user' ? 'white' : 'var(--sophie-blue)' }}>{message.author === 'user' ? 'You' : 'Assistant'}</div>
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
-                        {message.author === 'user' ?
-                           <ReactMarkdown className="message-text">
-                              {message.text}
-                           </ReactMarkdown>
-                           :
-                           message.text.includes('```pebekac') && message.text.includes('```') ?
-                              <SyntaxHighlighter language="kotlin" style={darcula}>
-                                 {message.text.match(/```pebekac([\s\S]*?)```/) ? message.text.match(/```pebekac([\s\S]*?)```/)![1] : ''}
-                              </SyntaxHighlighter>
-                              :
-                              message.text
-                        }
-                        {message.author !== 'user' ?
-                           <div className="actions">
-                              <div id="copy" className="copy-message" onClick={() => copyToClipboard(message.text, index)}>
-                                 <i className='bi-copy'></i>
-                                 <span className="tooltip">{tooltipTexts[index]}</span>
-                              </div>
-                           </div>
-                           : null
-                        }
+                        <>
+                           {message.text.replace('```pebekac', '```').split('```').map((part, idx) => {
+                              if (idx % 2 === 0) {
+                                 return <ReactMarkdown key={idx} className="message-text">{part}</ReactMarkdown>;
+                              } else {
+                                 return (
+                                    <div key={idx}>
+                                       <SyntaxHighlighter language="kotlin" style={darcula}>
+                                          {part}
+                                       </SyntaxHighlighter>
+                                       <div className="actions">
+                                          <div id="copy" className="copy-message" onClick={() => copyToClipboard(part, index)}>
+                                             <i className='bi-copy'></i>
+                                             <span className="tooltip">{tooltipTexts[index]}</span>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 );
+                              }
+                           })}
+                        </>
                      </div>
                   </div>
                ))}
             </div>
-
             {/* prompt container */}
             <div className="prompt-container">
                {/* input box */}
@@ -204,7 +184,6 @@ function Assistant({ reset, setReset }) {
                      }}
                      autoFocus
                      rows={1}
-                     maxLength={200}
                   />
                   <div className="input-footer">
                      <button className="mic-button" style={{ display: speechToTextSupported ? (userInput ? 'none' : 'flex') : 'none', animation: isListening ? 'listening 1s infinite' : 'none' }} onClick={() => { setIsListening(prevState => !prevState); }}>

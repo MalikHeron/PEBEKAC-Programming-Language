@@ -78,7 +78,7 @@
    .side-pane {
       display: flex;
       flex-direction: column;
-      width: clamp(200px, 85vw, 310px);
+      width: clamp(200px, 85vw, 370px);
       min-height: 90vh;
       max-height: 90vh;
       background-color: var(--black-lighter);
@@ -99,7 +99,7 @@
       .content {
          display: flex;
          flex-direction: column;
-         width: clamp(200px, 85vw, 300px);
+         width: clamp(200px, 85vw, 360px);
          min-height: 90vh;
          max-height: 90vh;
          background-color: var(--black-lighter);
