@@ -148,15 +148,21 @@ class SemanticAnalyzer:
                 var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
                 var_type = node[1][1]
                 if node[3][0] == 'function_call':
-                    # print('assigned_value is a: ', node[3][0])
+                    # print('assigned_value is a: ', node[3])
                     self.analyze_semantics(node[3])
+                    fun_type = self.get_expression_type(node[3])
+                    # print('fun_type:', fun_type)
+                    if fun_type != var_type:
+                        raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
                 if node[3][0] == 'expression':
-                    # print('assigned_value is a: ', node[3][0])
+                    # print('assigned_value is: ', node[3][1][1])
                     self.analyze_semantics(node[3])
+                    assigned_value = node[3][1][1]
                 elif node[3] == 'null':
                     assigned_value = node[3]
                 else:
-                    assigned_value = node[3][1][1]
+                    # print('assigned_value_else:', node[3][1][1])
+                    assigned_value = node[3][1]
 
                 # Extract variable information
                 # print('assignment var_name: ', var_name)
@@ -173,16 +179,26 @@ class SemanticAnalyzer:
                 var_type = self.lookup_symbol(node[1][1])['type']
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
                 # print('assignment var_name: ', var_name)
-                # print('node: ', node)
+                # print('assignment var_type: ', var_type)
+                # print('node: ', node[3][0])
 
                 # Check if the variable being assigned is declared
                 if not self.lookup_symbol(var_name):
                     raise Exception(f"Error: Variable {var_name} not declared")
                 elif self.lookup_symbol(var_name):
                     # Check if the assigned value matches the type of the variable
-                    if node[3][0] == 'function_call':
-                        # print('assigned_value is a: ', node[3][0])
+                    if node[3][0] == 'assignment':
+                        # print('node:', node[3])
                         self.analyze_semantics(node[3])
+                        assigned_value = self.assigned_value
+                        var_type = self.lookup_symbol(var_name)['type']
+                    if node[3][0] == 'function_call':
+                        # print('assigned_value is a: ', node[3])
+                        self.analyze_semantics(node[3])
+                        fun_type = self.get_expression_type(node[3])
+                        # print('fun_type:', fun_type)
+                        if fun_type != var_type:
+                            raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
                     elif node[3] == 'null':
                         assigned_value = node[3]
                     elif node[2] == 'assignment_sign':
@@ -476,6 +492,15 @@ class SemanticAnalyzer:
                 # print('right_operand_type:', right_operand_type, 'left_operand_type:', left_operand_type)
                 # Check if the types of the operands match
                 if right_operand_type != left_operand_type:
+                    if (left_operand_type == 'int' and right_operand_type == 'float') or (
+                            left_operand_type == 'float' and right_operand_type == 'int'):
+                        return 'float'
+                    elif (left_operand_type == 'int' and right_operand_type == 'double') or (
+                            left_operand_type == 'double' or right_operand_type == 'int'):
+                        return 'double'
+                    elif (left_operand_type == 'float' and right_operand_type == 'double') or (
+                            left_operand_type == 'double' or right_operand_type == 'float'):
+                        return 'double'
                     raise TypeError(f"Type mismatch in binary operation: {left_operand_type} and {right_operand_type}")
                 elif operator == '-' or operator == '*' or operator == '/':
                     if right_operand_type == 'string' or left_operand_type == 'string':
