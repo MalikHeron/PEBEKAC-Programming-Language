@@ -16,7 +16,7 @@ fun boolean stringEquals(string string1, string string2) {
 // main function
 fun main() {
     // call the equals function to compare the two strings
-    if (stringEquals("Hello", "hello") == true) {
+    if (stringEquals("Hello", "hello")) {
         print("The strings are equal");
     } else {
         print("The strings are not equal");
@@ -261,6 +261,7 @@ main();`;
          cursorStyle: 'block',
          fontFamily: `"Fira Code", monospace`,
          fontSize: 14,
+         rows: 10
       });
 
       if (terminalRef.current) {
@@ -376,6 +377,13 @@ main();`;
                </div>
                <span className="tooltip-side">Chat</span>
             </div>
+            <div className={`doc-btn`}>
+               <div className="indicator" />
+               <div className='icon'>
+                  <i className='bi-journals'></i>
+               </div>
+               <span className="tooltip-side">Resources</span>
+            </div>
          </div>
          {/* side pane */}
          <div className="side-pane">
@@ -469,9 +477,7 @@ main();`;
                   <h6 className='header'>
                      TERMINAL
                   </h6>
-                  <div className='terminal-content'>
-                     <div id='terminal' ref={terminalRef} />
-                  </div>
+                   <div id='terminal' ref={terminalRef} />
                </div>
             </div>
          </div>

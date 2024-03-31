@@ -1,5 +1,5 @@
 import { ChatMessage } from '@models/ChatMessage';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '@styles/Assistant.scss';
 import ReactMarkdown from 'react-markdown';
 import { Timestamp } from 'firebase/firestore';
@@ -42,7 +42,6 @@ function Assistant({ reset, setReset }) {
       }
    };
 
-
    const sendMessage = async () => {
       if (!userInput) return;
 
@@ -62,8 +61,7 @@ function Assistant({ reset, setReset }) {
       try {
          // Send message to backend here
          new ChatService().getResponse(trimmedInput).then((botResponse) => {
-            const response = botResponse;
-            const botMessage = { author: 'bot', text: response, timestamp: new Timestamp(seconds, milliseconds) };
+            const botMessage = { author: 'bot', text: botResponse, timestamp: new Timestamp(seconds, milliseconds) };
             setMessages([...newMessages, botMessage]);
          }).catch((error) => {
             throw error;
@@ -109,7 +107,7 @@ function Assistant({ reset, setReset }) {
       if (textAreaRef.current && chatContainerRef.current) {
          textAreaRef.current.style.height = 'inherit';
          const scrollHeight = textAreaRef.current.scrollHeight;
-         textAreaRef.current.style.height = `${scrollHeight > 100 ? 100 : scrollHeight}px`;
+         textAreaRef.current.style.height = `${scrollHeight > 300 ? 300 : scrollHeight}px`;
          chatContainerRef.current.style.height = `${scrollHeight > 80 ? '85%' : '90%'}`;
       }
    }, [userInput]);

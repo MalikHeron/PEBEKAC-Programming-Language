@@ -20,7 +20,8 @@
          display: none;
       }
 
-      .chat-btn {
+      .chat-btn,
+      .doc-btn {
          width: 100%;
          display: flex;
          justify-content: space-between;
@@ -68,7 +69,8 @@
          }
       }
 
-      .chat-btn {
+      .chat-btn,
+      .doc-btn {
          .tooltip-side {
             transform: translate(50px, 0px);
          }
@@ -292,11 +294,6 @@
             .header {
                font-size: 0.8em;
                text-decoration: underline;
-            }
-
-            .terminal-content {
-               overflow-y: auto;
-               height: 100%;
             }
          }
       }
