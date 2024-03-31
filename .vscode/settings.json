@@ -1,0 +1,9 @@
+{
+   "python.analysis.extraPaths": [
+      "./backend/src"
+   ],
+   "cSpell.words": [
+      "darcula",
+      "pebekac"
+   ]
+}
