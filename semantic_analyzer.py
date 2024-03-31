@@ -545,7 +545,7 @@ class SemanticAnalyzer:
 
         elif node_type == 'break_stmt':
             if self.in_loop is False:
-                raise Exception("Error: break statement not inside loop or switch")
+                raise Exception("Error: break statement not inside a loop")
 
         elif node_type == 'array_access':
             # Analyze the identifier to ensure it's defined
