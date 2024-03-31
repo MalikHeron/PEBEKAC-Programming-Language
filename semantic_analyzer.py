@@ -109,15 +109,15 @@ class SemanticAnalyzer:
             param_type = node[1][1]
             param_name = node[2][1]
 
-            # print('function_name:', function_name, 'param:', node, 'param_type:', param_type, 'param_name:', param_name)
+            print('function_name:', function_name, 'param:', node, 'param_type:', param_type, 'param_name:', param_name)
 
             # Check if the parameter is already declared
-            if self.lookup_symbol(param_name) and self.lookup_symbol(param_name)['function_name'] == function_name:
+            if self.lookup_symbol(param_name):
                 raise Exception(
                     f"Error: Parameter {param_name} already declared in {function_name}")
             else:
                 # Add parameter to the symbol table
-                self.declare_symbol(param_name, {'function_name': function_name, 'type': param_type})
+                self.declare_symbol(param_name, {'type': param_type})
 
             if len(node) > 3:
                 self.analyze_semantics(node[3], function_name=function_name)
