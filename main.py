@@ -3,19 +3,23 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun stringList caesarCypher(string text, int shift) {
-    stringList result = null;
-    for (int i = 0; i < len(text); i += 1) {
-        string c = text[i];
-        if (c >= "a" && c <= "z") {
-            c = (c - "a" + shift) % 26 + "a";
-        } else if (c >= "A" && c <= "Z") {
-            c = (c - "A" + shift) % 26 + "A";
-        }
-        result = result + c;
+fun string caesarCypher(string text, int shift) {
+  int i = 0;
+  string result = "";
+  while (i < len(text)) {
+    string c = text[i];
+    if (c >= 'a' && c <= 'z') {
+      c = (c - 'a' + shift) % 26 + 'a';
+    } else if (c >= 'A' && c <= 'Z') {
+      c = (c - 'A' + shift) % 26 + 'A';
     }
-    return result;
+    result = result + c;
+    i = i + 1;
+  }
+  return result;
 }
+
+print(caesarCypher("Hello World", 3));
 """
 
 # Parse and analyze the program

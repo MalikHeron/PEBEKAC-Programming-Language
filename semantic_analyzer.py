@@ -9,7 +9,6 @@ class SemanticAnalyzer:
         self.assigned_value = None
         self.in_loop = False
         self.in_function = False
-        self.expr = None
 
     def is_in_function(self, boolean):
         self.in_function = boolean
@@ -17,7 +16,6 @@ class SemanticAnalyzer:
     def looping(self, value):
         self.in_loop = value
 
-    # Modify self.push_scope() and self.pop_scope() functions to include the current function name
     def push_scope(self, function_name=None, return_type=None):
         if function_name and return_type:
             self.scope_stack.append({'function_name': function_name, 'return_type': return_type})
@@ -58,7 +56,7 @@ class SemanticAnalyzer:
         elif node_type == 'stmt_list':
             # Analyze each statement in the statement list
             for stmt in node[1:]:
-                self.analyze_semantics(stmt)
+                self.analyze_semantics(stmt, function_name=function_name)
 
         elif node_type == 'fun_declaration':
             # Add function information to the symbol table
@@ -72,8 +70,10 @@ class SemanticAnalyzer:
                 params = node[2]
             elif len(node) == 5:
                 fun_name = node[2][1]  # Extract the actual function name from the identifier non-terminal
-                return_type = node[1][1]
+                return_type = node[1][1][1]
                 params = node[3]
+
+            # print('fun_name:', fun_name, 'return_type:', return_type, 'params:', params)
 
             if self.lookup_symbol(fun_name):
                 if len(self.scope_stack) > 1:
@@ -114,13 +114,13 @@ class SemanticAnalyzer:
             # Check if the parameter is already declared
             if self.lookup_symbol(param_name) and self.lookup_symbol(param_name)['function_name'] == function_name:
                 raise Exception(
-                    f"Error: Parameter {param_name} already declared in previous declaration of function {function_name}")
+                    f"Error: Parameter {param_name} already declared in {function_name}")
             else:
                 # Add parameter to the symbol table
                 self.declare_symbol(param_name, {'function_name': function_name, 'type': param_type})
 
             if len(node) > 3:
-                self.analyze_semantics(node[3])
+                self.analyze_semantics(node[3], function_name=function_name)
 
         elif node_type == 'variable_declaration':
             # Extract variable information
@@ -138,7 +138,7 @@ class SemanticAnalyzer:
             if len(node) == 4:
                 init_value = node[3]
                 # First add the variable to the symbol table, then analyze the initialization
-                self.analyze_semantics(('assignment', var_type, var_name, init_value))
+                self.analyze_semantics(('assignment', var_type, var_name, init_value), function_name=function_name)
 
         elif node_type == 'assignment':
             # print('node:', node)
@@ -150,14 +150,14 @@ class SemanticAnalyzer:
                     var_type = node[1][1]
                     if node[3][0] == 'function_call':
                         # print('assigned_value is a: ', node[3])
-                        self.analyze_semantics(node[3])
-                        fun_type = self.get_expression_type(node[3])
+                        self.analyze_semantics(node[3], function_name=function_name)
+                        fun_type = self.get_expression_type(node[3], function_name=function_name)
                         # print('fun_type:', fun_type)
                         if fun_type != var_type:
                             raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
                     elif node[3][0] == 'expression':
                         # print('assigned_value is: ', node[3][1][1])
-                        self.analyze_semantics(node[3])
+                        self.analyze_semantics(node[3], function_name=function_name)
                         assigned_value = node[3][1][1]
                     elif node[3][0] == 'assignment_sign':
                         # print('node:', node)
@@ -180,7 +180,7 @@ class SemanticAnalyzer:
                         raise Exception(f"Error: Variable {var_name} already declared")
                 else:
                     var_name = node[2][1]
-                    var_type = self.get_expression_type(node[1][1])
+                    var_type = self.get_expression_type(node[1][1], function_name=function_name)
 
                     # print('var_name: ', var_name)
                     # print('var_type: ', var_type)
@@ -197,8 +197,8 @@ class SemanticAnalyzer:
                                 print('assigned_value is: ', values[1][1])
                                 print('assigned_type is: ', values[1][0])
                             """
-                            self.analyze_semantics(values)
-                            value_type = self.get_expression_type(values[1])
+                            self.analyze_semantics(values, function_name=function_name)
+                            value_type = self.get_expression_type(values[1], function_name=function_name)
                             # print('value_type:', value_type)
                             if value_type != var_type:
                                 if ((var_type == 'intList' and value_type == 'int')
@@ -238,13 +238,13 @@ class SemanticAnalyzer:
                     # Check if the assigned value matches the type of the variable
                     if node[3][0] == 'assignment':
                         # print('node:', node[3])
-                        self.analyze_semantics(node[3])
+                        self.analyze_semantics(node[3], function_name=function_name)
                         assigned_value = self.assigned_value
                         var_type = self.lookup_symbol(var_name)['type']
                     if node[3][0] == 'function_call':
                         # print('assigned_value is a: ', node[3])
-                        self.analyze_semantics(node[3])
-                        fun_type = self.get_expression_type(node[3])
+                        self.analyze_semantics(node[3], function_name=function_name)
+                        fun_type = self.get_expression_type(node[3], function_name=function_name)
                         # print('fun_type:', fun_type)
                         if fun_type != var_type:
                             raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
@@ -264,8 +264,8 @@ class SemanticAnalyzer:
                 pass  # Allow the return type checking to be done by python compiler
             elif node[3][1][0] == 'array_access':
                 # print('array_node:', node[3][1])
-                self.analyze_semantics(node[3][1])
-                assigned_value = self.get_expression_type(node[3][1])
+                self.analyze_semantics(node[3][1], function_name=function_name)
+                assigned_value = self.get_expression_type(node[3][1], function_name=function_name)
                 # print('assigned_value:', assigned_value)
                 # print('var_type:', var_type)
                 if assigned_value != var_type:
@@ -306,23 +306,23 @@ class SemanticAnalyzer:
 
         elif node_type == 'expression':
             # print('expression_node:', node):
-            self.analyze_semantics(node[1])
+            self.analyze_semantics(node[1], function_name=function_name)
             # Handle expression nodes
-            self.get_expression_type(node[1])  # Analyze left operand
+            self.get_expression_type(node[1], function_name=function_name)  # Analyze left operand
 
             if len(node) == 4:  # Binary operation
                 operator = node[2]
-                self.analyze_semantics(operator)  # Analyze operator
-                self.analyze_semantics(node[3])  # Analyze right operand
+                self.analyze_semantics(operator, function_name=function_name)  # Analyze operator
+                self.analyze_semantics(node[3], function_name=function_name)  # Analyze right operand
 
         elif node_type == 'control_structure':
             # Analyze the control structure
-            self.analyze_semantics(node[1])
+            self.analyze_semantics(node[1], function_name=function_name)
 
         elif node_type == 'if_stmt':
             # print('node:', node)
             # Analyze the condition expression
-            self.analyze_semantics(node[1])
+            self.analyze_semantics(node[1], function_name=function_name)
 
             # Analyze statements in the if block
             self.push_scope(function_name=function_name)
@@ -346,7 +346,7 @@ class SemanticAnalyzer:
         elif node_type == 'while_stmt':
             # ('node:', node)
             # Analyze the condition expression
-            self.analyze_semantics(node[1])
+            self.analyze_semantics(node[1], function_name=function_name)
 
             # Analyze statements in the while loop body
             self.push_scope(function_name=function_name)
@@ -357,9 +357,9 @@ class SemanticAnalyzer:
 
         elif node_type == 'for_stmt':
             # Analyze Assignment expression
-            self.analyze_semantics(node[1])
-            self.analyze_semantics(node[2])
-            self.analyze_semantics(node[3])
+            self.analyze_semantics(node[1], function_name=function_name)
+            self.analyze_semantics(node[2], function_name=function_name)
+            self.analyze_semantics(node[3], function_name=function_name)
 
             # Analyze statements in the for loop body
             self.push_scope(function_name=function_name)
@@ -371,7 +371,7 @@ class SemanticAnalyzer:
         elif node_type == 'print_stmt':
             # Analyze expression(s) in print statement
             for expr in node[1:]:
-                self.analyze_semantics(expr)
+                self.analyze_semantics(expr, function_name=function_name)
 
         elif node_type == 'len_stmt':
             # Analyze expression(s) in print statement
@@ -380,10 +380,10 @@ class SemanticAnalyzer:
                 # Check if the expression is an identifier
                 if expr[0] == 'function_call':
                     # Analyze the function call expression
-                    self.analyze_semantics(expr)
+                    self.analyze_semantics(expr, function_name=function_name)
 
             # Check the type of the expression
-            expr_type = self.get_expression_type(node[1])
+            expr_type = self.get_expression_type(node[1], function_name=function_name)
 
             # Check if expression is valid...
             if expr_type is None:
@@ -459,11 +459,11 @@ class SemanticAnalyzer:
                         if arg[0] == 'expression':
                             if arg[1][0] == 'function_call':
                                 check_arg_type(arg[1])
-                                self.analyze_semantics(arg[1])
+                                self.analyze_semantics(arg[1], function_name=function_name)
                             else:
-                                arg_types.append(self.get_expression_type(arg[1]))
+                                arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
                         if arg[0] == 'function_call':
-                            arg_types.append(self.get_expression_type(arg[1]))
+                            arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
                         if arg[0] == 'arg_list':
                             check_arg_type(arg)
                         # print('arg_types:', arg_types)
@@ -473,9 +473,9 @@ class SemanticAnalyzer:
                     for param_ in list_param[1:]:
                         # print('param:', param_)
                         if param_[0] == 'general_type':
-                            param_types.append(self.get_expression_type(param_[1]))
+                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
                         if param_[0] == 'function_call':
-                            param_types.append(self.get_expression_type(param_[1]))
+                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
                         if param_[0] == 'param':
                             check_param_type(param_)
                         # print('param_types:', param_types)
@@ -492,7 +492,7 @@ class SemanticAnalyzer:
             # First, find out the current function's name from the scope stack
             # print('scope_stack:', self.scope_stack[-2])
             # print('node:', node)
-            self.get_expression_type(node[1])
+            self.get_expression_type(node[1], function_name=function_name)
 
             if function_name is not None:
                 current_function_name = function_name
@@ -510,7 +510,7 @@ class SemanticAnalyzer:
             # function_info = self.lookup_symbol(current_function_name)
             # print('function_info:', function_info)
             # Then, check the type of the return expression
-            return_expr_type = self.get_expression_type(node[1])
+            return_expr_type = self.get_expression_type(node[1], function_name=function_name)
 
             if isinstance(return_expr_type, dict):
                 return_expr_type = return_expr_type['type']
@@ -526,8 +526,8 @@ class SemanticAnalyzer:
         elif node_type == 'compound_assignment':
             # print('node:', node)
             # Analyze the expression to increment
-            self.analyze_semantics(node[1])
-            self.analyze_semantics(node[3])
+            self.analyze_semantics(node[1], function_name=function_name)
+            self.analyze_semantics(node[3], function_name=function_name)
 
             if len(node) > 4:
                 # print('node:', node[1][1])
@@ -541,7 +541,7 @@ class SemanticAnalyzer:
                     raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
 
             # Ensure the types match
-            self.get_expression_type(node)
+            self.get_expression_type(node, function_name=function_name)
 
         elif node_type == 'break_stmt':
             if self.in_loop is False:
@@ -557,14 +557,14 @@ class SemanticAnalyzer:
                 raise NameError(f"Array {array_name} is not defined")
 
             # Analyze the index expression
-            self.analyze_semantics(node[2])
+            self.analyze_semantics(node[2], function_name=function_name)
 
             # Ensure the index expression evaluates to an integer
-            index_type = self.get_expression_type(node[2])
+            index_type = self.get_expression_type(node[2], function_name=function_name)
             if index_type != 'int':
                 raise TypeError(f"Array index must be an integer, got {index_type}")
 
-    def get_expression_type(self, expr):
+    def get_expression_type(self, expr, function_name):
         # Determine the type of expression.
         if isinstance(expr, tuple):
             expr_type = expr[0]
@@ -575,17 +575,19 @@ class SemanticAnalyzer:
 
         if expr_type == 'expression':
             if len(expr) >= 4:
-                # print('expr:', expr)
+                print('binary_expr:', expr)
                 # Binary operation
-                self.analyze_semantics(expr[1])
-                self.analyze_semantics(expr[3])
+                self.analyze_semantics(expr[1], function_name=function_name)
+                self.analyze_semantics(expr[3], function_name=function_name)
                 operator = expr[2]
-                right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
-                left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
+                right_operand_type = self.get_expression_type(expr[3],
+                                                              function_name=function_name)  # Analyze right operand
+                left_operand_type = self.get_expression_type(expr[1],
+                                                             function_name=function_name)  # Analyze left operand
                 # print('right_operand_type:', right_operand_type, 'left_operand_type:', left_operand_type)
                 # Check if the types of the operands match
                 if right_operand_type != left_operand_type:
-                    get_type("binary operation", left_operand_type, right_operand_type)
+                    return get_type("binary operation", left_operand_type, right_operand_type)
                 elif (operator == '-' or operator == '*' or operator == '/' or operator == '%'
                       or operator == '-=' or operator == '*=' or operator == '/=' or operator == '%='):
                     if right_operand_type == 'string' or left_operand_type == 'string':
@@ -593,17 +595,17 @@ class SemanticAnalyzer:
                 elif operator == '==' or operator == '!=' or operator == '<' or operator == '<=' or operator == '>' or operator == '>=':
                     return 'boolean'
                 return right_operand_type
-            self.analyze_semantics(expr)  # Analyze right operand
-            return self.get_expression_type(expr[1])
+            self.analyze_semantics(expr, function_name=function_name)  # Analyze right operand
+            return self.get_expression_type(expr[1], function_name=function_name)
 
         if expr_type == 'compound_assignment':
             # print('expr:', expr)
             # Binary operation
-            self.analyze_semantics(expr[1])
-            self.analyze_semantics(expr[3])
+            self.analyze_semantics(expr[1], function_name=function_name)
+            self.analyze_semantics(expr[3], function_name=function_name)
             operator = expr[2][1]
-            right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
-            left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
+            right_operand_type = self.get_expression_type(expr[3], function_name=function_name)  # Analyze right operand
+            left_operand_type = self.get_expression_type(expr[1], function_name=function_name)  # Analyze left operand
             # print('right_operand_type:', right_operand_type, 'operator:', operator,
             #      'left_operand_type:', left_operand_type)
             # Check if the types of the operands match
@@ -652,17 +654,17 @@ class SemanticAnalyzer:
                 # print('expr:', expr[2][1][1])
                 if expr[0] == 'function_call':
                     # print('expr_call:', expr)
-                    self.analyze_semantics(expr)
+                    self.analyze_semantics(expr, function_name=function_name)
                     return fun_info['return_type'][1]
                 if expr_type == 'expression' or expr_type == 'identifier' or expr_type == 'function_call':
                     if expr_type == 'expression':
                         if len(expr[2][1][1]) > 2:
-                            expr_type = self.get_expression_type(expr[2][1][1])
+                            expr_type = self.get_expression_type(expr[2][1][1], function_name=function_name)
                             if expr_type == 'identifier':
                                 # print('expr_type:', self.lookup_symbol(expr))
                                 expr_type = self.lookup_symbol([2][1])
                         else:
-                            expr_type = self.get_expression_type(expr[2][1])
+                            expr_type = self.get_expression_type(expr[2][1], function_name=function_name)
                             if expr_type == 'identifier':
                                 # print('expr_type:', self.lookup_symbol(expr))
                                 expr_type = self.lookup_symbol([2][1])
@@ -672,7 +674,7 @@ class SemanticAnalyzer:
                         expr_type = self.lookup_symbol(expr[2][1][1][1])['type']
                     if expr_type == 'function_call':
                         # print('expr_call:', expr[2][1][1][1])
-                        expr_type = self.get_expression_type(expr[2][1][1])
+                        expr_type = self.get_expression_type(expr[2][1][1], function_name=function_name)
                 if expr_type != fun_info['return_type'][1]:
                     # print('return_type:', expr_type)
                     raise Exception(
