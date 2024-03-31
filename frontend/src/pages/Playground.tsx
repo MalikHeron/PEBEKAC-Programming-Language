@@ -8,8 +8,19 @@ import 'xterm/css/xterm.css';
 function Playground() {
    const terminalRef = useRef<HTMLDivElement>(null);
    const [terminalInstance, setTerminalInstance] = useState<Terminal | null>(null);
-   const defaultCode = `fun main() {
-    print("Hello World!");
+   const defaultCode = `# Check if two strings are the same
+fun boolean stringEquals(string string1, string string2) {
+    return string1 == string2;
+}
+
+// main function
+fun main() {
+    // call the equals function to compare the two strings
+    if (stringEquals("Hello", "hello")) {
+        print("The strings are equal");
+    } else {
+        print("The strings are not equal");
+    }
 }
 
 main();`;
@@ -31,7 +42,8 @@ main();`;
 
       monaco.languages.setMonarchTokensProvider('PEBEKAC', {
          keywords: [
-            'fun', 'return', 'if', 'for', 'while', 'void', 'break',
+            'fun', 'return', 'if', 'else', 'for', 'while', 'void', 'break',
+            'true', 'false', 'True', 'False', 'null',
             'intList', 'floatList', 'stringList', 'doubleList',
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
             'int', 'float', 'double', 'string', 'boolean'
@@ -39,8 +51,9 @@ main();`;
          tokenizer: {
             root: [
                // Comments
-               [/\/\*/, 'comment', '@comment'], // Block comments
-               [/\/\/.*$/, 'comment'], // Line comments
+               [/\/\*/, 'comment', '@comment'],
+               [/\/\/.*/, 'comment'],
+               [/#.*/, 'comment'],
 
                // Keywords and identifiers
                [/[a-zA-Z_$][\w$]*/, {
@@ -167,9 +180,6 @@ main();`;
                // No more input prompts, break the loop
                break;
             }
-
-            // Send user input to the server
-            await provideUserInput(userInput);
          }
       } catch (error) {
          // Handle errors
@@ -183,7 +193,7 @@ main();`;
    const stopExecution = async () => {
       try {
          // Send a request to the server to stop execution
-         const response = await fetch('/stop_execution', { method: 'POST' });
+         const response = await fetch('https://pebekac.azurewebsites.net/stop_execution', { method: 'POST' });
          if (!response.ok) {
             throw new Error('Failed to stop execution.');
          }
@@ -200,30 +210,11 @@ main();`;
       return !running;
    };
 
-   // Function to provide user input to the server
-   const provideUserInput = async (input) => {
-      try {
-         const response = await fetch('/provide_input', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ input }),
-         });
-
-         if (!response.ok) {
-            throw new Error('Failed to provide user input.');
-         }
-      } catch (error) {
-         console.error('Error:', error);
-      }
-   };
-
    // Function to compile and run code
    const compileAndRunCode = async (code) => {
       try {
          // Local Flask backend URL
-         const apiUrl = 'http://localhost:5000/compile_code';
+         const apiUrl = 'https://pebekac.azurewebsites.net/compile_code';
 
          // Fetch data from the local endpoint
          const response = await fetch(apiUrl, {
@@ -270,6 +261,7 @@ main();`;
          cursorStyle: 'block',
          fontFamily: `"Fira Code", monospace`,
          fontSize: 14,
+         rows: 10
       });
 
       if (terminalRef.current) {
@@ -385,6 +377,13 @@ main();`;
                </div>
                <span className="tooltip-side">Chat</span>
             </div>
+            <div className={`doc-btn`}>
+               <div className="indicator" />
+               <div className='icon'>
+                  <i className='bi-journals'></i>
+               </div>
+               <span className="tooltip-side">Resources</span>
+            </div>
          </div>
          {/* side pane */}
          <div className="side-pane">
@@ -478,9 +477,7 @@ main();`;
                   <h6 className='header'>
                      TERMINAL
                   </h6>
-                  <div className='terminal-content'>
-                     <div id='terminal' ref={terminalRef} />
-                  </div>
+                   <div id='terminal' ref={terminalRef} />
                </div>
             </div>
          </div>

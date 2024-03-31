@@ -4,7 +4,7 @@
    min-height: 90vh;
 
    @media screen and (max-width: 850px) {
-      max-height: 95vh;
+      max-height: 80vh;
    }
 
    .side-pane-mini {
@@ -16,10 +16,14 @@
       transition: all 0.3s ease-in-out;
       overflow: hidden;
 
-      .chat-btn {
+      @media screen and (max-width: 850px) {
+         display: none;
+      }
+
+      .chat-btn,
+      .doc-btn {
          width: 100%;
          display: flex;
-         flex-wrap: wrap;
          justify-content: space-between;
          align-items: center;
          margin: 0;
@@ -39,7 +43,6 @@
 
          .icon {
             font-size: 1.7em;
-            padding: 0em;
             margin-left: 0.3em;
             color: gray;
          }
@@ -66,7 +69,8 @@
          }
       }
 
-      .chat-btn {
+      .chat-btn,
+      .doc-btn {
          .tooltip-side {
             transform: translate(50px, 0px);
          }
@@ -76,7 +80,7 @@
    .side-pane {
       display: flex;
       flex-direction: column;
-      width: clamp(200px, 85vw, 300px);
+      width: clamp(200px, 85vw, 370px);
       min-height: 90vh;
       max-height: 90vh;
       background-color: var(--black-lighter);
@@ -91,23 +95,13 @@
 
       // hide the sidebar when the screen is too small
       @media screen and (max-width: 850px) {
-         overflow: hidden;
-         position: absolute;
-         margin-right: 0;
-         left: 0;
-         width: 0;
-         z-index: 1000;
-         border-radius: 10px;
-
-         .content {
-            padding: 0.6em;
-         }
+         display: none;
       }
 
       .content {
          display: flex;
          flex-direction: column;
-         width: clamp(200px, 85vw, 300px);
+         width: clamp(200px, 85vw, 360px);
          min-height: 90vh;
          max-height: 90vh;
          background-color: var(--black-lighter);
@@ -300,11 +294,6 @@
             .header {
                font-size: 0.8em;
                text-decoration: underline;
-            }
-
-            .terminal-content {
-               overflow-y: auto;
-               height: 100%;
             }
          }
       }

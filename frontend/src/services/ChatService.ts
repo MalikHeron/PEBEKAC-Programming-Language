@@ -12,7 +12,7 @@ export class ChatService {
       const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
       const generationConfig = {
-         temperature: 0.9,
+         temperature: 0,
          topK: 1,
          topP: 1,
          maxOutputTokens: 2048,
@@ -40,9 +40,11 @@ export class ChatService {
       const parts = [
          { text: `
          You are a code assistant for the PEBEKAC programming language. 
-         Do not answer any query that isn't related to coding in PEBEKAC. 
-         This is the grammar of the language along with the reserve words, 
-         you must write valid programs according to the language, don't make any assumptions:
+         You should be very friendly and helpful. You should be engaging and supportive.
+         You should answer anything outside the scope of PEBEKAC and friendly interactions. 
+         You should explain any code written for the user.
+         This is the grammar for PEBEKAC Programming language along with the reserve words.
+         You must write valid programs according to the language, follow the grammar and reserve words closely.
 
          <program> 
                : <stmt_list>
@@ -56,10 +58,12 @@ export class ChatService {
          <stmt> 
                : <fun_declaration>
                | <print_stmt>
+               | <len_stmt> ';'
                | <function_call> ';'
                | <return_stmt>
                | <variable_declaration>
                | <assignment>
+               | <compound_assignment> ';'
                | <control_structure>
                | <break_stmt>
                | <comment>
@@ -76,6 +80,10 @@ export class ChatService {
          <param>
                : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
+               ;
+         
+         <len_stmt>
+               : 'len' '(' <identifier> ')'
                ;
          
          <print_stmt>
@@ -107,20 +115,22 @@ export class ChatService {
                | <general_type> <identifier> '=' <function_call> ';'
                | <general_type> <identifier> '=' <null> ';'
                | <list_type> <identifier> '=' <null> ';'
-               | <list_type> <identifier> '[' <digit> ']' '=' <null> ';'
-               | <list_type> <identifier> '[' <digit> ']' '=' <expression> ';'
-               | <list_type> <identifier> '[' <digit> ']' '=' <function_call> ';'
+               | <list_type> <identifier> '[' <int> ']' '=' <null> ';'
+               | <list_type> <identifier> '[' <int> ']' '=' <expression> ';'
+               | <list_type> <identifier> '[' <int> ']' '=' <function_call> ';'
                | <list_type> <identifier> '=' '[' <expression> ']' ';'
                | <list_type> <identifier> '=' <function_call> ';'
                | <array_type> <identifier> '=' <null> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <null> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <expression> ';'
-               | <array_type> <identifier> '{' <digit> '}' '=' <function_call>
+               | <array_type> <identifier> '[' <int> ']' '=' <null> ';'
+               | <array_type> <identifier> '[' <int> ']' '=' <expression> ';'
+               | <array_type> <identifier> '[' <int> ']' '=' <function_call>
                | <array_type> <identifier> '=' '{' <expression> '}' ';'
                | <array_type> <identifier> '=' <function_call> ';'
                | <identifier> '=' <expression> ';'
+               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <function_call> ';'
                | <identifier> '=' <null> ';'
+               | <identifier> '=' <len_stmt> ';'
                ;
          
          <control_structure> 
@@ -137,7 +147,7 @@ export class ChatService {
          <comment>
                : '//' <identifier>
                | '#' <identifier>
-               | '/*' <identifier>  '*/'
+               | '/*' <identifier> '*/'
                ;
          
          <return_type>
@@ -147,10 +157,14 @@ export class ChatService {
                ;
          
          <if_stmt>
-               : 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' '{' <stmt_list> '}'
-               | 'if' '(' <expression> ')' '{' <stmt_list> '}' 'else' <if_stmt>
-               | 'if' '(' <expression> ')' '{' <stmt_list> '}'
+               : 'if' '(' <expression> ')' '{' <stmt_list> '}'
+               | 'if' '(' <expression> ')' '{' <stmt_list> '}' <else_stmt>
                | <expression> '?' <expression> ':' <expression> ';'
+               ;
+         
+         <else_stmt>
+               : 'else' '{' <stmt_list> '}'
+               | 'else' <if_stmt>
                ;
          
          <for_stmt>
@@ -176,29 +190,40 @@ export class ChatService {
                | <expression> '>' <expression>
                | <expression> '<=' <expression>
                | <expression> '>=' <expression>
-               | <expression> '+=' <expression>
-               | <expression> '-=' <expression>
-               | <expression> '*=' <expression>
-               | <expression> '/=' <expression>
-               | <expression> '%=' <expression>
-               | <expression> '++'
-               | <expression> '--'
-               | '++' <expression>
-               | '--' <expression>
                | <expression> ',' <expression>
                | <expression> '**' <expression>
                | '!' <expression>
                | '(' <expression> ')'
                | <identifier>
-               | <digit>
+               | <int>
+               | <float>
                | <string_literal>
                | <boolean>
+               | <compound_assignment>
+               | <len_stmt>
                | <null>
                | <identifier> '[' <expression> ']'
                | <identifier> '{' <expression> '}'
          
-         <digit> 
-               : '-'?[0-9]+('.'[0-9]+)? 
+         <compound_assignment>
+               : <expression> <assignment_sign> <expression>
+               | <identifier> <assignment_sign> <expression>
+               ;
+         
+         <assignment_sign>
+               : '+='
+               | '-='
+               | '*='
+               | '/='
+               | '%='
+               ;
+         
+         <int>
+               : '-'?[0-9]+
+               ;
+         
+         <float>
+               : '-'?[0-9]+'.'[0-9]+
                ;
          
          <string> 
@@ -206,7 +231,7 @@ export class ChatService {
                ;
          
          <identifier>
-               : ('_')?(<string>|<digit>)+
+               : ('_')?(<string>|<int>)+
                ;
          
          <boolean> 
@@ -248,7 +273,7 @@ export class ChatService {
          [
             'if', 'else', 'while', 'for', 
             'true', 'false', 'void'
-            'null', 'return', 'print', 'fun', 'break',
+            'null', 'return', 'print', 'fun', 'break', 'len',
             'int', 'float', 'double', 'string', 
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
             'intList', 'floatList', 'stringList', 'doubleList'
@@ -264,7 +289,6 @@ export class ChatService {
       });
 
       const response = result.response;
-      console.log(response.text());
       return response.text();
    }
 }

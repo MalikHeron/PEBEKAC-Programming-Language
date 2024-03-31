@@ -1,12 +1,14 @@
 import { ChatMessage } from '@models/ChatMessage';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import '@styles/Assistant.scss';
 import ReactMarkdown from 'react-markdown';
 import { Timestamp } from 'firebase/firestore';
 import useSpeechToText from '@services/SpeechToText';
 import { ChatService } from '@services/ChatService';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-function Assistant( {reset, setReset} ) {
+function Assistant({ reset, setReset }) {
    const [userInput, setUserInput] = useState('');
    const [messages, setMessages] = useState<ChatMessage[]>([]);
    const [isLoading, setIsLoading] = useState(false);
@@ -18,19 +20,26 @@ function Assistant( {reset, setReset} ) {
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
 
    const copyToClipboard = (message: string, index: number) => {
-      navigator.clipboard.writeText(message);
-      setTooltipTexts(prevTooltipTexts => {
-         const newTooltipTexts = [...prevTooltipTexts];
-         newTooltipTexts[index] = 'Copied!';
-         return newTooltipTexts;
-      });
-      setTimeout(() => {
-         setTooltipTexts(prevTooltipTexts => {
-            const newTooltipTexts = [...prevTooltipTexts];
-            newTooltipTexts[index] = 'Copy';
-            return newTooltipTexts;
-         });
-      }, 3000);
+      if (message) {
+         navigator.clipboard.writeText(message.trim())
+            .then(() => {
+               setTooltipTexts(prevTooltipTexts => {
+                  const newTooltipTexts = [...prevTooltipTexts];
+                  newTooltipTexts[index] = 'Copied!';
+                  return newTooltipTexts;
+               });
+               setTimeout(() => {
+                  setTooltipTexts(prevTooltipTexts => {
+                     const newTooltipTexts = [...prevTooltipTexts];
+                     newTooltipTexts[index] = 'Copy';
+                     return newTooltipTexts;
+                  });
+               }, 3000);
+            })
+            .catch(err => {
+               console.error('Failed to copy text: ', err);
+            });
+      }
    };
 
    const sendMessage = async () => {
@@ -52,8 +61,7 @@ function Assistant( {reset, setReset} ) {
       try {
          // Send message to backend here
          new ChatService().getResponse(trimmedInput).then((botResponse) => {
-            const response = botResponse;
-            const botMessage = { author: 'bot', text: response, timestamp: new Timestamp(seconds, milliseconds) };
+            const botMessage = { author: 'bot', text: botResponse, timestamp: new Timestamp(seconds, milliseconds) };
             setMessages([...newMessages, botMessage]);
          }).catch((error) => {
             throw error;
@@ -70,30 +78,6 @@ function Assistant( {reset, setReset} ) {
          setIsLoading(false);
       }
    };
-
-   textAreaRef.current?.addEventListener('keypress', function (e) {
-      const maxLength = 200;
-
-      if (textAreaRef.current) {
-         if (textAreaRef.current.value.length > maxLength) {
-            e.preventDefault();
-         }
-      }
-   });
-
-   textAreaRef.current?.addEventListener('paste', function (e) {
-      const maxLength = 200;
-
-      if (e.clipboardData && textAreaRef.current) {
-         const pastedText = e.clipboardData.getData('text');
-         if (pastedText.length + textAreaRef.current.value.length > maxLength) {
-            e.preventDefault();
-            const textToPaste = pastedText.slice(0, maxLength - textAreaRef.current.value.length);
-            textAreaRef.current.value += textToPaste;
-            textAreaRef.current.focus();
-         }
-      }
-   });
 
    useEffect(() => {
       const SpeechRecognition =
@@ -123,7 +107,7 @@ function Assistant( {reset, setReset} ) {
       if (textAreaRef.current && chatContainerRef.current) {
          textAreaRef.current.style.height = 'inherit';
          const scrollHeight = textAreaRef.current.scrollHeight;
-         textAreaRef.current.style.height = `${scrollHeight > 100 ? 100 : scrollHeight}px`;
+         textAreaRef.current.style.height = `${scrollHeight > 300 ? 300 : scrollHeight}px`;
          chatContainerRef.current.style.height = `${scrollHeight > 80 ? '85%' : '90%'}`;
       }
    }, [userInput]);
@@ -154,23 +138,31 @@ function Assistant( {reset, setReset} ) {
                         <div className='message-author' style={{ color: message.author === 'user' ? 'white' : 'var(--sophie-blue)' }}>{message.author === 'user' ? 'You' : 'Assistant'}</div>
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
-                        <ReactMarkdown className="message-text">
-                           {message.text}
-                        </ReactMarkdown>
-                        {message.author !== 'user' ?
-                           <div className="actions">
-                              <div id="copy" className="copy-message" onClick={() => copyToClipboard(message.text, index)}>
-                                 <i className='bi-copy'></i>
-                                 <span className="tooltip">{tooltipTexts[index]}</span>
-                              </div>
-                           </div>
-                           : null
-                        }
+                        <>
+                           {message.text.replace('```pebekac', '```').split('```').map((part, idx) => {
+                              if (idx % 2 === 0) {
+                                 return <ReactMarkdown key={idx} className="message-text">{part}</ReactMarkdown>;
+                              } else {
+                                 return (
+                                    <div key={idx}>
+                                       <SyntaxHighlighter language="kotlin" style={darcula}>
+                                          {part}
+                                       </SyntaxHighlighter>
+                                       <div className="actions">
+                                          <div id="copy" className="copy-message" onClick={() => copyToClipboard(part, index)}>
+                                             <i className='bi-copy'></i>
+                                             <span className="tooltip">{tooltipTexts[index]}</span>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 );
+                              }
+                           })}
+                        </>
                      </div>
                   </div>
                ))}
             </div>
-
             {/* prompt container */}
             <div className="prompt-container">
                {/* input box */}
@@ -190,7 +182,6 @@ function Assistant( {reset, setReset} ) {
                      }}
                      autoFocus
                      rows={1}
-                     maxLength={200}
                   />
                   <div className="input-footer">
                      <button className="mic-button" style={{ display: speechToTextSupported ? (userInput ? 'none' : 'flex') : 'none', animation: isListening ? 'listening 1s infinite' : 'none' }} onClick={() => { setIsListening(prevState => !prevState); }}>
