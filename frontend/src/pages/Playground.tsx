@@ -200,7 +200,7 @@ main();`;
    const stopExecution = async () => {
       try {
          // Send a request to the server to stop execution
-         const response = await fetch('http://pebekac.azurewebsites.net/stop_execution', { method: 'POST' });
+         const response = await fetch('https://pebekac.azurewebsites.net/stop_execution', { method: 'POST' });
          if (!response.ok) {
             throw new Error('Failed to stop execution.');
          }
@@ -218,7 +218,7 @@ main();`;
    const compileAndRunCode = async (code) => {
       try {
          // Local Flask backend URL
-         const apiUrl = 'http://pebekac.azurewebsites.net/compile_code';
+         const apiUrl = 'https://pebekac.azurewebsites.net/compile_code';
 
          // Fetch data from the local endpoint
          const response = await fetch(apiUrl, {
