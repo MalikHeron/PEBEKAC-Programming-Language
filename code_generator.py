@@ -51,6 +51,10 @@ def generate_code(node):
                 expr = generate_code(node[3])
                 sign = generate_code(node[2])
                 return f'{var_name} {sign} {expr}'
+            elif node[2][0] == '=':
+                expr = generate_code(node[3])
+                sign = generate_code(node[2])
+                return f'{var_name} {sign} {expr}'
             else:
                 expr = generate_code(node[2])
                 return f'{var_name} = {expr}'
@@ -172,6 +176,9 @@ def generate_code(node):
         array_name = generate_code(node[1])
         index = generate_code(node[2])
         return f'{array_name}[{index}]'
+
+    elif node_type == '=':
+        return '='
 
     else:
         return f'Unknown node type: {node_type}'

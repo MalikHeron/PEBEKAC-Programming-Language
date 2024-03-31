@@ -144,39 +144,85 @@ class SemanticAnalyzer:
             # print('node:', node)
             assigned_value, assignment_type = None, None
             if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
-                # Check if the variable being assigned is declared
-                var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
-                var_type = node[1][1]
-                if node[3][0] == 'function_call':
-                    # print('assigned_value is a: ', node[3])
-                    self.analyze_semantics(node[3])
-                    fun_type = self.get_expression_type(node[3])
-                    # print('fun_type:', fun_type)
-                    if fun_type != var_type:
-                        raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
-                elif node[3][0] == 'expression':
-                    # print('assigned_value is: ', node[3][1][1])
-                    self.analyze_semantics(node[3])
-                    assigned_value = node[3][1][1]
-                elif node[3][0] == 'assignment_sign':
-                    print('node:', node)
-                    assignment_type = node[2]
-                elif node[3] == 'null':
-                    assigned_value = node[3]
+                if node[1][0] == 'general_type':
+                    # Check if the variable being assigned is declared
+                    var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
+                    var_type = node[1][1]
+                    if node[3][0] == 'function_call':
+                        # print('assigned_value is a: ', node[3])
+                        self.analyze_semantics(node[3])
+                        fun_type = self.get_expression_type(node[3])
+                        # print('fun_type:', fun_type)
+                        if fun_type != var_type:
+                            raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
+                    elif node[3][0] == 'expression':
+                        # print('assigned_value is: ', node[3][1][1])
+                        self.analyze_semantics(node[3])
+                        assigned_value = node[3][1][1]
+                    elif node[3][0] == 'assignment_sign':
+                        # print('node:', node)
+                        assignment_type = node[2]
+                    elif node[3] == 'null':
+                        assigned_value = node[3]
+                    else:
+                        # print('assigned_value_else:', node[3][1][1])
+                        assigned_value = node[3][1]
+
+                    # Extract variable information
+                    # print('assignment var_name: ', var_name)
+                    # print('assigned_value: ', assigned_value)
+                    # print('assigned var_type: ', var_type)
+
+                    if not self.lookup_symbol(var_name):
+                        # Add variable to the symbol table
+                        self.declare_symbol(var_name, {'type': var_type})
+                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
+                        raise Exception(f"Error: Variable {var_name} already declared")
                 else:
-                    # print('assigned_value_else:', node[3][1][1])
-                    assigned_value = node[3][1]
+                    var_name = node[2][1]
+                    var_type = self.get_expression_type(node[1][1])
 
-                # Extract variable information
-                # print('assignment var_name: ', var_name)
-                # print('assigned_value: ', assigned_value)
-                # print('assigned var_type: ', var_type)
+                    # print('var_name: ', var_name)
+                    # print('var_type: ', var_type)
+                    # print('node: ', node)
 
-                if not self.lookup_symbol(var_name):
-                    # Add variable to the symbol table
-                    self.declare_symbol(var_name, {'type': var_type})
-                elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
-                    raise Exception(f"Error: Variable {var_name} already declared")
+                    def process_values(values):
+                        # print('values:', values)
+                        if values[0] == 'expression':
+                            """
+                            if len(values) >= 4:
+                                print('assigned_value is: ', values[1][1][1])
+                                print('assigned_type is: ', values[1][1][0])
+                            else:
+                                print('assigned_value is: ', values[1][1])
+                                print('assigned_type is: ', values[1][0])
+                            """
+                            self.analyze_semantics(values)
+                            value_type = self.get_expression_type(values[1])
+                            # print('value_type:', value_type)
+                            if value_type != var_type:
+                                if ((var_type == 'intList' and value_type == 'int')
+                                        or (var_type == 'floatList' and value_type == 'float')
+                                        or (var_type == 'stringList' and value_type == 'string')
+                                        or (var_type == 'doubleList' and value_type == 'double')):
+                                    return
+                                if ((var_type == 'intArray' and value_type == 'int')
+                                        or (var_type == 'floatArray' and value_type == 'float')
+                                        or (var_type == 'stringArray' and value_type == 'string')
+                                        or (var_type == 'doubleArray' and value_type == 'double')):
+                                    return
+                                raise Exception(f"Error: Type mismatch. Expected {var_type}, got {value_type}")
+                            if len(values) >= 4:
+                                process_values(values[3])
+
+                    # Process the values
+                    process_values(node[3])
+
+                    if not self.lookup_symbol(var_name):
+                        # Add variable to the symbol table
+                        self.declare_symbol(var_name, {'type': var_type})
+                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
+                        raise Exception(f"Error: Variable {var_name} already declared")
             else:
                 # Extract variable information
                 var_type = self.lookup_symbol(node[1][1])['type']
@@ -205,7 +251,7 @@ class SemanticAnalyzer:
                     elif node[3] == 'null':
                         assigned_value = node[3]
                     elif node[2] == 'assignment_sign':
-                        print('node:', node)
+                        # print('node:', node)
                         assignment_type = node[2]
                     else:
                         assigned_value = node[3][1][1]
@@ -216,23 +262,45 @@ class SemanticAnalyzer:
             # Check if the assigned value matches the type of the variable
             if node[3][0] == 'function_call':
                 pass  # Allow the return type checking to be done by python compiler
+            elif node[3][1][0] == 'array_access':
+                # print('array_node:', node[3][1])
+                self.analyze_semantics(node[3][1])
+                assigned_value = self.get_expression_type(node[3][1])
+                # print('assigned_value:', assigned_value)
+                # print('var_type:', var_type)
+                if assigned_value != var_type:
+                    if ((var_type == 'int' and assigned_value == 'intList')
+                            or (var_type == 'float' and assigned_value == 'floatList')
+                            or (var_type == 'string' and assigned_value == 'stringList')
+                            or (var_type == 'double' and assigned_value == 'doubleList')):
+                        return
+                    if ((var_type == 'int' and assigned_value == 'intArray')
+                            or (var_type == 'float' and assigned_value == 'floatArray')
+                            or (var_type == 'string' and assigned_value == 'stringArray')
+                            or (var_type == 'double' and assigned_value == 'doubleArray')):
+                        return
+                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got {assigned_value}")
             elif assigned_value == 'null':
                 pass
             else:
+                # print('node_else:', node[3])
                 # print('assigned_value:', assigned_value, 'var_type:', var_type)
                 if self.lookup_symbol(assigned_value):
                     if self.lookup_symbol(assigned_value)['type'] == var_type:
                         return
                 if isinstance(assigned_value, str) and var_type != 'string':
+                    if assigned_value.capitalize() == 'True' or assigned_value.capitalize() == 'False':
+                        if var_type == 'boolean':
+                            return
+                        else:
+                            raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got string")
                 elif isinstance(assigned_value, int) and var_type != 'int':
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got int")
                 elif isinstance(assigned_value, float) and (var_type != 'float' and var_type != 'double'):
                     raise Exception(f"Error: Type mismatch. Expected {var_type}, got float")
-                elif isinstance(assigned_value, bool) and var_type != 'boolean':
-                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got boolean")
-                # elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
-                #    raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
+                elif not isinstance(assigned_value, (str, int, float, bool)) and var_type == 'string':
+                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got non-string")
                 elif assignment_type is not None and assignment_type != 'ASSIGN' and var_type == 'string':
                     raise Exception(f"Error: Invalid assignment on type {var_type}")
 
@@ -562,20 +630,15 @@ class SemanticAnalyzer:
                     raise TypeError(f"Invalid operation: {operator} on string")
             return left_operand_type
 
-        elif expr_type == 'int':
-            return 'int'
-
-        elif expr_type == 'float':
-            return 'float'
-
-        elif expr_type == 'double':
-            return 'double'
-
-        elif expr_type == 'boolean':
-            return 'boolean'
-
-        elif expr_type == 'string' or expr_type == 'string_literal':
-            return 'string'
+        elif expr_type == 'array_access':
+            # print('expr:', expr)
+            # Analyze the identifier to ensure it's defined
+            array_name = expr[1][1]
+            array_info = self.lookup_symbol(array_name)
+            if array_info:
+                # print('array_info:', array_info)
+                return array_info['type']
+            raise NameError(f"Array {array_name} is not defined")
 
         elif expr_type == 'identifier':
             # Look up the identifier in the symbol table
@@ -636,6 +699,45 @@ class SemanticAnalyzer:
 
         elif expr_type == 'len_stmt':
             return 'int'
+
+        elif expr_type == 'int':
+            return 'int'
+
+        elif expr_type == 'float':
+            return 'float'
+
+        elif expr_type == 'double':
+            return 'double'
+
+        elif expr_type == 'boolean':
+            return 'boolean'
+
+        elif expr_type == 'string' or expr_type == 'string_literal':
+            return 'string'
+
+        elif expr_type == 'intList':
+            return 'intList'
+
+        elif expr_type == 'floatList':
+            return 'floatList'
+
+        elif expr_type == 'doubleList':
+            return 'doubleList'
+
+        elif expr_type == 'stringList':
+            return 'stringList'
+
+        elif expr_type == 'intArray':
+            return 'intArray'
+
+        elif expr_type == 'floatArray':
+            return 'floatArray'
+
+        elif expr_type == 'doubleArray':
+            return 'doubleArray'
+
+        elif expr_type == 'stringArray':
+            return 'stringArray'
 
         elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
             return 'boolean'
