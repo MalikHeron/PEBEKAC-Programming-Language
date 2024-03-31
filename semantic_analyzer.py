@@ -519,7 +519,8 @@ class SemanticAnalyzer:
 
             if return_expr_type != expected_return_type:
                 raise Exception(
-                    f"Return type mismatch in function {current_function_name}: Expected {'void' if expected_return_type == 'o' else expected_return_type}, got {return_expr_type}"
+                    f"Return type mismatch in function {current_function_name}: "
+                    f"Expected {'void' if expected_return_type == 'o' else expected_return_type}, got {return_expr_type}"
                 )
 
         elif node_type == 'compound_assignment':
@@ -584,16 +585,7 @@ class SemanticAnalyzer:
                 # print('right_operand_type:', right_operand_type, 'left_operand_type:', left_operand_type)
                 # Check if the types of the operands match
                 if right_operand_type != left_operand_type:
-                    if (left_operand_type == 'int' and right_operand_type == 'float') or (
-                            left_operand_type == 'float' and right_operand_type == 'int'):
-                        return 'float'
-                    elif (left_operand_type == 'int' and right_operand_type == 'double') or (
-                            left_operand_type == 'double' and right_operand_type == 'int'):
-                        return 'double'
-                    elif (left_operand_type == 'float' and right_operand_type == 'double') or (
-                            left_operand_type == 'double' and right_operand_type == 'float'):
-                        return 'double'
-                    raise TypeError(f"Type mismatch in binary operation: {left_operand_type} and {right_operand_type}")
+                    get_type("binary operation", left_operand_type, right_operand_type)
                 elif (operator == '-' or operator == '*' or operator == '/' or operator == '%'
                       or operator == '-=' or operator == '*=' or operator == '/=' or operator == '%='):
                     if right_operand_type == 'string' or left_operand_type == 'string':
@@ -612,19 +604,11 @@ class SemanticAnalyzer:
             operator = expr[2][1]
             right_operand_type = self.get_expression_type(expr[3])  # Analyze right operand
             left_operand_type = self.get_expression_type(expr[1])  # Analyze left operand
-            # print('right_operand_type:', right_operand_type, 'operator:', operator, 'left_operand_type:', left_operand_type)
+            # print('right_operand_type:', right_operand_type, 'operator:', operator,
+            #      'left_operand_type:', left_operand_type)
             # Check if the types of the operands match
             if right_operand_type != left_operand_type:
-                if (left_operand_type == 'int' and right_operand_type == 'float') or (
-                        left_operand_type == 'float' and right_operand_type == 'int'):
-                    return 'float'
-                elif (left_operand_type == 'int' and right_operand_type == 'double') or (
-                        left_operand_type == 'double' and right_operand_type == 'int'):
-                    return 'double'
-                elif (left_operand_type == 'float' and right_operand_type == 'double') or (
-                        left_operand_type == 'double' and right_operand_type == 'float'):
-                    return 'double'
-                raise TypeError(f"Type mismatch in compound assignment: {left_operand_type} and {right_operand_type}")
+                get_type("compound assignment", left_operand_type, right_operand_type)
             elif operator == '-=' or operator == '*=' or operator == '/=' or operator == '%=':
                 if left_operand_type == 'string':
                     raise TypeError(f"Invalid operation: {operator} on string")
@@ -692,7 +676,9 @@ class SemanticAnalyzer:
                 if expr_type != fun_info['return_type'][1]:
                     # print('return_type:', expr_type)
                     raise Exception(
-                        f"Return type mismatch in function {fun_name}: Expected {'void' if fun_info['return_type'][1] == 'o' else fun_info['return_type'][1]}, got {expr_type}")
+                        f"Return type mismatch in function {fun_name}: Expected "
+                        f"{'void' if fun_info['return_type'][1] == 'o'
+                        else fun_info['return_type'][1]}, got {expr_type}")
                 return fun_info['return_type'][1]
             else:
                 raise NameError(f"Function {fun_name} is not defined")
@@ -739,7 +725,8 @@ class SemanticAnalyzer:
         elif expr_type == 'stringArray':
             return 'stringArray'
 
-        elif expr_type == '==' or expr_type == '!=' or expr_type == '<' or expr_type == '<=' or expr_type == '>' or expr_type == '>=':
+        elif (expr_type == '==' or expr_type == '!=' or expr_type == '<'
+              or expr_type == '<=' or expr_type == '>' or expr_type == '>='):
             return 'boolean'
 
         else:
@@ -796,3 +783,16 @@ class SemanticAnalyzer:
         self.reset_symbol_table_and_scope_stack()
         self.analyze_semantics(ast)
         return ast
+
+
+def get_type(op_type, left_operand_type, right_operand_type):
+    if (left_operand_type == 'int' and right_operand_type == 'float') or (
+            left_operand_type == 'float' and right_operand_type == 'int'):
+        return 'float'
+    elif (left_operand_type == 'int' and right_operand_type == 'double') or (
+            left_operand_type == 'double' and right_operand_type == 'int'):
+        return 'double'
+    elif (left_operand_type == 'float' and right_operand_type == 'double') or (
+            left_operand_type == 'double' and right_operand_type == 'float'):
+        return 'double'
+    raise TypeError(f"Type mismatch in {op_type}: {left_operand_type} and {right_operand_type}")

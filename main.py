@@ -6,7 +6,7 @@ program_code = """
 int x = 10;
 x += 10;
 string y = "Hello, World!";
-y += " Welcome!";
+x = y;
 print(x);
 """
 
