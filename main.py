@@ -3,23 +3,27 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun string caesarCypher(string text, int shift) {
-  int i = 0;
-  string result = "";
-  while (i < len(text)) {
-    string c = text[i];
-    if (c >= 'a' && c <= 'z') {
-      c = (c - 'a' + shift) % 26 + 'a';
-    } else if (c >= 'A' && c <= 'Z') {
-      c = (c - 'A' + shift) % 26 + 'A';
-    }
-    result = result + c;
-    i = i + 1;
-  }
-  return result;
+# Check if two strings are the same
+fun boolean stringEquals(string string1, string string2) {
+    return string1 == string2;
 }
 
-print(caesarCypher("Hello World", 3));
+// main function
+fun main() {
+    int a = 5;
+    // call the equals function to compare the two strings
+    if (stringEquals("Hello", "hello")) {
+        print("The strings are equal");
+    } else {
+        print("The strings are not equal");
+    }
+
+    fun sum(float a, float b) {
+        print(a + b);
+    }
+}
+
+main();
 """
 
 # Parse and analyze the program
