@@ -1,7 +1,5 @@
 from ply.lex import lex
 
-# --- Tokenizer
-
 # Keywords
 reserved = {
     'class': 'CLASS',
@@ -172,7 +170,7 @@ def t_VOID(t):
 
 
 def t_STRING_LITERAL(t):
-    r'"(?:\\.|[^\\"])*"'
+    r"'(?:\\.|[^\\'])*'|\"(?:\\.|[^\\\"])*\""
     # Remove the quotes and replace escape characters
     t.value = t.value[1:-1].replace('\n', '\\n')
     return t

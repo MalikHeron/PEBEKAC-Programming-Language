@@ -1,11 +1,7 @@
 from ply.yacc import yacc
 
 
-# --- Parser
-
-
-# Write functions for each grammar rule which is
-# specified in the docstring.
+# Define the grammar rules
 def p_program(p):
     """
     program : stmt_list

@@ -197,6 +197,7 @@
       
 <string_literal> 
       : '"'<identifier>'"'
+      | "'" <identifier> "'"
       ;
 
 <general_type> 

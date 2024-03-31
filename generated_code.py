@@ -1,5 +1,10 @@
-x = 10
-x += 10
-y = "Hello, World!"
-x = y + 10
-print(x)
+def add(a, b):
+    def subtract(a, b):
+        return a - b
+    return a + b
+def multiply(a, b):
+    return a * b
+def divide(a, b):
+    return a / b
+def modulus(a, b):
+    return a % b
