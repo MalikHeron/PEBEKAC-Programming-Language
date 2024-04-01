@@ -337,11 +337,16 @@ class SemanticAnalyzer:
                 self.pop_scope()
 
         elif node_type == 'else_stmt':
-            # print('else_node:', node[1])
-            # Analyze the statements in the else block
-            self.push_scope(function_name=function_name)
-            self.analyze_semantics(node[1], function_name=function_name)
-            self.pop_scope()
+            # print('else_node:', node[1][0])
+            if node[1][0] == 'if_stmt' or node[1][0] == 'stmt_list':
+                # Analyze the statements in the else block
+                self.push_scope(function_name=function_name)
+                self.analyze_semantics(node[1], function_name=function_name)
+                self.pop_scope()
+
+                # Check if the else_if block is followed by an else statement
+                if node[1][0] == 'if_stmt' and not len(node[1]) > 3:
+                    raise Exception("Error: nested if statement not followed by a else block")
 
         elif node_type == 'while_stmt':
             # ('node:', node)
@@ -500,9 +505,11 @@ class SemanticAnalyzer:
             elif len(self.scope_stack[-1]) > 1:
                 current_function_name = self.scope_stack[-1]['function_name']
                 expected_return_type = self.scope_stack[-1]['return_type']
+                # print('scope_stack:', self.scope_stack[-1])
             elif len(self.scope_stack[-2]) == 1:
                 current_function_name = self.scope_stack[-2]['function_name']
                 expected_return_type = self.scope_stack[-2]['return_type']
+                # print('scope_stack:', self.scope_stack[-2])
             else:
                 return
 
@@ -576,6 +583,7 @@ class SemanticAnalyzer:
         if expr_type == 'expression':
             if len(expr) >= 4:
                 # print('binary_expr:', expr)
+                # print('left_operand:', expr[1], 'operator:', expr[2], 'right_operand:', expr[3])
                 # Binary operation
                 self.analyze_semantics(expr[1], function_name=function_name)
                 self.analyze_semantics(expr[3], function_name=function_name)
@@ -592,7 +600,8 @@ class SemanticAnalyzer:
                       or operator == '-=' or operator == '*=' or operator == '/=' or operator == '%='):
                     if right_operand_type == 'string' or left_operand_type == 'string':
                         raise TypeError(f"Invalid operation: {operator} on string")
-                elif operator == '==' or operator == '!=' or operator == '<' or operator == '<=' or operator == '>' or operator == '>=':
+                elif (operator == '==' or operator == '!=' or operator == '<' or operator == '<='
+                      or operator == '>' or operator == '>='):
                     return 'boolean'
                 return right_operand_type
             self.analyze_semantics(expr, function_name=function_name)  # Analyze right operand
@@ -655,7 +664,8 @@ class SemanticAnalyzer:
                 if expr[0] == 'function_call':
                     # print('expr_call:', expr)
                     self.analyze_semantics(expr, function_name=function_name)
-                    return fun_info['return_type'][1]
+                    # print('fun_info:', fun_info['return_type'])
+                    return fun_info['return_type']
                 if expr_type == 'expression' or expr_type == 'identifier' or expr_type == 'function_call':
                     if expr_type == 'expression':
                         if len(expr[2][1][1]) > 2:
@@ -675,13 +685,12 @@ class SemanticAnalyzer:
                     if expr_type == 'function_call':
                         # print('expr_call:', expr[2][1][1][1])
                         expr_type = self.get_expression_type(expr[2][1][1], function_name=function_name)
-                if expr_type != fun_info['return_type'][1]:
+                if expr_type != fun_info['return_type']:
                     # print('return_type:', expr_type)
                     raise Exception(
                         f"Return type mismatch in function {fun_name}: Expected "
-                        f"{'void' if fun_info['return_type'][1] == 'o'
-                        else fun_info['return_type'][1]}, got {expr_type}")
-                return fun_info['return_type'][1]
+                        f"{'void' if fun_info['return_type'] == 'o' else fun_info['return_type']}, got {expr_type}")
+                return fun_info['return_type']
             else:
                 raise NameError(f"Function {fun_name} is not defined")
 
