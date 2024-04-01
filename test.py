@@ -8,55 +8,60 @@ class TestCodeGeneration(unittest.TestCase):
     def setUp(self):
         # Define multiple program codes
         self.program_codes = [
-            """  
-            # Program code 1
+            """
             # Check if two strings are the same
-fun boolean stringEquals(string string1, string string2) {
-    return string1 == string2;
-}
+            fun boolean stringEquals(string string1, string string2) {
+               return string1 == string2;
+            }
 
-// main function
-fun main() {
-    // call the equals function to compare the two strings
-    if (stringEquals("Hello", "hello")) {
-        print("The strings are equal");
-    } else {
-        print("The strings are not equal");
-    }
-}
+            // main function
+            fun main() {
+               // call the equals function to compare the two strings
+               if (stringEquals("Hello", "hello")) {
+                  print("The strings are equal");
+               } else {
+                  print("The strings are not equal");
+               }
+            }
 
-main();
+            main();
             """,
             """  
             fun int factorial(int n) {
-    if (n == 0) {
-        return 1;
-    } else {
-        return n * factorial(n - 1);
-    }
-}
+               if (n == 0) {
+                  return 1;
+               }
+               return n * factorial(n - 1);
+            }
 
-print(factorial(5));
+            print(factorial(5));
             """
         ]
 
     def test_code_generation_and_execution(self):
-        for program_code in self.program_codes:
-            # Parse and analyze the program
-            ast_with_semantics = SemanticAnalyzer().parse_and_analyze(program_code)
+      self.exceptions = []  # List to store exceptions
+      for i, program_code in enumerate(self.program_codes, start=1):
+         try:
+               # Parse and analyze the program
+               ast_with_semantics = SemanticAnalyzer().parse_and_analyze(program_code)
 
-            # Generate Python code with semantics
-            python_code_with_semantics = generate_code(ast_with_semantics)
+               # Generate Python code with semantics
+               python_code_with_semantics = generate_code(ast_with_semantics)
 
-            # Save the generated Python code to a file
-            with open('generated_code.py', 'w') as file:
-                file.write(python_code_with_semantics)
+               # Save the generated Python code to a file
+               with open(f'generated_code-{i}.py', 'w') as file:
+                  file.write(python_code_with_semantics)
 
-            # Execute the generated Python code
-            try:
-                exec(open('generated_code.py').read())
-            except Exception as e:
-                self.fail("Error executing generated code: {}".format(e))
+               exec(open(f'generated_code-{i}.py').read(), globals())
+         except Exception as e:
+               self.exceptions.append(str(e))  # Convert the exception to a string before appending
+               continue  # Skip to the next program code
+
+      # If there were any exceptions, fail the test
+      if self.exceptions:
+         error_messages = "\n".join(self.exceptions)  # Now this should work
+         self.fail("Errors during code generation, analysis or execution:\n{}".format(error_messages))
+
 
 
 if __name__ == '__main__':

@@ -508,7 +508,7 @@ class SemanticAnalyzer:
                 def check_arg_type(list_arg):
                     # Check if the types of arguments match the types of parameters
                     for arg in list_arg[1:]:
-                        print('arg:', arg)
+                        # print('arg:', arg)
                         if arg[0] == 'expression':
                             if arg[1][0] == 'function_call':
                                 check_arg_type(arg[1])
