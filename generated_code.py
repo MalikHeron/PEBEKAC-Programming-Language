@@ -6,7 +6,9 @@ def main():
         print("The strings are equal")
     else:
         print("The strings are not equal")
-    def sum(x, b):
-        print(a + b)
-    sum(1.5, 6.5)
+    def i(b):
+        b = 5.2
+        print(a)
+def add(a, b):
+    print(a + b)
 main()
