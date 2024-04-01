@@ -131,6 +131,8 @@ class SemanticAnalyzer:
             if self.lookup_symbol(var_name):
                 raise Exception(f"Error: Variable {var_name} already declared")
             else:
+                if var_type == 'list':
+                    var_type = ['int', 'float', 'double', 'string']
                 # Add variable to the symbol table
                 self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
 
@@ -143,7 +145,7 @@ class SemanticAnalyzer:
         elif node_type == 'assignment':
             # print('node:', node)
             assigned_value, assignment_type = None, None
-            if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
+            if node[1][0] == 'general_type' or node[1][0] == 'list' or node[1][0] == 'array_type':
                 if node[1][0] == 'general_type':
                     # Check if the variable being assigned is declared
                     var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
@@ -181,10 +183,24 @@ class SemanticAnalyzer:
                 else:
                     var_name = node[2][1]
                     var_type = self.get_expression_type(node[1][1], function_name=function_name)
+                    var_type_check = var_type
 
                     # print('var_name: ', var_name)
                     # print('var_type: ', var_type)
                     # print('node: ', node)
+
+                    if var_type == 'intArray':
+                        var_type_check = 'int'
+                    elif var_type == 'floatArray':
+                        var_type_check = 'float'
+                    elif var_type == 'stringArray':
+                        var_type_check = 'string'
+                    elif var_type == 'doubleArray':
+                        var_type_check = 'double'
+                    elif var_type == 'list':
+                        var_type_check = ['int', 'float', 'double', 'string']
+
+                    # print('var_type: ', var_type)
 
                     def process_values(values):
                         # print('values:', values)
@@ -200,18 +216,14 @@ class SemanticAnalyzer:
                             self.analyze_semantics(values, function_name=function_name)
                             value_type = self.get_expression_type(values[1], function_name=function_name)
                             # print('value_type:', value_type)
-                            if value_type != var_type:
-                                if ((var_type == 'intList' and value_type == 'int')
-                                        or (var_type == 'floatList' and value_type == 'float')
-                                        or (var_type == 'stringList' and value_type == 'string')
-                                        or (var_type == 'doubleList' and value_type == 'double')):
-                                    return
-                                if ((var_type == 'intArray' and value_type == 'int')
-                                        or (var_type == 'floatArray' and value_type == 'float')
-                                        or (var_type == 'stringArray' and value_type == 'string')
-                                        or (var_type == 'doubleArray' and value_type == 'double')):
-                                    return
-                                raise Exception(f"Error: Type mismatch. Expected {var_type}, got {value_type}")
+                            if value_type != var_type_check:
+                                if var_type_check == ['int', 'float', 'double',
+                                                      'string'] and value_type in var_type_check:
+                                    pass
+                                else:
+                                    if var_type_check == ['int', 'float', 'double', 'string']:
+                                        raise Exception(f"Error: Type mismatch. Expected list, got {value_type}")
+                                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got {value_type}")
                             if len(values) >= 4:
                                 process_values(values[3])
 
@@ -220,6 +232,7 @@ class SemanticAnalyzer:
 
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
+                        # print('var_type: ', var_type)
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
                     elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
                         raise Exception(f"Error: Variable {var_name} already declared")
@@ -227,52 +240,81 @@ class SemanticAnalyzer:
                 # Extract variable information
                 var_type = self.lookup_symbol(node[1][1])['type']
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
+                var_type_check = var_type
                 # print('assignment var_name: ', var_name)
                 # print('assignment var_type: ', var_type)
                 # print('node: ', node[3][0])
+
+                if var_type == 'intArray':
+                    var_type_check = 'int'
+                elif var_type == 'floatArray':
+                    var_type_check = 'float'
+                elif var_type == 'stringArray':
+                    var_type_check = 'string'
+                elif var_type == 'doubleArray':
+                    var_type_check = 'double'
+                elif var_type == 'list':
+                    var_type_check = ['int', 'float', 'double', 'string']
+
+                # print('var_type: ', var_type)
 
                 # Check if the variable being assigned is declared
                 if not self.lookup_symbol(var_name):
                     raise Exception(f"Error: Variable {var_name} not declared")
                 elif self.lookup_symbol(var_name):
-                    # Check if the assigned value matches the type of the variable
-                    if node[3][0] == 'assignment':
-                        # print('node:', node[3])
-                        self.analyze_semantics(node[3], function_name=function_name)
-                        assigned_value = self.assigned_value
-                        var_type = self.lookup_symbol(var_name)['type']
-                    if node[3][0] == 'function_call':
-                        # print('assigned_value is a: ', node[3])
-                        self.analyze_semantics(node[3], function_name=function_name)
-                        fun_type = self.get_expression_type(node[3], function_name=function_name)
-                        # print('fun_type:', fun_type)
-                        if fun_type != var_type:
-                            raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
-                    elif node[3] == 'null':
-                        assigned_value = node[3]
-                    elif node[2] == 'assignment_sign':
-                        # print('node:', node)
-                        assignment_type = node[2]
-                    else:
-                        assigned_value = node[3][1][1]
-                    # print('assigned_value: ', assigned_value)
-                    var_type = self.lookup_symbol(var_name)['type']
-                    # print('assigned var_type: ', var_type)
+                    def process_values(values):
+                        # print('values:', values)
+                        if values[0] == 'expression':
+                            """
+                            if len(values) >= 4:
+                                print('greater than 4, len(values):', len(values))
+                                print('assigned_value is: ', values[1][1][1])
+                                print('assigned_type is: ', values[1][1][0])
+                            else:
+                                print('less than 4, len(values):', len(values))
+                                print('assigned_value is: ', values[1][1])
+                                print('assigned_type is: ', values[1][0])
+                            """
+                            self.analyze_semantics(values, function_name=function_name)
+                            value_type = self.get_expression_type(values[1], function_name=function_name)
+                            # print('value_type:', value_type)
+                            if value_type != var_type_check:
+                                if var_type_check == ['int', 'float', 'double',
+                                                      'string'] and value_type in var_type_check:
+                                    pass
+                                else:
+                                    if var_type_check == ['int', 'float', 'double', 'string']:
+                                        raise Exception(f"Error: Type mismatch. Expected list, got {value_type}")
+                                    raise Exception(
+                                        f"Error: Type mismatch. Expected {var_type_check}, got {value_type}")
+                        if values[0] == 'function_call':
+                            # print('assigned_value is a: ', node[3])
+                            self.analyze_semantics(node[3], function_name=function_name)
+                            fun_type = self.get_expression_type(node[3], function_name=function_name)
+                            # print('fun_type:', fun_type)
+                            if fun_type != var_type_check:
+                                raise Exception(f"Error: Type mismatch. Expected {var_type_check}, got {fun_type}")
+
+                        if len(values) == 2:
+                            if len(values[1]) > 2:
+                                process_values(values[1][3])
+                        elif len(values) == 4:
+                            process_values(values[3])
+
+                    # Process the values
+                    process_values(node[3])
 
             # Check if the assigned value matches the type of the variable
             if node[3][0] == 'function_call':
                 pass  # Allow the return type checking to be done by python compiler
-            elif node[3][1][0] == 'array_access':
+            elif node[3][1][0] == 'element_access':
                 # print('array_node:', node[3][1])
                 self.analyze_semantics(node[3][1], function_name=function_name)
                 assigned_value = self.get_expression_type(node[3][1], function_name=function_name)
                 # print('assigned_value:', assigned_value)
                 # print('var_type:', var_type)
                 if assigned_value != var_type:
-                    if ((var_type == 'int' and assigned_value == 'intList')
-                            or (var_type == 'float' and assigned_value == 'floatList')
-                            or (var_type == 'string' and assigned_value == 'stringList')
-                            or (var_type == 'double' and assigned_value == 'doubleList')):
+                    if var_type != 'boolean' and assigned_value == 'list':
                         return
                     if ((var_type == 'int' and assigned_value == 'intArray')
                             or (var_type == 'float' and assigned_value == 'floatArray')
@@ -540,12 +582,12 @@ class SemanticAnalyzer:
                 # print('node:', node[1][1])
                 # Ensure the expression to increment is an identifier
                 if node[1][1] != 'identifier':
-                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+                    raise TypeError(f"Invalid operation: Increment operator cannot be applied to a {node[1][1][0]}")
             else:
                 # print('node:', node[1][0])
                 # Ensure the expression to increment is an identifier
                 if node[1][0] != 'identifier':
-                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+                    raise TypeError(f"Invalid operation: Increment operator cannot be applied to a {node[1][1][0]}")
 
             # Ensure the types match
             self.get_expression_type(node, function_name=function_name)
@@ -554,7 +596,7 @@ class SemanticAnalyzer:
             if self.in_loop is False:
                 raise Exception("Error: break statement not inside a loop")
 
-        elif node_type == 'array_access':
+        elif node_type == 'element_access':
             # Analyze the identifier to ensure it's defined
             # print('node:', node)
             array_name = node[1][1]
@@ -625,7 +667,7 @@ class SemanticAnalyzer:
                     raise TypeError(f"Invalid operation: {operator} on string")
             return left_operand_type
 
-        elif expr_type == 'array_access':
+        elif expr_type == 'element_access':
             # print('expr:', expr)
             # Analyze the identifier to ensure it's defined
             array_name = expr[1][1]
@@ -712,17 +754,8 @@ class SemanticAnalyzer:
         elif expr_type == 'string' or expr_type == 'string_literal':
             return 'string'
 
-        elif expr_type == 'intList':
-            return 'intList'
-
-        elif expr_type == 'floatList':
-            return 'floatList'
-
-        elif expr_type == 'doubleList':
-            return 'doubleList'
-
-        elif expr_type == 'stringList':
-            return 'stringList'
+        elif expr_type == 'list':
+            return 'list'
 
         elif expr_type == 'intArray':
             return 'intArray'
@@ -797,13 +830,28 @@ class SemanticAnalyzer:
 
 
 def get_type(op_type, left_operand_type, right_operand_type):
-    if (left_operand_type == 'int' and right_operand_type == 'float') or (
-            left_operand_type == 'float' and right_operand_type == 'int'):
+    if ((left_operand_type == 'int' and right_operand_type == 'float')
+            or (left_operand_type == 'float' and right_operand_type == 'int')):
         return 'float'
-    elif (left_operand_type == 'int' and right_operand_type == 'double') or (
-            left_operand_type == 'double' and right_operand_type == 'int'):
+    elif ((left_operand_type == 'int' and right_operand_type == 'double')
+          or (left_operand_type == 'double' and right_operand_type == 'int')):
         return 'double'
-    elif (left_operand_type == 'float' and right_operand_type == 'double') or (
-            left_operand_type == 'double' and right_operand_type == 'float'):
+    elif ((left_operand_type == 'float' and right_operand_type == 'double')
+          or (left_operand_type == 'double' and right_operand_type == 'float')):
         return 'double'
+    elif ((left_operand_type == 'int' and right_operand_type == 'intArray')
+          or (left_operand_type == 'intArray' and right_operand_type == 'int')):
+        return 'int'
+    elif ((left_operand_type == 'float' and right_operand_type == 'floatArray')
+          or (left_operand_type == 'floatArray' and right_operand_type == 'float')):
+        return 'float'
+    elif ((left_operand_type == 'double' and right_operand_type == 'doubleArray')
+          or (left_operand_type == 'doubleArray' and right_operand_type == 'double')):
+        return 'double'
+    elif ((left_operand_type == 'string' and right_operand_type == 'stringArray')
+          or (left_operand_type == 'stringArray' and right_operand_type == 'string')):
+        return 'string'
+    elif ((left_operand_type != 'boolean' and right_operand_type == 'list')
+          or (left_operand_type == 'list' and right_operand_type != 'boolean')):
+        return 'int' or 'float' or 'double' or 'string'
     raise TypeError(f"Type mismatch in {op_type}: {left_operand_type} and {right_operand_type}")

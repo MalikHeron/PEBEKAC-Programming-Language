@@ -65,8 +65,8 @@ def p_param(p):
     """
     param : general_type identifier COMMA param
           | general_type identifier
-          | list_type identifier COMMA param
-          | list_type identifier
+          | list identifier COMMA param
+          | list identifier
           | array_type identifier COMMA param
           | array_type identifier
           | empty
@@ -132,8 +132,8 @@ def p_return_stmt(p):
 def p_variable_declaration(p):
     """
     variable_declaration : general_type identifier SEMICOLON
-                         | list_type identifier LBRACKET RBRACKET SEMICOLON
-                         | array_type identifier LBRACE RBRACE SEMICOLON
+                         | list identifier LBRACE RBRACE SEMICOLON
+                         | array_type identifier LBRACKET RBRACKET SEMICOLON
     """
     p[0] = ('variable_declaration', p[1], p[2])
 
@@ -141,24 +141,18 @@ def p_variable_declaration(p):
 def p_assignment(p):
     """
     assignment : general_type identifier ASSIGN expression SEMICOLON
-               | general_type identifier ASSIGN NULL SEMICOLON
                | general_type identifier ASSIGN function_call SEMICOLON
-               | list_type identifier ASSIGN NULL SEMICOLON
-               | list_type identifier ASSIGN function_call SEMICOLON
-               | list_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
-               | list_type identifier LBRACKET int RBRACKET ASSIGN function_call SEMICOLON
-               | list_type identifier LBRACKET int RBRACKET ASSIGN NULL SEMICOLON
-               | list_type identifier LBRACKET int RBRACKET ASSIGN expression SEMICOLON
-               | array_type identifier ASSIGN NULL SEMICOLON
+               | general_type identifier ASSIGN NULL SEMICOLON
+               | list identifier ASSIGN LBRACE expression RBRACE SEMICOLON
+               | list identifier ASSIGN function_call SEMICOLON
+               | list identifier ASSIGN NULL SEMICOLON
+               | array_type identifier ASSIGN LBRACKET expression RBRACKET SEMICOLON
                | array_type identifier ASSIGN function_call SEMICOLON
-               | array_type identifier LBRACKET int RBRACKET ASSIGN NULL SEMICOLON
-               | array_type identifier LBRACKET int RBRACKET ASSIGN expression SEMICOLON
-               | array_type identifier LBRACKET int RBRACKET ASSIGN function_call SEMICOLON
-               | array_type identifier ASSIGN LBRACE expression RBRACE SEMICOLON
+               | array_type identifier ASSIGN NULL SEMICOLON
                | identifier ASSIGN expression SEMICOLON
-               | identifier assignment_sign function_call SEMICOLON
                | identifier ASSIGN function_call SEMICOLON
                | identifier ASSIGN NULL SEMICOLON
+               | identifier assignment_sign function_call SEMICOLON
                | identifier ASSIGN len_stmt SEMICOLON
     """
     if len(p) == 5:
@@ -166,8 +160,8 @@ def p_assignment(p):
     elif len(p) == 6:
         p[0] = ('assignment', p[1], p[2], p[4])
     elif len(p) == 8:
-        if p[7][0] == 'function_call':
-            p[0] = ('assignment', p[1], p[2], p[7])
+        if p[6][0] == 'function_call' or p[6][0] == 'expression' or p[6][0] == 'NULL':
+            p[0] = ('assignment', p[1], p[2], p[6])
         else:
             p[0] = ('assignment', p[1], p[2], p[5])
     elif len(p) == 9:
@@ -201,7 +195,7 @@ def p_return_type(p):
     """
     return_type : general_type
                 | array_type
-                | list_type
+                | list
                 | VOID
     """
     p[0] = ('return_type', p[1])
@@ -265,6 +259,7 @@ def p_expression(p):
                | expression COMMA expression
                | expression POW expression
                | LPAREN expression RPAREN
+               | LBRACKET expression RBRACKET
                | NOT expression
                | identifier
                | int
@@ -272,7 +267,7 @@ def p_expression(p):
                | double
                | string
                | boolean
-               | array_access
+               | element_access
                | function_call
                | compound_assignment
                | len_stmt
@@ -299,7 +294,10 @@ def p_expression(p):
     if len(p) == 5:
         p[0] = ('expression', p[1], p[3])
     elif len(p) == 4:
-        p[0] = ('expression', p[1], p[2], p[3])
+        if p[1] == '(' and p[3] == ')' or p[1] == '[' and p[3] == ']':
+            p[0] = ('expression', p[2])
+        else:
+            p[0] = ('expression', p[1], p[2], p[3])
     elif len(p) == 3:
         p[0] = ('expression', p[1], p[2])
     else:
@@ -375,14 +373,11 @@ def p_array_type(p):
     p[0] = ('array_type', p[1])
 
 
-def p_list_type(p):
+def p_list(p):
     """
-    list_type : INTLIST
-              | FLOATLIST
-              | STRINGLIST
-              | DOUBLELIST
+    list : LIST
     """
-    p[0] = ('list_type', p[1])
+    p[0] = ('list', p[1])
 
 
 def p_identifier(p):
@@ -399,11 +394,11 @@ def p_string_literal(p):
     p[0] = ('string_literal', p[1])
 
 
-def p_array_access(p):
+def p_element_access(p):
     """
-    array_access : identifier LBRACKET expression RBRACKET
+    element_access : identifier LBRACKET expression RBRACKET
     """
-    p[0] = ('array_access', p[1], p[3])
+    p[0] = ('element_access', p[1], p[3])
 
 
 def p_empty(p):

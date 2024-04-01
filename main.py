@@ -3,32 +3,9 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-# Check if two strings are the same
-fun boolean stringEquals(string string1, string string2) {
-    return string1 == string2;
-}
+intArray x = [1, 2, 3, 4, 5];
 
-// main function
-fun main() {
-    int a = 5;
-    // call the equals function to compare the two strings
-    if (stringEquals("Hello", "hello")) {
-        print("The strings are equal");
-    } else {
-        print("The strings are not equal");
-    }
-
-    fun i(float b){
-        b = 5.2;
-        print(a);
-    }
-}
-
-fun add(int a, int b) {
-    print(a + b);
-}
-
-main();
+print(x[3]);
 """
 
 # Parse and analyze the program
