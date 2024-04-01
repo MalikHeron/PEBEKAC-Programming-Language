@@ -18,9 +18,14 @@ fun main() {
         print("The strings are not equal");
     }
 
-    fun sum(float a, float b) {
-        print(a + b);
+    fun i(float b){
+        b = 5.2;
+        print(a);
     }
+}
+
+fun add(int a, int b) {
+    print(a + b);
 }
 
 main();
