@@ -809,12 +809,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
          <program> 
                : <stmt_list>
                ;
-         
+
          <stmt_list> 
                : <stmt> <stmt_list> 
                | <stmt>
                ;
-         
+
          <stmt> 
                : <fun_declaration>
                | <print_stmt>
@@ -828,15 +828,15 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <break_stmt>
                | <comment>
                ;
-         
+
          <fun_declaration> 
                : 'fun' <return_type>? <identifier> '(' <params> ')' '{' <stmt_list> '}'
                ;
-         
+
          <params>
                : <param>
                ;
-         
+
          <param>
                : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
@@ -845,35 +845,35 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <array_type> <identifier> ',' <param>
                | <array_type> <identifier>
                ;
-         
+
          <len_stmt>
                : 'len' '(' <identifier> ')'
                ;
-         
+
          <print_stmt>
                : 'print' '(' <expression> (',' <function_call> ',' <expression>)? ')' ';'
                | 'print' '(' <function_call> ')' ';'
                ;
-         
+
          <function_call>
                : <identifier> '(' <arg_list> ')'
                ;
-         
+
          <arg_list>
                : <expression> ',' <arg_list>
                | <expression>
                ;
-         
+
          <return_stmt>
                : 'return' <expression> ';'
                ;
-         
+
          <variable_declaration>
                : <general_type> <identifier> ';'
                | <list> <identifier> '{' '}' ';'
                | <array_type> <identifier> '[' ']' ';'
                ;
-         
+
          <assignment>
                : <general_type> <identifier> '=' <expression> ';'
                | <general_type> <identifier> '=' <function_call> ';'
@@ -890,47 +890,46 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <len_stmt> ';'
                ;
-         
+
          <control_structure> 
                : <if_stmt> 
                | <for_stmt> 
                | <while_stmt>
-               | <switch_stmt>
                ;
-         
+
          <break_stmt>
                : 'break' ';'
                ;
-         
+
          <comment>
                : '//' <identifier>
                | '#' <identifier>
                | '/*' <identifier> '*/'
                ;
-         
+
          <return_type>
                : <general_type>
                | <array_type>
                | <list>
                | 'void'
                ;
-         
+
          <if_stmt>
                : 'if' '(' <expression> ')' '{' <stmt_list> '}'
                | 'if' '(' <expression> ')' '{' <stmt_list> '}' <else_stmt>
                | <expression> '?' <expression> ':' <expression> ';'
                ;
-         
+
          <else_stmt>
                : 'else' '{' <stmt_list> '}'
                | 'else' <if_stmt>
                ;
-         
+
          <for_stmt>
                : 'for' '(' <variable_declaration> <expression> ';' <expression> ')' '{' <stmt_list> '}'
                | 'for' '(' <assignment> <expression> ';' <expression> ')' '{' <stmt_list> '}'
                ;
-         
+
          <while_stmt>
                : 'while' '(' <expression> ')' '{' <stmt_list> '}'
                ;
@@ -963,12 +962,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <compound_assignment>
                | <len_stmt>
                | <null>
-         
+
          <compound_assignment>
                : <expression> <assignment_sign> <expression>
                | <identifier> <assignment_sign> <expression>
                ;
-         
+
          <assignment_sign>
                : '+='
                | '-='
@@ -976,28 +975,28 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | '/='
                | '%='
                ;
-         
+
          <int>
                : '-'?[0-9]+
                ;
-         
+
          <float>
                : '-'?[0-9]+'.'[0-9]+
                ;
-         
+
          <string> 
                : [a-zA-Z]
                ;
-         
+
          <identifier>
                : ('_')?(<string>|<int>)+
                ;
-         
+
          <boolean> 
                : 'true' 
                | 'false'
                ;
-         
+
          <null>
                : 'null'
                ;
@@ -1006,7 +1005,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                : '"'<identifier>'"'
                | "'" <identifier> "'"
                ;
-         
+
          <general_type> 
                : 'int' 
                | 'float' 
@@ -1014,30 +1013,29 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | 'string' 
                | 'boolean'
                ;
-         
+
          <array_type> 
                : 'intArray' 
                | 'floatArray' 
                | 'stringArray' 
                | 'doubleArray'
                ;
-         
+
          <list>
                : 'list'
                ;
-         
+
          <element_access>
                : <identifier> '[' <expression> ']'
                ;
-         
+
          # Reserved and Keywords
          [
             'if', 'else', 'while', 'for', 
-            'true', 'false', 'void'
+            'true', 'false', 'void', 'True', 'False',
             'null', 'return', 'print', 'fun', 'break', 'len',
-            'int', 'float', 'double', 'string', 
-            'intArray', 'floatArray', 'stringArray', 'doubleArray',
-            'intList', 'floatList', 'stringList', 'doubleList'
+            'int', 'float', 'double', 'string', 'list',
+            'intArray', 'floatArray', 'stringArray', 'doubleArray'
          ]
          
          

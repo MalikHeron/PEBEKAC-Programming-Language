@@ -3,15 +3,41 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-fun int factorial(int n) {
-    if (n == 0) {
-        return 1;
+// This is a comment in PEBEKAC
+
+// Declare a variable x with scope within the main function
+fun main() {
+    int x = 10;
+    print("x inside main: ", x);
+
+    if (true) {
+        x = 15;
+
+        print("x inside if: ", x);
     }
-        return n * factorial(n - 1);
-    
+
+    print("x inside main after if: ", x);
+
+    fun add(int a, int b) {
+        int x = 3;
+        print("x inside add: ", x);
+    }
+
+    add(3, 2);        
 }
 
-print(factorial(5));
+// Declare a variable x with scope within the function
+fun scopeTest() {
+    int x = 20;
+    print("x inside scopeTest: ", x);
+}
+
+// Call the scopeTest function
+scopeTest();
+main();
+
+// Print the value of x outside of the function
+print("x outside of scope: ", x);
 """
 
 # Parse and analyze the program
