@@ -87,7 +87,6 @@
       : <if_stmt> 
       | <for_stmt> 
       | <while_stmt>
-      | <switch_stmt>
       ;
 
 <break_stmt>
@@ -225,9 +224,8 @@
 # Reserved and Keywords
 [
    'if', 'else', 'while', 'for', 
-   'true', 'false', 'void'
+   'true', 'false', 'void', 'True', 'False',
    'null', 'return', 'print', 'fun', 'break', 'len',
-   'int', 'float', 'double', 'string', 
-   'intArray', 'floatArray', 'stringArray', 'doubleArray',
-   'intList', 'floatList', 'stringList', 'doubleList'
+   'int', 'float', 'double', 'string', 'list',
+   'intArray', 'floatArray', 'stringArray', 'doubleArray'
 ]
