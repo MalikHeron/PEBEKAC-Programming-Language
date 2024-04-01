@@ -67,7 +67,8 @@ main();`;
                [/\b\d+\b/, 'number'],
 
                // String literals
-               [/"/, 'string', '@string'],
+               [/"/, { token: 'string.quote', bracket: '@open', next: '@string_double' }],
+               [/'/, { token: 'string.quote', bracket: '@open', next: '@string_single' }],
 
                // Operators and punctuation
                [/[+\-*/=<>!]+/, 'operator'],
@@ -83,9 +84,15 @@ main();`;
                [/\*\//, 'comment', '@pop'],
                [/./, 'comment']
             ],
-            string: [
+            string_double: [
                [/[^\\"]+/, 'string'],
-               [/"/, 'string', '@pop']
+               [/\\./, 'string.escape'],
+               [/"/, { token: 'string.quote', bracket: '@close', next: '@pop' }]
+            ],
+            string_single: [
+               [/[^\\']+/, 'string'],
+               [/\\./, 'string.escape'],
+               [/'/, { token: 'string.quote', bracket: '@close', next: '@pop' }]
             ]
          }
       });
@@ -204,9 +211,6 @@ main();`;
 
    // Function to check if the program execution should be stopped
    const stopRequested = () => {
-      // Implement your logic to determine if the execution should be stopped
-      // For example, check if the stop button is clicked or a specific condition is met
-      // In this example, I'm checking the global variable `running`
       return !running;
    };
 
@@ -477,7 +481,7 @@ main();`;
                   <h6 className='header'>
                      TERMINAL
                   </h6>
-                   <div id='terminal' ref={terminalRef} />
+                  <div id='terminal' ref={terminalRef} />
                </div>
             </div>
          </div>
