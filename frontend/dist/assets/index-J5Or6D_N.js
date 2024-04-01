@@ -840,6 +840,10 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
          <param>
                : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
+               | <list> <identifier> ',' <param>
+               | <list> <identifier>
+               | <array_type> <identifier> ',' <param>
+               | <array_type> <identifier>
                ;
          
          <len_stmt>
@@ -865,38 +869,32 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                ;
          
          <variable_declaration>
-               : <general_type> <identifier> '(' ',' <variable_declaration>+')'? ';'
-               | <list_type> <identifier> '[' ']' '(' ',' <variable_declaration>+')'? ';'
-               | <array_type> <identifier> '{' '}' '(' ',' <variable_declaration>+')'? ';'
+               : <general_type> <identifier> ';'
+               | <list> <identifier> '{' '}' ';'
+               | <array_type> <identifier> '[' ']' ';'
                ;
          
          <assignment>
                : <general_type> <identifier> '=' <expression> ';'
                | <general_type> <identifier> '=' <function_call> ';'
                | <general_type> <identifier> '=' <null> ';'
-               | <list_type> <identifier> '=' <null> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <null> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <expression> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <function_call> ';'
-               | <list_type> <identifier> '=' '[' <expression> ']' ';'
-               | <list_type> <identifier> '=' <function_call> ';'
-               | <array_type> <identifier> '=' <null> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <null> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <expression> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <function_call>
-               | <array_type> <identifier> '=' '{' <expression> '}' ';'
+               | <list> <identifier> '=' '{' <expression> '}' ';'
+               | <list> <identifier> '=' <function_call> ';'
+               | <list> <identifier> '=' <null> ';'
+               | <array_type> <identifier> '=' '[' <expression> ']' ';'
                | <array_type> <identifier> '=' <function_call> ';'
+               | <array_type> <identifier> '=' <null> ';'
                | <identifier> '=' <expression> ';'
-               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <function_call> ';'
                | <identifier> '=' <null> ';'
+               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <len_stmt> ';'
                ;
          
          <control_structure> 
                : <if_stmt> 
                | <for_stmt> 
-               | <while_stmt> 
+               | <while_stmt>
                | <switch_stmt>
                ;
          
@@ -913,7 +911,8 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
          <return_type>
                : <general_type>
                | <array_type>
-               | <list_type>
+               | <list>
+               | 'void'
                ;
          
          <if_stmt>
@@ -959,11 +958,11 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | <float>
                | <string_literal>
                | <boolean>
+               | <element_access>
+               | <function_call>
                | <compound_assignment>
                | <len_stmt>
                | <null>
-               | <identifier> '[' <expression> ']'
-               | <identifier> '{' <expression> '}'
          
          <compound_assignment>
                : <expression> <assignment_sign> <expression>
@@ -1023,11 +1022,12 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
                | 'doubleArray'
                ;
          
-         <list_type> 
-               : 'intList' 
-               | 'floatList' 
-               | 'stringList' 
-               | 'doubleList'
+         <list>
+               : 'list'
+               ;
+         
+         <element_access>
+               : <identifier> '[' <expression> ']'
                ;
          
          # Reserved and Keywords
