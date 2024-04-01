@@ -3,9 +3,15 @@ from semantic_analyzer import SemanticAnalyzer
 
 # Read the program code from a file or define it here...
 program_code = """  
-intArray x = [1, 2, 3, 4, 5];
+fun int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    }
+        return n * factorial(n - 1);
+    
+}
 
-print(x[3]);
+print(factorial(5));
 """
 
 # Parse and analyze the program

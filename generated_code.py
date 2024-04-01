@@ -1,2 +1,5 @@
-x = [1 , 2 , 3 , 4 , 5]
-print(x[3])
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
+print(factorial(5))

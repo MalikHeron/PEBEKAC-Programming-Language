@@ -80,14 +80,14 @@ class SemanticAnalyzer:
                     if self.scope_stack[1][fun_name]['params'] == params:
                         raise Exception(f"Error: Function {fun_name} already defined")
             else:
-                self.push_scope(function_name=fun_name, return_type=return_type[1])
+                self.push_scope(function_name=fun_name, return_type=return_type)
                 self.declare_symbol(fun_name, {'type': 'function', 'return_type': return_type, 'params': params})
 
             # Analyze parameters
             self.analyze_semantics(params, function_name=fun_name)
 
             # Analyze statements inside the function declaration
-            self.push_scope(function_name=fun_name, return_type=return_type[1])
+            self.push_scope(function_name=fun_name, return_type=return_type)
             self.is_in_function(True)
             self.analyze_semantics(node[-1],
                                    function_name=fun_name)  # Changed to analyze last part of the function declaration
@@ -95,7 +95,7 @@ class SemanticAnalyzer:
             self.is_in_function(False)
 
             # Check if the function has a return type but no return statement
-            if return_type != 'void':
+            if return_type != 'void' and return_type != 'o':
                 if not self.has_return_statement(node[-1]):
                     raise Exception(f"Error: Function {fun_name} has a return type but no return statement")
 
@@ -128,8 +128,8 @@ class SemanticAnalyzer:
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
 
             # Check if the variable is already declared
-            if self.lookup_symbol(var_name):
-                raise Exception(f"Error: Variable {var_name} already declared")
+            if self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+                raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 if var_type == 'list':
                     var_type = ['int', 'float', 'double', 'string']
@@ -143,7 +143,7 @@ class SemanticAnalyzer:
                 self.analyze_semantics(('assignment', var_type, var_name, init_value), function_name=function_name)
 
         elif node_type == 'assignment':
-            # print('node:', node)
+            print('assignment_node:', node)
             assigned_value, assignment_type = None, None
             if node[1][0] == 'general_type' or node[1][0] == 'list' or node[1][0] == 'array_type':
                 if node[1][0] == 'general_type':
@@ -178,8 +178,11 @@ class SemanticAnalyzer:
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
-                        raise Exception(f"Error: Variable {var_name} already declared")
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] != function_name:
+                        # Add variable to the symbol table
+                        self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+                        raise Exception(f"Error: Identifier {var_name} already declared")
                 else:
                     var_name = node[2][1]
                     var_type = self.get_expression_type(node[1][1], function_name=function_name)
@@ -234,10 +237,11 @@ class SemanticAnalyzer:
                         # Add variable to the symbol table
                         # print('var_type: ', var_type)
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
-                        raise Exception(f"Error: Variable {var_name} already declared")
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+                        raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 # Extract variable information
+                self.get_expression_type(node[1], function_name=function_name)
                 var_type = self.lookup_symbol(node[1][1])['type']
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
                 var_type_check = var_type
@@ -260,7 +264,9 @@ class SemanticAnalyzer:
 
                 # Check if the variable being assigned is declared
                 if not self.lookup_symbol(var_name):
-                    raise Exception(f"Error: Variable {var_name} not declared")
+                    raise Exception(f"Error: Identifier {var_name} not declared")
+                elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] != function_name:
+                    raise Exception(f"Error: Identifier {var_name} not declared")
                 elif self.lookup_symbol(var_name):
                     def process_values(values):
                         # print('values:', values)
@@ -502,11 +508,31 @@ class SemanticAnalyzer:
                 def check_arg_type(list_arg):
                     # Check if the types of arguments match the types of parameters
                     for arg in list_arg[1:]:
-                        # print('arg:', arg)
+                        print('arg:', arg)
                         if arg[0] == 'expression':
                             if arg[1][0] == 'function_call':
                                 check_arg_type(arg[1])
                                 self.analyze_semantics(arg[1], function_name=function_name)
+                            elif arg[1][0] == 'identifier':
+                                # print('function_name:', function_name)
+                                # print('next_arg:', self.lookup_symbol(arg[1][1]))
+                                # print('scope_stack len:', len(self.scope_stack))
+                                if len(self.scope_stack[-1]) > 1:
+                                    # print('scope_stack[-1]:', self.scope_stack[-1])
+                                    if (self.lookup_symbol(arg[1][1])
+                                            and self.lookup_symbol(arg[1][1])['function_name'] != function_name):
+                                        if (self.lookup_symbol(arg[1][1])['function_name']
+                                                != self.scope_stack[-2]['function_name']):
+                                            raise Exception(
+                                                f"Error: Identifier {arg[1][1]} already exists in outer scope")
+                                        if (self.lookup_symbol(arg[1][1])
+                                                and self.scope_stack[-2]['function_name'] == function_name):
+                                            raise Exception(f"Error: Argument {arg[1][1]} already declared")
+                                    if (self.lookup_symbol(arg[1][1])
+                                            and self.lookup_symbol(arg[1][1])['function_name'] != function_name):
+                                        raise Exception(f"Error: Identifier {arg[1][1]} not declared")
+                                    if not self.lookup_symbol(arg[1][1]):
+                                        raise Exception(f"Error: Argument {arg[1][1]} not declared")
                             else:
                                 arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
                         if arg[0] == 'function_call':
