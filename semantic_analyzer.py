@@ -631,7 +631,7 @@ class SemanticAnalyzer:
             array_info = self.lookup_symbol(array_name)
 
             if not array_info:
-                raise NameError(f"Error: Array {array_name} is not defined")
+                raise NameError(f"Error: Identifier {array_name} is not defined")
 
             # Analyze the index expression
             self.analyze_semantics(node[2], function_name=function_name)
@@ -703,7 +703,7 @@ class SemanticAnalyzer:
             if array_info:
                 # print('array_info:', array_info)
                 return array_info['type']
-            raise NameError(f"Error: Array {array_name} is not defined")
+            raise NameError(f"Error: Identifier {array_name} is not defined")
 
         elif expr_type == 'identifier':
             # Look up the identifier in the symbol table
