@@ -442,7 +442,7 @@ class SemanticAnalyzer:
 
             # Check if expression is valid...
             if expr_type is None:
-                raise ValueError(f"Invalid expression in print statement: {node}")
+                raise ValueError(f"Error: Invalid expression in print statement: {node}")
 
         elif node_type == 'function_call':
             fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
@@ -631,7 +631,7 @@ class SemanticAnalyzer:
             array_info = self.lookup_symbol(array_name)
 
             if not array_info:
-                raise NameError(f"Array {array_name} is not defined")
+                raise NameError(f"Error: Array {array_name} is not defined")
 
             # Analyze the index expression
             self.analyze_semantics(node[2], function_name=function_name)
@@ -639,7 +639,7 @@ class SemanticAnalyzer:
             # Ensure the index expression evaluates to an integer
             index_type = self.get_expression_type(node[2], function_name=function_name)
             if index_type != 'int':
-                raise TypeError(f"Array index must be an integer, got {index_type}")
+                raise TypeError(f"Error: Array index must be an integer, got {index_type}")
 
     def get_expression_type(self, expr, function_name):
         # Determine the type of expression.
@@ -703,7 +703,7 @@ class SemanticAnalyzer:
             if array_info:
                 # print('array_info:', array_info)
                 return array_info['type']
-            raise NameError(f"Array {array_name} is not defined")
+            raise NameError(f"Error: Array {array_name} is not defined")
 
         elif expr_type == 'identifier':
             # Look up the identifier in the symbol table
@@ -718,7 +718,7 @@ class SemanticAnalyzer:
                     return 'double'
                 return self.lookup_symbol(identifier)['type']
             else:
-                raise NameError(f"Identifier {identifier} is not defined")
+                raise NameError(f"Error: Identifier {identifier} is not defined")
 
         elif expr_type == 'function_call':
             # Look up the function in the symbol table
@@ -762,7 +762,7 @@ class SemanticAnalyzer:
                         f"{'void' if fun_info['return_type'] == 'o' else fun_info['return_type']}, got {expr_type}")
                 return fun_info['return_type']
             else:
-                raise NameError(f"Function {fun_name} is not defined")
+                raise NameError(f"Error: Function {fun_name} is not defined")
 
         elif expr_type == 'len_stmt':
             return 'int'

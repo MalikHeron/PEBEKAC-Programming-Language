@@ -145,7 +145,9 @@ main();`;
    // Function to handle terminal output
    const handleTerminalOutput = (line) => {
       // Check if the line contains an error message
-      if (line.includes('Error:') || line.includes('Syntax error')) {
+      if (line.includes('Error:') || line.includes('Syntax error')
+          || line.includes('Return type mismatch') || line.includes('Invalid operation:')
+          || line.includes('Type mismatch')) {
          // If so, write the line in red
          terminalInstance?.writeln(`\x1b[91m${line}\x1b[0m`);
       } else {
