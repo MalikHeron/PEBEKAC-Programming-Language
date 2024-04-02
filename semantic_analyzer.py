@@ -109,7 +109,8 @@ class SemanticAnalyzer:
             param_type = node[1][1]
             param_name = node[2][1]
 
-            # print('function_name:', function_name, 'param:', node, 'param_type:', param_type, 'param_name:', param_name)
+            # print('function_name:', function_name, 'param:', node,
+            #      'param_type:', param_type, 'param_name:', param_name)
 
             # Check if the parameter is already declared
             if self.lookup_symbol(param_name) and self.lookup_symbol(param_name)['function_name'] == function_name:
@@ -178,10 +179,12 @@ class SemanticAnalyzer:
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] != function_name:
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
+                        'function_name'] != function_name:
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
+                        'function_name'] == function_name:
                         raise Exception(f"Error: Identifier {var_name} already declared")
                 else:
                     var_name = node[2][1]
@@ -239,7 +242,8 @@ class SemanticAnalyzer:
                         # Add variable to the symbol table
                         # print('var_type: ', var_type)
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
+                        'function_name'] == function_name:
                         raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 # Extract variable information
