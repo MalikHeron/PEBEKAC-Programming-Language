@@ -27,7 +27,7 @@ class TestCodeGeneration(unittest.TestCase):
                 }
 
                 main();
-                """,
+            """,
             "test_factorial": """
                 fun int factorial(int n) {
                     if (n == 0) {
@@ -37,7 +37,55 @@ class TestCodeGeneration(unittest.TestCase):
                 }
 
                 print(factorial(5));
-                """
+            """,
+            "test_prime_number_checker": """
+                fun main() {
+                    int num = 10;
+                    boolean isPrime = true;
+                    for (int i = 2; i <= num / 2; i += 1) {
+                        if (num % i == 0) {
+                            isPrime = false;
+                        break;
+                        }
+                    }
+                    if (isPrime) {
+                        print("The number is prime");
+                    } else {
+                        print("The number is not prime");
+                    }
+                }
+
+                main();
+            """,
+            "test_fibonacci_series": """
+                fun main() {
+                    int num = 10;
+                    int a = 0;
+                    int b = 1;
+                    for (int i = 0; i < num; i +=1 ) {
+                        print(a);
+                        int temp = a;
+                        a = b;
+                        b = temp + b;
+                    }
+                }
+
+                main();
+            """,
+            "test_scopes": """
+                fun void main() {
+                    int a = 10;
+
+                    if (a == 10) {
+                        a = 20;
+                        print(a); // prints 20
+                    }
+                    print(a); // prints 10
+                }
+
+                main();
+            """,
+
         }
 
     def run_test_case(self, test_name, test_code):
@@ -65,6 +113,15 @@ class TestCodeGeneration(unittest.TestCase):
 
     def test_factorial(self):
         self.run_test_case("test_factorial", self.test_cases["test_factorial"])
+
+    def test_prime_number_checker(self):
+        self.run_test_case("test_prime_number_checker", self.test_cases["test_prime_number_checker"])
+
+    def test_fibonacci_series(self):
+        self.run_test_case("test_fibonacci_series", self.test_cases["test_fibonacci_series"])
+
+    def test_scopes(self):
+        self.run_test_case("test_scopes", self.test_cases["test_scopes"])
 
 
 if __name__ == '__main__':

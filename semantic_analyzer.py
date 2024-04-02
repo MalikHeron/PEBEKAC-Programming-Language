@@ -143,7 +143,7 @@ class SemanticAnalyzer:
                 self.analyze_semantics(('assignment', var_type, var_name, init_value), function_name=function_name)
 
         elif node_type == 'assignment':
-            print('assignment_node:', node)
+            # print('assignment_node:', node)
             assigned_value, assignment_type = None, None
             if node[1][0] == 'general_type' or node[1][0] == 'list' or node[1][0] == 'array_type':
                 if node[1][0] == 'general_type':
