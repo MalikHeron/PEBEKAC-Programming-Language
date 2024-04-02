@@ -188,6 +188,7 @@ def p_comment(p):
     """
     comment : COMMENT
     """
+    p.lexer.lineno += 1  # increment the line number
     p[0] = ('comment', p[1])
 
 
@@ -409,7 +410,6 @@ def p_empty(p):
 
 
 def p_error(p):
-    print(p)
     if p:
         raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
     else:

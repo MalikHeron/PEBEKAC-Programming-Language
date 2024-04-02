@@ -142,7 +142,19 @@ main();`;
       document.body.removeChild(element);
    }
 
-   // Update the runCode function to start and stop the program execution
+   // Function to handle terminal output
+   const handleTerminalOutput = (line) => {
+      // Check if the line contains an error message
+      if (line.includes('Error:') || line.includes('Syntax error')) {
+         // If so, write the line in red
+         terminalInstance?.writeln(`\x1b[91m${line}\x1b[0m`);
+      } else {
+         // Otherwise, write the line as normal
+         terminalInstance?.writeln(line);
+      }
+   };
+
+   // Update the runCode function
    const runCode = async () => {
       try {
          if (!terminalActive && terminalInstance) {
@@ -158,9 +170,7 @@ main();`;
             const outputLines = response.split('\n');
 
             for (const line of outputLines) {
-               if (terminalInstance) {
-                  terminalInstance.writeln(line);
-               }
+               handleTerminalOutput(line); // Use the new function to handle output
             }
 
             // Check if execution is complete or stopped
@@ -176,16 +186,6 @@ main();`;
                }
                break;  // Exit the loop
             }
-
-            // Handle user input prompts
-            const inputRequest = await fetch('/get_input');
-            const inputResponse = await inputRequest.json();
-            const userInput = inputResponse.input;
-
-            if (!userInput) {
-               // No more input prompts, break the loop
-               break;
-            }
          }
       } catch (error) {
          // Handle errors
@@ -194,6 +194,7 @@ main();`;
          setRunning(false); // Set running state to false after execution
       }
    };
+
 
    // Function to request stopping the program execution
    const stopExecution = async () => {
