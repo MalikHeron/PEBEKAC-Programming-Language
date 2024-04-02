@@ -75,7 +75,8 @@ class TestCodeGeneration(unittest.TestCase):
             "test_scopes": """
                 fun void main() {
                     int a = 10;
-
+                    doubleArray x = [2.5, 3.5];
+                    
                     if (a == 10) {
                         a = 20;
                         print(a); // prints 20

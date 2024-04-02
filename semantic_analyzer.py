@@ -223,6 +223,8 @@ class SemanticAnalyzer:
                                 if var_type_check == ['int', 'float', 'double',
                                                       'string'] and value_type in var_type_check:
                                     pass
+                                elif var_type == 'doubleArray' and value_type == 'float':
+                                    pass
                                 else:
                                     if var_type_check == ['int', 'float', 'double', 'string']:
                                         raise Exception(f"Error: Type mismatch. Expected list, got {value_type}")
