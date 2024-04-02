@@ -139,7 +139,7 @@ function Assistant({ reset, setReset }) {
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
                         <>
-                           {message.text.replace('```pebekac', '```').split('```').map((part, idx) => {
+                           {message.text.replace(/```pebekac/g, '```').split('```').map((part, idx) => {
                               if (idx % 2 === 0) {
                                  return <ReactMarkdown key={idx} className="message-text">{part}</ReactMarkdown>;
                               } else {
