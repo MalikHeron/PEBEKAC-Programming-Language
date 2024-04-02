@@ -45,7 +45,7 @@ main();`;
             'fun', 'return', 'if', 'else', 'for', 'while', 'void', 'break',
             'true', 'false', 'True', 'False', 'null', 'list', 'len',
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
-            'int', 'float', 'double', 'string', 'boolean'
+            'int', 'float', 'double', 'string', 'boolean', 'print'
          ],
          tokenizer: {
             root: [
