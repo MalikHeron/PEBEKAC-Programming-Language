@@ -411,9 +411,9 @@ def p_empty(p):
 
 def p_error(p):
     if p:
-        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}, position {p.lexpos}")
+        raise SyntaxError(f"Syntax error at '{p.value}' on line {p.lineno}")
     else:
-        raise SyntaxError("Syntax error at EOF")
+        raise SyntaxError("Syntax error at EOF: Unexpected end of input")
 
 
 # Create the parser object
