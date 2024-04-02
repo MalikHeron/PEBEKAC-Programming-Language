@@ -1,0 +1,12 @@
+.ChatWelcome {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   height: 100%;
+
+   h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+   }
+}
