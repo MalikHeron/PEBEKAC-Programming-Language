@@ -137,6 +137,7 @@ class CodeGeneration(unittest.TestCase):
             """,
             "test_function_call_with_return": """
                 int p = 5;
+                # (p > 5) ? print("a is greater than 5") : print("a is less than or equal to 5");
                 fun void main() {
                     int a = 10;
                     int b = 20;
@@ -156,7 +157,6 @@ class CodeGeneration(unittest.TestCase):
                 
                 main();
             """,
-
         }
 
     def run_test_case(self, test_name, test_code):

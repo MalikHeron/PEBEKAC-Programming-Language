@@ -114,15 +114,15 @@ def generate_code(node):
         if len(node) == 2:
             return generate_code(node[1])
         elif len(node) == 3:
-            op = node[1]
+            op = node[1] if node[1][0] != 'assignment_sign' else generate_code(node[1])
             right = generate_code(node[2])
             # print('op:', op, 'right:', right)
             return f'{op} {right}'
         elif len(node) == 4:
             left = generate_code(node[1])
-            op = node[2]
+            op = generate_code(node[2])
             right = generate_code(node[3])
-            # print('left:', left, 'op:', op, 'right:', right)
+            print('left:', left, 'op:', op, 'right:', right)
             return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
@@ -181,11 +181,14 @@ def generate_code(node):
         index = generate_code(node[2])
         return f'{array_name}[{index}]'
 
-    elif node_type == '=':
-        return '='
+    elif node_type == '|':
+        return 'or'
+
+    elif node_type == '&':
+        return 'and'
 
     else:
-        return f'Unknown node type: {node_type}'
+        return f'{node}'
 
 
 def indent(code):
