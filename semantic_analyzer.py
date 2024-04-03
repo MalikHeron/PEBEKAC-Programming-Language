@@ -76,9 +76,7 @@ class SemanticAnalyzer:
             # print('fun_name:', fun_name, 'return_type:', return_type, 'params:', params)
 
             if self.lookup_symbol(fun_name):
-                if len(self.scope_stack) > 1:
-                    if not self.symbol_exists_in_current_scope(fun_name, function_name):
-                        raise Exception(f"Error: Function {fun_name} already defined")
+                raise Exception(f"Error: Function {fun_name} already defined")
             else:
                 self.declare_symbol(fun_name, {'type': 'function', 'return_type': return_type, 'params': params})
 
