@@ -8,20 +8,12 @@ class SemanticAnalyzer:
         self.scope_stack = []
         self.assigned_value = None
         self.in_loop = False
-        self.in_function = False
-
-    def is_in_function(self, boolean):
-        self.in_function = boolean
 
     def looping(self, value):
         self.in_loop = value
 
     def push_scope(self, function_name=None, return_type=None):
-        if function_name and return_type:
-            self.scope_stack.append({'function_name': function_name, 'return_type': return_type})
-            return
-        # Push a new scope onto the stack
-        self.scope_stack.append({})
+        self.scope_stack.append({'function_name': function_name, 'return_type': return_type})
 
     def pop_scope(self):
         # Pop the current scope from the stack
@@ -38,12 +30,20 @@ class SemanticAnalyzer:
                 return scope[name]
         return None
 
-    # Define functions to manage the symbol table and scope stack
+    def symbol_exists_in_current_scope(self, name, function_name):
+        for scope in reversed(self.scope_stack):
+            # print('scope:', scope)
+            # Check if the symbol exists, and it's not in the current function scope
+            if name in scope and ('function_name' not in scope or scope['function_name'] != function_name):
+                return True
+        return False
+
+    # Function to manage the symbol table and scope stack
     def reset_symbol_table_and_scope_stack(self):
         self.symbol_table = {}
         self.scope_stack = []
 
-    # Define a function for semantic analysis
+    # Function for semantic analysis
     def analyze_semantics(self, node, function_name=None):
         node_type = node[0]
 
@@ -77,22 +77,18 @@ class SemanticAnalyzer:
 
             if self.lookup_symbol(fun_name):
                 if len(self.scope_stack) > 1:
-                    if self.scope_stack[1][fun_name]['params'] == params:
+                    if not self.symbol_exists_in_current_scope(fun_name, function_name):
                         raise Exception(f"Error: Function {fun_name} already defined")
             else:
-                self.push_scope(function_name=fun_name, return_type=return_type)
                 self.declare_symbol(fun_name, {'type': 'function', 'return_type': return_type, 'params': params})
 
             # Analyze parameters
-            self.analyze_semantics(params, function_name=fun_name)
-
             # Analyze statements inside the function declaration
             self.push_scope(function_name=fun_name, return_type=return_type)
-            self.is_in_function(True)
-            self.analyze_semantics(node[-1],
-                                   function_name=fun_name)  # Changed to analyze last part of the function declaration
+            self.analyze_semantics(params, function_name=fun_name)
+            # Changed to analyze last part of the function declaration
+            self.analyze_semantics(node[-1], function_name=fun_name)
             self.pop_scope()
-            self.is_in_function(False)
 
             # Check if the function has a return type but no return statement
             if return_type != 'void' and return_type != 'o':
@@ -129,7 +125,7 @@ class SemanticAnalyzer:
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
 
             # Check if the variable is already declared
-            if self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] == function_name:
+            if not self.symbol_exists_in_current_scope(var_name, function_name):
                 raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 if var_type == 'list':
@@ -179,12 +175,12 @@ class SemanticAnalyzer:
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
-                        'function_name'] != function_name:
+                    elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['function_name'] != function_name):
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
-                        'function_name'] == function_name:
+                    elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['function_name'] == function_name):
                         raise Exception(f"Error: Identifier {var_name} already declared")
                 else:
                     var_name = node[2][1]
@@ -242,15 +238,16 @@ class SemanticAnalyzer:
                         # Add variable to the symbol table
                         # print('var_type: ', var_type)
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
-                    elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)[
-                        'function_name'] == function_name:
+                    elif not self.symbol_exists_in_current_scope(var_name, function_name):
                         raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 # Extract variable information
                 self.get_expression_type(node[1], function_name=function_name)
-                var_type = self.lookup_symbol(node[1][1])['type']
+                # print('node:', node)
+                var_type = self.lookup_symbol(node[1][1])['type'] if self.lookup_symbol(node[1][1]) else None
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
                 var_type_check = var_type
+
                 # print('assignment var_name: ', var_name)
                 # print('assignment var_type: ', var_type)
                 # print('node: ', node[3][0])
@@ -267,11 +264,13 @@ class SemanticAnalyzer:
                     var_type_check = ['int', 'float', 'double', 'string']
 
                 # print('var_type: ', var_type)
+                # print('function_name:', function_name)
 
                 # Check if the variable being assigned is declared
                 if not self.lookup_symbol(var_name):
                     raise Exception(f"Error: Identifier {var_name} not declared")
-                elif self.lookup_symbol(var_name) and self.lookup_symbol(var_name)['function_name'] != function_name:
+                elif (not self.symbol_exists_in_current_scope(var_name, function_name)
+                      and self.lookup_symbol(var_name)['function_name'] != function_name):
                     raise Exception(f"Error: Identifier {var_name} not declared")
                 elif self.lookup_symbol(var_name):
                     def process_values(values):
@@ -318,7 +317,7 @@ class SemanticAnalyzer:
 
             # Check if the assigned value matches the type of the variable
             if node[3][0] == 'function_call':
-                pass  # Allow the return type checking to be done by python compiler
+                self.analyze_semantics(node[3], function_name=function_name)
             elif node[3][1][0] == 'element_access':
                 # print('array_node:', node[3][1])
                 self.analyze_semantics(node[3][1], function_name=function_name)
@@ -339,9 +338,8 @@ class SemanticAnalyzer:
             else:
                 # print('node_else:', node[3])
                 # print('assigned_value:', assigned_value, 'var_type:', var_type)
-                if self.lookup_symbol(assigned_value):
-                    if self.lookup_symbol(assigned_value)['type'] == var_type:
-                        return
+                if self.lookup_symbol(assigned_value) and self.lookup_symbol(assigned_value)['type'] == var_type:
+                    return
                 if isinstance(assigned_value, str) and var_type != 'string':
                     if assigned_value.capitalize() == 'True' or assigned_value.capitalize() == 'False':
                         if var_type == 'boolean':
@@ -452,6 +450,11 @@ class SemanticAnalyzer:
             fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
             arg_list = node[2]
             fun_info = self.lookup_symbol(fun_name)
+            self.check_function_call_parameters(arg_list)
+
+            # Check if the function exists
+            if fun_info is None:
+                raise Exception(f"Error: Function {fun_name} not defined")
 
             # Check if the arguments are expressions
             def count_args(arg_node):
@@ -485,7 +488,7 @@ class SemanticAnalyzer:
                             # parameters
                             return 1 + count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
                     elif isinstance(param_node, tuple) and param_node[0] == 'param':
-                        # print('ELse param_node:', param_node)
+                        # print('Else param_node:', param_node)
                         if param_node[1] == 'empty':
                             # print('empty')
                             return 0
@@ -519,26 +522,6 @@ class SemanticAnalyzer:
                             if arg[1][0] == 'function_call':
                                 check_arg_type(arg[1])
                                 self.analyze_semantics(arg[1], function_name=function_name)
-                            elif arg[1][0] == 'identifier':
-                                # print('function_name:', function_name)
-                                # print('next_arg:', self.lookup_symbol(arg[1][1]))
-                                # print('scope_stack len:', len(self.scope_stack))
-                                if len(self.scope_stack[-1]) > 1:
-                                    # print('scope_stack[-1]:', self.scope_stack[-1])
-                                    if (self.lookup_symbol(arg[1][1])
-                                            and self.lookup_symbol(arg[1][1])['function_name'] != function_name):
-                                        if (self.lookup_symbol(arg[1][1])['function_name']
-                                                != self.scope_stack[-2]['function_name']):
-                                            raise Exception(
-                                                f"Error: Identifier {arg[1][1]} already exists in outer scope")
-                                        if (self.lookup_symbol(arg[1][1])
-                                                and self.scope_stack[-2]['function_name'] == function_name):
-                                            raise Exception(f"Error: Argument {arg[1][1]} already declared")
-                                    if (self.lookup_symbol(arg[1][1])
-                                            and self.lookup_symbol(arg[1][1])['function_name'] != function_name):
-                                        raise Exception(f"Error: Identifier {arg[1][1]} not declared")
-                                    if not self.lookup_symbol(arg[1][1]):
-                                        raise Exception(f"Error: Argument {arg[1][1]} not declared")
                             else:
                                 arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
                         if arg[0] == 'function_call':
@@ -846,6 +829,25 @@ class SemanticAnalyzer:
                 return sum(self.count_args(arg) for arg in arg_node[1:])
         else:
             return 1
+
+    def check_function_call_parameters(self, arg_list):
+        # Check each argument in the argument list
+        for arg in arg_list[1:]:
+            # print('arg:', arg)
+            # If the argument is an identifier, check if it's declared
+            if arg[1][0] == 'identifier':
+                arg_name = arg[1][1]
+                arg_info = self.lookup_symbol(arg_name)
+                # print('arg_info:', arg_info)
+
+                # Exclude parameter type variable from the check
+                if arg_info is not None and arg_info['type'] == 'param':
+                    # print('arg_info:', arg_info)
+                    continue
+
+                # If the argument is not declared, raise an error
+                if arg_info is None:
+                    raise Exception(f"Error: Argument {arg_name} not declared")
 
     # Integrate semantic analysis into the parser
     def parse_and_analyze(self, program):

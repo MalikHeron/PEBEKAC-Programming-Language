@@ -5,7 +5,7 @@ from code_generator import generate_code
 from semantic_analyzer import SemanticAnalyzer
 
 
-class TestCodeGeneration(unittest.TestCase):
+class CodeGeneration(unittest.TestCase):
     def setUp(self):
         # Ensure the test_runs directory exists
         self.output_dir = "test_runs"
@@ -45,7 +45,7 @@ class TestCodeGeneration(unittest.TestCase):
                     for (int i = 2; i <= num / 2; i += 1) {
                         if (num % i == 0) {
                             isPrime = false;
-                        break;
+                            break;
                         }
                     }
                     if (isPrime) {
@@ -86,6 +86,76 @@ class TestCodeGeneration(unittest.TestCase):
 
                 main();
             """,
+            "test_assignment_inside": """
+                fun void main() {
+                    int a = 10;
+                    doubleArray x = [2.5, 3.5];
+                    a = 20;
+                    print(a); // prints 20
+                }
+                
+                int a = 5;
+                
+                main();            
+            """,
+            "test_assignment_outside": """
+                int a = 5;
+                a = 2;
+                
+                fun void main() {
+                    int a = 10;
+                    doubleArray x = [2.5, 3.5];
+                    print(a); // prints 10
+                }
+                
+                print(a); // prints 5
+                
+                main();
+            """,
+            "test_function_call": """
+                fun void printSum(int a, int b) {
+                    print(a + b);
+                }
+                
+                list x = {1, "hello"};
+                x = 5;
+                
+                fun void main() {
+                    int x = 10;
+                    int b = 20;
+                    printSum(x, b);
+                    
+                    fun void prints(int a, int b) {
+                        a = 5;
+                        b = 2;
+                    }
+                    
+                    prints(x, b);
+                }
+                
+                main();
+            """,
+            "test_function_call_with_return": """
+                int p = 5;
+                fun void main() {
+                    int a = 10;
+                    int b = 20;
+                    
+                    fun int sum(int a, int b) {
+                        int x = 5;
+                        x = 2;
+                        p = 5;
+                        return a + b;
+                    }
+                    
+                    print(sum(a, b));
+                }
+                
+                int a = 10;
+                a = 2;
+                
+                main();
+            """,
 
         }
 
@@ -123,6 +193,18 @@ class TestCodeGeneration(unittest.TestCase):
 
     def test_scopes(self):
         self.run_test_case("test_scopes", self.test_cases["test_scopes"])
+
+    def test_assignment_inside(self):
+        self.run_test_case("test_assignment_inside", self.test_cases["test_assignment_inside"])
+
+    def test_assignment_outside(self):
+        self.run_test_case("test_assignment_outside", self.test_cases["test_assignment_outside"])
+
+    def test_function_call(self):
+        self.run_test_case("test_function_call", self.test_cases["test_function_call"])
+
+    def test_function_call_with_return(self):
+        self.run_test_case("test_function_call_with_return", self.test_cases["test_function_call_with_return"])
 
 
 if __name__ == '__main__':
