@@ -123,7 +123,8 @@ class SemanticAnalyzer:
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
 
             # Check if the variable is already declared
-            if not self.symbol_exists_in_current_scope(var_name, function_name):
+            if (self.lookup_symbol(var_name)
+                    and self.lookup_symbol(var_name)['function_name'] == function_name):
                 raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 if var_type == 'list':
@@ -287,6 +288,12 @@ class SemanticAnalyzer:
                             self.analyze_semantics(values, function_name=function_name)
                             value_type = self.get_expression_type(values[1], function_name=function_name)
                             # print('value_type:', value_type)
+                            # Check if a list of values is being assigned to a primitive type
+                            if len(values) >= 4 and values[2] == ',':
+                                if (var_type_check != ['int', 'float', 'double', 'string']
+                                        and var_type not in ['intArray', 'floatArray', 'doubleArray', 'stringArray']):
+                                    raise Exception(
+                                        f"Error: Type mismatch. Expected {var_type_check}, got list")
                             if value_type != var_type_check:
                                 if var_type_check == ['int', 'float', 'double',
                                                       'string'] and value_type in var_type_check:

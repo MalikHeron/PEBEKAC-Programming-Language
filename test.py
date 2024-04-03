@@ -156,7 +156,6 @@ class CodeGeneration(unittest.TestCase):
                 
                 main();
             """,
-
         }
 
     def run_test_case(self, test_name, test_code):
