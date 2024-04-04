@@ -175,6 +175,10 @@ class SemanticAnalyzer:
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
                     elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['type'] == 'function'):
+                        # Check if the variable is a function
+                        raise Exception(f"Error: Identifier {var_name} is already declared")
+                    elif (self.lookup_symbol(var_name)
                           and self.lookup_symbol(var_name)['function_name'] != function_name):
                         # Add variable to the symbol table
                         self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
@@ -447,7 +451,7 @@ class SemanticAnalyzer:
             # Check the type of the expression
             expr_type = self.get_expression_type(node[1], function_name=function_name)
 
-            # Check if expression is valid...
+            # Check if expression is valid
             if expr_type is None:
                 raise ValueError(f"Error: Invalid expression in print statement: {node}")
 
@@ -460,51 +464,12 @@ class SemanticAnalyzer:
             # Check if the function exists
             if fun_info is None:
                 raise Exception(f"Error: Function {fun_name} not defined")
-
-            # Check if the arguments are expressions
-            def count_args(arg_node):
-                if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
-                    if arg_node[1] == 'empty':
-                        return 0
-                    else:
-                        return sum(count_args(arg) for arg in arg_node[1:])
-                else:
-                    return 1
-
-            num_args = count_args(arg_list)
-
-            if fun_info is None:
-                raise Exception(f"Error: Function {fun_name} not defined")
             else:
                 params = fun_info['params']
 
-                # Count the number of parameters in the function declaration
-                def count_params(param_node):
-                    # print('param_node[0]:', param_node[0])
-                    if isinstance(param_node, tuple) and param_node[0] == 'params':
-                        # print('If param_node:', param_node)
-                        if param_node[1] == 'empty':
-                            # print('empty')
-                            return 0
-                        else:
-                            # print('param_node[1]:', param_node[1])
-                            # print(len(param_node[1]))
-                            # If the node is a 'params' node, count the identifier and recursively count the rest of the
-                            # parameters
-                            return 1 + count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
-                    elif isinstance(param_node, tuple) and param_node[0] == 'param':
-                        # print('Else param_node:', param_node)
-                        if param_node[1] == 'empty':
-                            # print('empty')
-                            return 0
-                        else:
-                            # print('param_node[0]:', param_node[0])
-                            # print(len(param_node))
-                            # If the node is a 'params' node, count the identifier and recursively count the rest of the
-                            # parameters
-                            return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
-
-                num_params = count_params(params)
+                # Check if the number of arguments matches the number of parameters
+                num_args = self.count_args(arg_list)
+                num_params = self.count_params(params)
                 if num_args != num_params:
                     raise Exception(
                         f"Error: Number of arguments in function call ({num_args}) does not match the number of "
@@ -516,39 +481,8 @@ class SemanticAnalyzer:
                 param_list = params[1]
                 # print('param_list:', param_list)
 
-                arg_types = []  # List to store the types of arguments
-                param_types = []  # List to store the types of parameters
-
-                def check_arg_type(list_arg):
-                    # Check if the types of arguments match the types of parameters
-                    for arg in list_arg[1:]:
-                        # print('arg:', arg)
-                        if arg[0] == 'expression':
-                            if arg[1][0] == 'function_call':
-                                check_arg_type(arg[1])
-                                self.analyze_semantics(arg[1], function_name=function_name)
-                            else:
-                                arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
-                        if arg[0] == 'function_call':
-                            arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
-                        if arg[0] == 'arg_list':
-                            check_arg_type(arg)
-                        # print('arg_types:', arg_types)
-
-                def check_param_type(list_param):
-                    # Check if the types of parameters
-                    for param_ in list_param[1:]:
-                        # print('param:', param_)
-                        if param_[0] == 'general_type':
-                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
-                        if param_[0] == 'function_call':
-                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
-                        if param_[0] == 'param':
-                            check_param_type(param_)
-                        # print('param_types:', param_types)
-
-                check_arg_type(arg_list)  # Check the types of arguments
-                check_param_type(param_list)  # Check the types of parameters
+                arg_types = self.check_arg_type(arg_list, function_name)  # Check the types of arguments
+                param_types = self.check_param_type(param_list, function_name)  # Check the types of parameters
 
                 # Check the types of arguments and parameters
                 for arg_type, param_type in zip(arg_types[0:], param_types[0:]):
@@ -817,10 +751,26 @@ class SemanticAnalyzer:
 
     # Counts number of arguments in a function declaration
     def count_params(self, param_node):
+        # print('param_node[0]:', param_node[0])
         if isinstance(param_node, tuple) and param_node[0] == 'params':
+            # print('If param_node:', param_node)
             if param_node[1] == 'empty':
+                # print('empty')
                 return 0
             else:
+                # print('param_node[1]:', param_node[1])
+                # print(len(param_node[1]))
+                # If the node is a 'params' node, count the identifier and recursively count the rest of the
+                # parameters
+                return 1 + self.count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
+        elif isinstance(param_node, tuple) and param_node[0] == 'param':
+            # print('Else param_node:', param_node)
+            if param_node[1] == 'empty':
+                # print('empty')
+                return 0
+            else:
+                # print('param_node[0]:', param_node[0])
+                # print(len(param_node))
                 # If the node is a 'params' node, count the identifier and recursively count the rest of the
                 # parameters
                 return 1 + self.count_params(param_node[3]) if len(param_node) > 3 else 1
@@ -834,6 +784,40 @@ class SemanticAnalyzer:
                 return sum(self.count_args(arg) for arg in arg_node[1:])
         else:
             return 1
+
+    def check_arg_type(self, list_arg, function_name):
+        arg_types = []
+        # Check if the types of arguments match the types of parameters
+        for arg in list_arg[1:]:
+            # print('arg:', arg)
+            if arg[0] == 'expression':
+                if arg[1][0] == 'function_call':
+                    self.check_arg_type(arg[1], function_name)
+                    self.analyze_semantics(arg[1], function_name=function_name)
+                else:
+                    arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
+            if arg[0] == 'function_call':
+                arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
+            if arg[0] == 'arg_list':
+                self.check_arg_type(arg, function_name)
+            # print('arg_types:', arg_types)
+
+        return arg_types
+
+    def check_param_type(self, list_param, function_name):
+        param_types = []
+        # Check if the types of parameters
+        for param_ in list_param[1:]:
+            # print('param:', param_)
+            if param_[0] == 'general_type':
+                param_types.append(self.get_expression_type(param_[1], function_name=function_name))
+            if param_[0] == 'function_call':
+                param_types.append(self.get_expression_type(param_[1], function_name=function_name))
+            if param_[0] == 'param':
+                self.check_param_type(param_, function_name)
+            # print('param_types:', param_types)
+
+        return param_types
 
     def check_function_call_parameters(self, arg_list):
         # Check each argument in the argument list
