@@ -206,7 +206,6 @@ def p_if_stmt(p):
     """
     if_stmt : IF LPAREN expression RPAREN LBRACE stmt_list RBRACE
             | IF LPAREN expression RPAREN LBRACE stmt_list RBRACE else_stmt
-            | expression QUESTION expression COLON expression SEMICOLON
     """
     if len(p) == 9:
         p[0] = ('if_stmt', p[3], p[6], p[8])
