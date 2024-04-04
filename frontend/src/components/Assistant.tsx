@@ -7,6 +7,7 @@ import useSpeechToText from '@services/SpeechToText';
 import { ChatService } from '@services/ChatService';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { darcula } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import ChatWelcome from "@components/ChatWelcome.tsx";
 
 function Assistant({ reset, setReset }) {
    const [userInput, setUserInput] = useState('');
@@ -131,6 +132,9 @@ function Assistant({ reset, setReset }) {
          {/* chat pane */}
          <div className="assistant-pane">
             <div ref={chatContainerRef} className="conversation-container card">
+               {/* welcome message */}
+               {messages.length === 0 && <ChatWelcome />}
+
                {/* Display the messages */}
                {messages.map((message, index) => (
                   <div key={index} className={`message-container`}>
@@ -139,7 +143,7 @@ function Assistant({ reset, setReset }) {
                      </div>
                      <div className={`message-card ${message.author === 'user' ? 'user' : 'other'}`}>
                         <>
-                           {message.text.replace('```pebekac', '```').split('```').map((part, idx) => {
+                           {message.text.replace(/```pebekac/g, '```').split('```').map((part, idx) => {
                               if (idx % 2 === 0) {
                                  return <ReactMarkdown key={idx} className="message-text">{part}</ReactMarkdown>;
                               } else {

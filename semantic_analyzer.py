@@ -8,20 +8,12 @@ class SemanticAnalyzer:
         self.scope_stack = []
         self.assigned_value = None
         self.in_loop = False
-        self.in_function = False
-
-    def is_in_function(self, boolean):
-        self.in_function = boolean
 
     def looping(self, value):
         self.in_loop = value
 
     def push_scope(self, function_name=None, return_type=None):
-        if function_name and return_type:
-            self.scope_stack.append({'function_name': function_name, 'return_type': return_type})
-            return
-        # Push a new scope onto the stack
-        self.scope_stack.append({})
+        self.scope_stack.append({'function_name': function_name, 'return_type': return_type})
 
     def pop_scope(self):
         # Pop the current scope from the stack
@@ -38,12 +30,20 @@ class SemanticAnalyzer:
                 return scope[name]
         return None
 
-    # Define functions to manage the symbol table and scope stack
+    def symbol_exists_in_current_scope(self, name, function_name):
+        for scope in reversed(self.scope_stack):
+            # print('scope:', scope)
+            # Check if the symbol exists, and it's not in the current function scope
+            if name in scope and ('function_name' not in scope or scope['function_name'] != function_name):
+                return True
+        return False
+
+    # Function to manage the symbol table and scope stack
     def reset_symbol_table_and_scope_stack(self):
         self.symbol_table = {}
         self.scope_stack = []
 
-    # Define a function for semantic analysis
+    # Function for semantic analysis
     def analyze_semantics(self, node, function_name=None):
         node_type = node[0]
 
@@ -76,26 +76,20 @@ class SemanticAnalyzer:
             # print('fun_name:', fun_name, 'return_type:', return_type, 'params:', params)
 
             if self.lookup_symbol(fun_name):
-                if len(self.scope_stack) > 1:
-                    if self.scope_stack[1][fun_name]['params'] == params:
-                        raise Exception(f"Error: Function {fun_name} already defined")
+                raise Exception(f"Error: Function {fun_name} already defined")
             else:
-                self.push_scope(function_name=fun_name, return_type=return_type[1])
                 self.declare_symbol(fun_name, {'type': 'function', 'return_type': return_type, 'params': params})
 
             # Analyze parameters
-            self.analyze_semantics(params, function_name=fun_name)
-
             # Analyze statements inside the function declaration
-            self.push_scope(function_name=fun_name, return_type=return_type[1])
-            self.is_in_function(True)
-            self.analyze_semantics(node[-1],
-                                   function_name=fun_name)  # Changed to analyze last part of the function declaration
+            self.push_scope(function_name=fun_name, return_type=return_type)
+            self.analyze_semantics(params, function_name=fun_name)
+            # Changed to analyze last part of the function declaration
+            self.analyze_semantics(node[-1], function_name=fun_name)
             self.pop_scope()
-            self.is_in_function(False)
 
             # Check if the function has a return type but no return statement
-            if return_type != 'void':
+            if return_type != 'void' and return_type != 'o':
                 if not self.has_return_statement(node[-1]):
                     raise Exception(f"Error: Function {fun_name} has a return type but no return statement")
 
@@ -109,15 +103,16 @@ class SemanticAnalyzer:
             param_type = node[1][1]
             param_name = node[2][1]
 
-            print('function_name:', function_name, 'param:', node, 'param_type:', param_type, 'param_name:', param_name)
+            # print('function_name:', function_name, 'param:', node,
+            #      'param_type:', param_type, 'param_name:', param_name)
 
             # Check if the parameter is already declared
-            if self.lookup_symbol(param_name):
+            if self.lookup_symbol(param_name) and self.lookup_symbol(param_name)['function_name'] == function_name:
                 raise Exception(
                     f"Error: Parameter {param_name} already declared in {function_name}")
             else:
                 # Add parameter to the symbol table
-                self.declare_symbol(param_name, {'type': param_type})
+                self.declare_symbol(param_name, {'function_name': function_name, 'type': param_type})
 
             if len(node) > 3:
                 self.analyze_semantics(node[3], function_name=function_name)
@@ -128,11 +123,14 @@ class SemanticAnalyzer:
             var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
 
             # Check if the variable is already declared
-            if self.lookup_symbol(var_name):
-                raise Exception(f"Error: Variable {var_name} already declared")
+            if (self.lookup_symbol(var_name)
+                    and self.lookup_symbol(var_name)['function_name'] == function_name):
+                raise Exception(f"Error: Identifier {var_name} already declared")
             else:
+                if var_type == 'list':
+                    var_type = ['int', 'float', 'double', 'string']
                 # Add variable to the symbol table
-                self.declare_symbol(var_name, {'type': var_type})
+                self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
 
             # If the variable has an initialization value, analyze it
             if len(node) == 4:
@@ -141,9 +139,9 @@ class SemanticAnalyzer:
                 self.analyze_semantics(('assignment', var_type, var_name, init_value), function_name=function_name)
 
         elif node_type == 'assignment':
-            # print('node:', node)
+            # print('assignment_node:', node)
             assigned_value, assignment_type = None, None
-            if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
+            if node[1][0] == 'general_type' or node[1][0] == 'list' or node[1][0] == 'array_type':
                 if node[1][0] == 'general_type':
                     # Check if the variable being assigned is declared
                     var_name = node[2][1]  # Extract the actual variable name from the identifier non-terminal
@@ -175,16 +173,39 @@ class SemanticAnalyzer:
 
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
-                        self.declare_symbol(var_name, {'type': var_type})
-                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
-                        raise Exception(f"Error: Variable {var_name} already declared")
+                        self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
+                    elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['type'] == 'function'):
+                        # Check if the variable is a function
+                        raise Exception(f"Error: Identifier {var_name} is already declared")
+                    elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['function_name'] != function_name):
+                        # Add variable to the symbol table
+                        self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
+                    elif (self.lookup_symbol(var_name)
+                          and self.lookup_symbol(var_name)['function_name'] == function_name):
+                        raise Exception(f"Error: Identifier {var_name} already declared")
                 else:
                     var_name = node[2][1]
                     var_type = self.get_expression_type(node[1][1], function_name=function_name)
+                    var_type_check = var_type
 
                     # print('var_name: ', var_name)
                     # print('var_type: ', var_type)
                     # print('node: ', node)
+
+                    if var_type == 'intArray':
+                        var_type_check = 'int'
+                    elif var_type == 'floatArray':
+                        var_type_check = 'float'
+                    elif var_type == 'stringArray':
+                        var_type_check = 'string'
+                    elif var_type == 'doubleArray':
+                        var_type_check = 'double'
+                    elif var_type == 'list':
+                        var_type_check = ['int', 'float', 'double', 'string']
+
+                    # print('var_type: ', var_type)
 
                     def process_values(values):
                         # print('values:', values)
@@ -200,18 +221,16 @@ class SemanticAnalyzer:
                             self.analyze_semantics(values, function_name=function_name)
                             value_type = self.get_expression_type(values[1], function_name=function_name)
                             # print('value_type:', value_type)
-                            if value_type != var_type:
-                                if ((var_type == 'intList' and value_type == 'int')
-                                        or (var_type == 'floatList' and value_type == 'float')
-                                        or (var_type == 'stringList' and value_type == 'string')
-                                        or (var_type == 'doubleList' and value_type == 'double')):
-                                    return
-                                if ((var_type == 'intArray' and value_type == 'int')
-                                        or (var_type == 'floatArray' and value_type == 'float')
-                                        or (var_type == 'stringArray' and value_type == 'string')
-                                        or (var_type == 'doubleArray' and value_type == 'double')):
-                                    return
-                                raise Exception(f"Error: Type mismatch. Expected {var_type}, got {value_type}")
+                            if value_type != var_type_check:
+                                if var_type_check == ['int', 'float', 'double',
+                                                      'string'] and value_type in var_type_check:
+                                    pass
+                                elif var_type == 'doubleArray' and value_type == 'float':
+                                    pass
+                                else:
+                                    if var_type_check == ['int', 'float', 'double', 'string']:
+                                        raise Exception(f"Error: Type mismatch. Expected list, got {value_type}")
+                                    raise Exception(f"Error: Type mismatch. Expected {var_type}, got {value_type}")
                             if len(values) >= 4:
                                 process_values(values[3])
 
@@ -220,59 +239,102 @@ class SemanticAnalyzer:
 
                     if not self.lookup_symbol(var_name):
                         # Add variable to the symbol table
-                        self.declare_symbol(var_name, {'type': var_type})
-                    elif self.lookup_symbol(var_name) and len(self.lookup_symbol(var_name)) == 1:
-                        raise Exception(f"Error: Variable {var_name} already declared")
+                        # print('var_type: ', var_type)
+                        self.declare_symbol(var_name, {'function_name': function_name, 'type': var_type})
+                    elif not self.symbol_exists_in_current_scope(var_name, function_name):
+                        raise Exception(f"Error: Identifier {var_name} already declared")
             else:
                 # Extract variable information
-                var_type = self.lookup_symbol(node[1][1])['type']
+                self.get_expression_type(node[1], function_name=function_name)
+                # print('node:', node)
+                var_type = self.lookup_symbol(node[1][1])['type'] if self.lookup_symbol(node[1][1]) else None
                 var_name = node[1][1]  # Extract the actual variable name from the identifier non-terminal
+                var_type_check = var_type
+
                 # print('assignment var_name: ', var_name)
                 # print('assignment var_type: ', var_type)
                 # print('node: ', node[3][0])
 
+                if var_type == 'intArray':
+                    var_type_check = 'int'
+                elif var_type == 'floatArray':
+                    var_type_check = 'float'
+                elif var_type == 'stringArray':
+                    var_type_check = 'string'
+                elif var_type == 'doubleArray':
+                    var_type_check = 'double'
+                elif var_type == 'list':
+                    var_type_check = ['int', 'float', 'double', 'string']
+
+                # print('var_type: ', var_type)
+                # print('function_name:', function_name)
+
                 # Check if the variable being assigned is declared
                 if not self.lookup_symbol(var_name):
-                    raise Exception(f"Error: Variable {var_name} not declared")
+                    raise Exception(f"Error: Identifier {var_name} not declared")
+                elif (not self.symbol_exists_in_current_scope(var_name, function_name)
+                      and self.lookup_symbol(var_name)['function_name'] != function_name):
+                    raise Exception(f"Error: Identifier {var_name} not declared")
                 elif self.lookup_symbol(var_name):
-                    # Check if the assigned value matches the type of the variable
-                    if node[3][0] == 'assignment':
-                        # print('node:', node[3])
-                        self.analyze_semantics(node[3], function_name=function_name)
-                        assigned_value = self.assigned_value
-                        var_type = self.lookup_symbol(var_name)['type']
-                    if node[3][0] == 'function_call':
-                        # print('assigned_value is a: ', node[3])
-                        self.analyze_semantics(node[3], function_name=function_name)
-                        fun_type = self.get_expression_type(node[3], function_name=function_name)
-                        # print('fun_type:', fun_type)
-                        if fun_type != var_type:
-                            raise Exception(f"Error: Type mismatch. Expected {var_type}, got {fun_type}")
-                    elif node[3] == 'null':
-                        assigned_value = node[3]
-                    elif node[2] == 'assignment_sign':
-                        # print('node:', node)
-                        assignment_type = node[2]
-                    else:
-                        assigned_value = node[3][1][1]
-                    # print('assigned_value: ', assigned_value)
-                    var_type = self.lookup_symbol(var_name)['type']
-                    # print('assigned var_type: ', var_type)
+                    def process_values(values):
+                        # print('values:', values)
+                        if values[0] == 'expression':
+                            """
+                            if len(values) >= 4:
+                                print('greater than 4, len(values):', len(values))
+                                print('assigned_value is: ', values[1][1][1])
+                                print('assigned_type is: ', values[1][1][0])
+                            else:
+                                print('less than 4, len(values):', len(values))
+                                print('assigned_value is: ', values[1][1])
+                                print('assigned_type is: ', values[1][0])
+                            """
+                            self.analyze_semantics(values, function_name=function_name)
+                            value_type = self.get_expression_type(values[1], function_name=function_name)
+                            # print('value_type:', value_type)
+                            # Check if a list of values is being assigned to a primitive type
+                            if len(values) >= 4 and values[2] == ',':
+                                if (var_type_check != ['int', 'float', 'double', 'string']
+                                        and var_type not in ['intArray', 'floatArray', 'doubleArray', 'stringArray']):
+                                    raise Exception(
+                                        f"Error: Type mismatch. Expected {var_type_check}, got list")
+                            if value_type != var_type_check:
+                                if var_type_check == ['int', 'float', 'double',
+                                                      'string'] and value_type in var_type_check:
+                                    pass
+                                else:
+                                    if var_type_check == ['int', 'float', 'double', 'string']:
+                                        raise Exception(f"Error: Type mismatch. Expected list, got {value_type}")
+                                    raise Exception(
+                                        f"Error: Type mismatch. Expected {var_type_check}, got {value_type}")
+                        if values[0] == 'function_call':
+                            # print('assigned_value is a: ', node[3])
+                            self.analyze_semantics(node[3], function_name=function_name)
+                            fun_type = self.get_expression_type(node[3], function_name=function_name)
+                            # print('fun_type:', fun_type)
+                            if fun_type != var_type_check:
+                                raise Exception(f"Error: Type mismatch. Expected {var_type_check}, got {fun_type}")
+
+                        if len(values) == 2:
+                            if len(values[1]) > 2:
+                                process_values(values[1][3])
+                        elif len(values) == 4:
+                            process_values(values[3])
+
+                    # Process the values
+                    process_values(node[3])
 
             # Check if the assigned value matches the type of the variable
             if node[3][0] == 'function_call':
-                pass  # Allow the return type checking to be done by python compiler
-            elif node[3][1][0] == 'array_access':
+                self.analyze_semantics(node[3], function_name=function_name)
+            elif node[3][1][0] == 'element_access':
                 # print('array_node:', node[3][1])
                 self.analyze_semantics(node[3][1], function_name=function_name)
                 assigned_value = self.get_expression_type(node[3][1], function_name=function_name)
                 # print('assigned_value:', assigned_value)
                 # print('var_type:', var_type)
                 if assigned_value != var_type:
-                    if ((var_type == 'int' and assigned_value == 'intList')
-                            or (var_type == 'float' and assigned_value == 'floatList')
-                            or (var_type == 'string' and assigned_value == 'stringList')
-                            or (var_type == 'double' and assigned_value == 'doubleList')):
+                    if var_type != 'boolean' and assigned_value == 'list':
                         return
                     if ((var_type == 'int' and assigned_value == 'intArray')
                             or (var_type == 'float' and assigned_value == 'floatArray')
@@ -285,9 +347,8 @@ class SemanticAnalyzer:
             else:
                 # print('node_else:', node[3])
                 # print('assigned_value:', assigned_value, 'var_type:', var_type)
-                if self.lookup_symbol(assigned_value):
-                    if self.lookup_symbol(assigned_value)['type'] == var_type:
-                        return
+                if self.lookup_symbol(assigned_value) and self.lookup_symbol(assigned_value)['type'] == var_type:
+                    return
                 if isinstance(assigned_value, str) and var_type != 'string':
                     if assigned_value.capitalize() == 'True' or assigned_value.capitalize() == 'False':
                         if var_type == 'boolean':
@@ -337,11 +398,16 @@ class SemanticAnalyzer:
                 self.pop_scope()
 
         elif node_type == 'else_stmt':
-            # print('else_node:', node[1])
-            # Analyze the statements in the else block
-            self.push_scope(function_name=function_name)
-            self.analyze_semantics(node[1], function_name=function_name)
-            self.pop_scope()
+            # print('else_node:', node[1][0])
+            if node[1][0] == 'if_stmt' or node[1][0] == 'stmt_list':
+                # Analyze the statements in the else block
+                self.push_scope(function_name=function_name)
+                self.analyze_semantics(node[1], function_name=function_name)
+                self.pop_scope()
+
+                # Check if the else_if block is followed by an else statement
+                if node[1][0] == 'if_stmt' and not len(node[1]) > 3:
+                    raise Exception("Error: nested if statement not followed by a else block")
 
         elif node_type == 'while_stmt':
             # ('node:', node)
@@ -385,59 +451,25 @@ class SemanticAnalyzer:
             # Check the type of the expression
             expr_type = self.get_expression_type(node[1], function_name=function_name)
 
-            # Check if expression is valid...
+            # Check if expression is valid
             if expr_type is None:
-                raise ValueError(f"Invalid expression in print statement: {node}")
+                raise ValueError(f"Error: Invalid expression in print statement: {node}")
 
         elif node_type == 'function_call':
             fun_name = node[1][1]  # Extract the actual function name from the identifier non-terminal
             arg_list = node[2]
             fun_info = self.lookup_symbol(fun_name)
+            self.check_function_call_parameters(arg_list)
 
-            # Check if the arguments are expressions
-            def count_args(arg_node):
-                if isinstance(arg_node, tuple) and arg_node[0] == 'arg_list':
-                    if arg_node[1] == 'empty':
-                        return 0
-                    else:
-                        return sum(count_args(arg) for arg in arg_node[1:])
-                else:
-                    return 1
-
-            num_args = count_args(arg_list)
-
+            # Check if the function exists
             if fun_info is None:
                 raise Exception(f"Error: Function {fun_name} not defined")
             else:
                 params = fun_info['params']
 
-                # Count the number of parameters in the function declaration
-                def count_params(param_node):
-                    # print('param_node[0]:', param_node[0])
-                    if isinstance(param_node, tuple) and param_node[0] == 'params':
-                        # print('If param_node:', param_node)
-                        if param_node[1] == 'empty':
-                            # print('empty')
-                            return 0
-                        else:
-                            # print('param_node[1]:', param_node[1])
-                            # print(len(param_node[1]))
-                            # If the node is a 'params' node, count the identifier and recursively count the rest of the
-                            # parameters
-                            return 1 + count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
-                    elif isinstance(param_node, tuple) and param_node[0] == 'param':
-                        # print('ELse param_node:', param_node)
-                        if param_node[1] == 'empty':
-                            # print('empty')
-                            return 0
-                        else:
-                            # print('param_node[0]:', param_node[0])
-                            # print(len(param_node))
-                            # If the node is a 'params' node, count the identifier and recursively count the rest of the
-                            # parameters
-                            return 1 + count_params(param_node[3]) if len(param_node) > 3 else 1
-
-                num_params = count_params(params)
+                # Check if the number of arguments matches the number of parameters
+                num_args = self.count_args(arg_list)
+                num_params = self.count_params(params)
                 if num_args != num_params:
                     raise Exception(
                         f"Error: Number of arguments in function call ({num_args}) does not match the number of "
@@ -449,39 +481,8 @@ class SemanticAnalyzer:
                 param_list = params[1]
                 # print('param_list:', param_list)
 
-                arg_types = []  # List to store the types of arguments
-                param_types = []  # List to store the types of parameters
-
-                def check_arg_type(list_arg):
-                    # Check if the types of arguments match the types of parameters
-                    for arg in list_arg[1:]:
-                        # print('arg:', arg)
-                        if arg[0] == 'expression':
-                            if arg[1][0] == 'function_call':
-                                check_arg_type(arg[1])
-                                self.analyze_semantics(arg[1], function_name=function_name)
-                            else:
-                                arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
-                        if arg[0] == 'function_call':
-                            arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
-                        if arg[0] == 'arg_list':
-                            check_arg_type(arg)
-                        # print('arg_types:', arg_types)
-
-                def check_param_type(list_param):
-                    # Check if the types of parameters
-                    for param_ in list_param[1:]:
-                        # print('param:', param_)
-                        if param_[0] == 'general_type':
-                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
-                        if param_[0] == 'function_call':
-                            param_types.append(self.get_expression_type(param_[1], function_name=function_name))
-                        if param_[0] == 'param':
-                            check_param_type(param_)
-                        # print('param_types:', param_types)
-
-                check_arg_type(arg_list)  # Check the types of arguments
-                check_param_type(param_list)  # Check the types of parameters
+                arg_types = self.check_arg_type(arg_list, function_name)  # Check the types of arguments
+                param_types = self.check_param_type(param_list, function_name)  # Check the types of parameters
 
                 # Check the types of arguments and parameters
                 for arg_type, param_type in zip(arg_types[0:], param_types[0:]):
@@ -500,9 +501,11 @@ class SemanticAnalyzer:
             elif len(self.scope_stack[-1]) > 1:
                 current_function_name = self.scope_stack[-1]['function_name']
                 expected_return_type = self.scope_stack[-1]['return_type']
+                # print('scope_stack:', self.scope_stack[-1])
             elif len(self.scope_stack[-2]) == 1:
                 current_function_name = self.scope_stack[-2]['function_name']
                 expected_return_type = self.scope_stack[-2]['return_type']
+                # print('scope_stack:', self.scope_stack[-2])
             else:
                 return
 
@@ -533,12 +536,12 @@ class SemanticAnalyzer:
                 # print('node:', node[1][1])
                 # Ensure the expression to increment is an identifier
                 if node[1][1] != 'identifier':
-                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+                    raise TypeError(f"Invalid operation: Increment operator cannot be applied to a {node[1][1][0]}")
             else:
                 # print('node:', node[1][0])
                 # Ensure the expression to increment is an identifier
                 if node[1][0] != 'identifier':
-                    raise TypeError("Invalid operation: Increment operator can only be applied to an identifier")
+                    raise TypeError(f"Invalid operation: Increment operator cannot be applied to a {node[1][1][0]}")
 
             # Ensure the types match
             self.get_expression_type(node, function_name=function_name)
@@ -547,14 +550,14 @@ class SemanticAnalyzer:
             if self.in_loop is False:
                 raise Exception("Error: break statement not inside a loop")
 
-        elif node_type == 'array_access':
+        elif node_type == 'element_access':
             # Analyze the identifier to ensure it's defined
             # print('node:', node)
             array_name = node[1][1]
             array_info = self.lookup_symbol(array_name)
 
             if not array_info:
-                raise NameError(f"Array {array_name} is not defined")
+                raise NameError(f"Error: Identifier {array_name} is not defined")
 
             # Analyze the index expression
             self.analyze_semantics(node[2], function_name=function_name)
@@ -562,7 +565,7 @@ class SemanticAnalyzer:
             # Ensure the index expression evaluates to an integer
             index_type = self.get_expression_type(node[2], function_name=function_name)
             if index_type != 'int':
-                raise TypeError(f"Array index must be an integer, got {index_type}")
+                raise TypeError(f"Error: Array index must be an integer, got {index_type}")
 
     def get_expression_type(self, expr, function_name):
         # Determine the type of expression.
@@ -575,7 +578,8 @@ class SemanticAnalyzer:
 
         if expr_type == 'expression':
             if len(expr) >= 4:
-                print('binary_expr:', expr)
+                # print('binary_expr:', expr)
+                # print('left_operand:', expr[1], 'operator:', expr[2], 'right_operand:', expr[3])
                 # Binary operation
                 self.analyze_semantics(expr[1], function_name=function_name)
                 self.analyze_semantics(expr[3], function_name=function_name)
@@ -592,7 +596,8 @@ class SemanticAnalyzer:
                       or operator == '-=' or operator == '*=' or operator == '/=' or operator == '%='):
                     if right_operand_type == 'string' or left_operand_type == 'string':
                         raise TypeError(f"Invalid operation: {operator} on string")
-                elif operator == '==' or operator == '!=' or operator == '<' or operator == '<=' or operator == '>' or operator == '>=':
+                elif (operator == '==' or operator == '!=' or operator == '<' or operator == '<='
+                      or operator == '>' or operator == '>='):
                     return 'boolean'
                 return right_operand_type
             self.analyze_semantics(expr, function_name=function_name)  # Analyze right operand
@@ -616,7 +621,7 @@ class SemanticAnalyzer:
                     raise TypeError(f"Invalid operation: {operator} on string")
             return left_operand_type
 
-        elif expr_type == 'array_access':
+        elif expr_type == 'element_access':
             # print('expr:', expr)
             # Analyze the identifier to ensure it's defined
             array_name = expr[1][1]
@@ -624,7 +629,7 @@ class SemanticAnalyzer:
             if array_info:
                 # print('array_info:', array_info)
                 return array_info['type']
-            raise NameError(f"Array {array_name} is not defined")
+            raise NameError(f"Error: Identifier {array_name} is not defined")
 
         elif expr_type == 'identifier':
             # Look up the identifier in the symbol table
@@ -639,7 +644,7 @@ class SemanticAnalyzer:
                     return 'double'
                 return self.lookup_symbol(identifier)['type']
             else:
-                raise NameError(f"Identifier {identifier} is not defined")
+                raise NameError(f"Error: Identifier {identifier} is not defined")
 
         elif expr_type == 'function_call':
             # Look up the function in the symbol table
@@ -655,7 +660,8 @@ class SemanticAnalyzer:
                 if expr[0] == 'function_call':
                     # print('expr_call:', expr)
                     self.analyze_semantics(expr, function_name=function_name)
-                    return fun_info['return_type'][1]
+                    # print('fun_info:', fun_info['return_type'])
+                    return fun_info['return_type']
                 if expr_type == 'expression' or expr_type == 'identifier' or expr_type == 'function_call':
                     if expr_type == 'expression':
                         if len(expr[2][1][1]) > 2:
@@ -675,15 +681,14 @@ class SemanticAnalyzer:
                     if expr_type == 'function_call':
                         # print('expr_call:', expr[2][1][1][1])
                         expr_type = self.get_expression_type(expr[2][1][1], function_name=function_name)
-                if expr_type != fun_info['return_type'][1]:
+                if expr_type != fun_info['return_type']:
                     # print('return_type:', expr_type)
                     raise Exception(
                         f"Return type mismatch in function {fun_name}: Expected "
-                        f"{'void' if fun_info['return_type'][1] == 'o'
-                        else fun_info['return_type'][1]}, got {expr_type}")
-                return fun_info['return_type'][1]
+                        f"{'void' if fun_info['return_type'] == 'o' else fun_info['return_type']}, got {expr_type}")
+                return fun_info['return_type']
             else:
-                raise NameError(f"Function {fun_name} is not defined")
+                raise NameError(f"Error: Function {fun_name} is not defined")
 
         elif expr_type == 'len_stmt':
             return 'int'
@@ -703,17 +708,8 @@ class SemanticAnalyzer:
         elif expr_type == 'string' or expr_type == 'string_literal':
             return 'string'
 
-        elif expr_type == 'intList':
-            return 'intList'
-
-        elif expr_type == 'floatList':
-            return 'floatList'
-
-        elif expr_type == 'doubleList':
-            return 'doubleList'
-
-        elif expr_type == 'stringList':
-            return 'stringList'
+        elif expr_type == 'list':
+            return 'list'
 
         elif expr_type == 'intArray':
             return 'intArray'
@@ -755,10 +751,26 @@ class SemanticAnalyzer:
 
     # Counts number of arguments in a function declaration
     def count_params(self, param_node):
+        # print('param_node[0]:', param_node[0])
         if isinstance(param_node, tuple) and param_node[0] == 'params':
+            # print('If param_node:', param_node)
             if param_node[1] == 'empty':
+                # print('empty')
                 return 0
             else:
+                # print('param_node[1]:', param_node[1])
+                # print(len(param_node[1]))
+                # If the node is a 'params' node, count the identifier and recursively count the rest of the
+                # parameters
+                return 1 + self.count_params(param_node[1][3]) if len(param_node[1]) > 3 else 1
+        elif isinstance(param_node, tuple) and param_node[0] == 'param':
+            # print('Else param_node:', param_node)
+            if param_node[1] == 'empty':
+                # print('empty')
+                return 0
+            else:
+                # print('param_node[0]:', param_node[0])
+                # print(len(param_node))
                 # If the node is a 'params' node, count the identifier and recursively count the rest of the
                 # parameters
                 return 1 + self.count_params(param_node[3]) if len(param_node) > 3 else 1
@@ -772,6 +784,59 @@ class SemanticAnalyzer:
                 return sum(self.count_args(arg) for arg in arg_node[1:])
         else:
             return 1
+
+    def check_arg_type(self, list_arg, function_name):
+        arg_types = []
+        # Check if the types of arguments match the types of parameters
+        for arg in list_arg[1:]:
+            # print('arg:', arg)
+            if arg[0] == 'expression':
+                if arg[1][0] == 'function_call':
+                    self.check_arg_type(arg[1], function_name)
+                    self.analyze_semantics(arg[1], function_name=function_name)
+                else:
+                    arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
+            if arg[0] == 'function_call':
+                arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
+            if arg[0] == 'arg_list':
+                self.check_arg_type(arg, function_name)
+            # print('arg_types:', arg_types)
+
+        return arg_types
+
+    def check_param_type(self, list_param, function_name):
+        param_types = []
+        # Check if the types of parameters
+        for param_ in list_param[1:]:
+            # print('param:', param_)
+            if param_[0] == 'general_type':
+                param_types.append(self.get_expression_type(param_[1], function_name=function_name))
+            if param_[0] == 'function_call':
+                param_types.append(self.get_expression_type(param_[1], function_name=function_name))
+            if param_[0] == 'param':
+                self.check_param_type(param_, function_name)
+            # print('param_types:', param_types)
+
+        return param_types
+
+    def check_function_call_parameters(self, arg_list):
+        # Check each argument in the argument list
+        for arg in arg_list[1:]:
+            # print('arg:', arg)
+            # If the argument is an identifier, check if it's declared
+            if arg[1][0] == 'identifier':
+                arg_name = arg[1][1]
+                arg_info = self.lookup_symbol(arg_name)
+                # print('arg_info:', arg_info)
+
+                # Exclude parameter type variable from the check
+                if arg_info is not None and arg_info['type'] == 'param':
+                    # print('arg_info:', arg_info)
+                    continue
+
+                # If the argument is not declared, raise an error
+                if arg_info is None:
+                    raise Exception(f"Error: Argument {arg_name} not declared")
 
     # Integrate semantic analysis into the parser
     def parse_and_analyze(self, program):
@@ -788,13 +853,28 @@ class SemanticAnalyzer:
 
 
 def get_type(op_type, left_operand_type, right_operand_type):
-    if (left_operand_type == 'int' and right_operand_type == 'float') or (
-            left_operand_type == 'float' and right_operand_type == 'int'):
+    if ((left_operand_type == 'int' and right_operand_type == 'float')
+            or (left_operand_type == 'float' and right_operand_type == 'int')):
         return 'float'
-    elif (left_operand_type == 'int' and right_operand_type == 'double') or (
-            left_operand_type == 'double' and right_operand_type == 'int'):
+    elif ((left_operand_type == 'int' and right_operand_type == 'double')
+          or (left_operand_type == 'double' and right_operand_type == 'int')):
         return 'double'
-    elif (left_operand_type == 'float' and right_operand_type == 'double') or (
-            left_operand_type == 'double' and right_operand_type == 'float'):
+    elif ((left_operand_type == 'float' and right_operand_type == 'double')
+          or (left_operand_type == 'double' and right_operand_type == 'float')):
         return 'double'
+    elif ((left_operand_type == 'int' and right_operand_type == 'intArray')
+          or (left_operand_type == 'intArray' and right_operand_type == 'int')):
+        return 'int'
+    elif ((left_operand_type == 'float' and right_operand_type == 'floatArray')
+          or (left_operand_type == 'floatArray' and right_operand_type == 'float')):
+        return 'float'
+    elif ((left_operand_type == 'double' and right_operand_type == 'doubleArray')
+          or (left_operand_type == 'doubleArray' and right_operand_type == 'double')):
+        return 'double'
+    elif ((left_operand_type == 'string' and right_operand_type == 'stringArray')
+          or (left_operand_type == 'stringArray' and right_operand_type == 'string')):
+        return 'string'
+    elif ((left_operand_type != 'boolean' and right_operand_type == 'list')
+          or (left_operand_type == 'list' and right_operand_type != 'boolean')):
+        return 'int' or 'float' or 'double' or 'string'
     raise TypeError(f"Type mismatch in {op_type}: {left_operand_type} and {right_operand_type}")

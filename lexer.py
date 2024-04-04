@@ -26,10 +26,7 @@ reserved = {
     'floatArray': 'FLOATARRAY',
     'stringArray': 'STRINGARRAY',
     'doubleArray': 'DOUBLEARRAY',
-    'intList': 'INTLIST',
-    'floatList': 'FLOATLIST',
-    'stringList': 'STRINGLIST',
-    'doubleList': 'DOUBLELIST',
+    'list': 'LIST',
     'break': 'BREAK',
     'params': 'PARAMS',
     'void': 'VOID',
@@ -179,7 +176,7 @@ def t_STRING_LITERAL(t):
 # Start of a comment
 def t_COMMENT(t):
     r'(/\*(.|\n)*?\*/)|(//.*?\n)|(\#.*?\n)'
-    pass  # No return value. Token discarded
+    t.lexer.lineno += t.value.count('\n')  # increment the line number by the number of newlines in the comment
 
 
 # Ignored token with an action associated with it

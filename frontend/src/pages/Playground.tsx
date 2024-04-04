@@ -25,10 +25,12 @@ fun main() {
 
 main();`;
    const [chatActive, setChatActive] = useState(true);
+   const [resourcesActive, setResourcesActive] = useState(false);
    const [terminalActive, setTerminalActive] = useState(false);
    const [code, setCode] = useState(defaultCode);
    const [reset, setReset] = useState(false);
    const [running, setRunning] = useState(false);
+   const [sidePaneActive, setSidePaneActive] = useState(true);
 
    const handleEditorWillMount = (monaco) => {
       monaco.editor.defineTheme('myTheme', {
@@ -43,10 +45,9 @@ main();`;
       monaco.languages.setMonarchTokensProvider('PEBEKAC', {
          keywords: [
             'fun', 'return', 'if', 'else', 'for', 'while', 'void', 'break',
-            'true', 'false', 'True', 'False', 'null',
-            'intList', 'floatList', 'stringList', 'doubleList',
+            'true', 'false', 'True', 'False', 'null', 'list', 'len',
             'intArray', 'floatArray', 'stringArray', 'doubleArray',
-            'int', 'float', 'double', 'string', 'boolean'
+            'int', 'float', 'double', 'string', 'boolean', 'print'
          ],
          tokenizer: {
             root: [
@@ -115,11 +116,13 @@ main();`;
                editorContainer.style.borderRadius = '0px 10px 10px 0px';
                terminalContainer.style.borderRadius = '0px 0px 10px 0px';
                navTabs.style.setProperty('--bs-nav-tabs-border-radius', '0px');
+               setSidePaneActive(false);
             } else {
                editorPane.style.width = 'calc(100% - 450px)'; // Shrink editor pane to accommodate side pane
                editorContainer.style.borderRadius = '0px 10px 10px 10px';
                terminalContainer.style.borderRadius = '0px 10px 10px 10px';
                navTabs.style.setProperty('--bs-nav-tabs-border-radius', '');
+               setSidePaneActive(true);
             }
          }
       }
@@ -143,7 +146,21 @@ main();`;
       document.body.removeChild(element);
    }
 
-   // Update the runCode function to start and stop the program execution
+   // Function to handle terminal output
+   const handleTerminalOutput = (line) => {
+      // Check if the line contains an error message
+      if (line.includes('Error:') || line.includes('Syntax error')
+         || line.includes('Return type mismatch') || line.includes('Invalid operation:')
+         || line.includes('Type mismatch')) {
+         // If so, write the line in red
+         terminalInstance?.writeln(`\x1b[91m${line}\x1b[0m`);
+      } else {
+         // Otherwise, write the line as normal
+         terminalInstance?.writeln(line);
+      }
+   };
+
+   // Update the runCode function
    const runCode = async () => {
       try {
          if (!terminalActive && terminalInstance) {
@@ -159,9 +176,7 @@ main();`;
             const outputLines = response.split('\n');
 
             for (const line of outputLines) {
-               if (terminalInstance) {
-                  terminalInstance.writeln(line);
-               }
+               handleTerminalOutput(line); // Use the new function to handle output
             }
 
             // Check if execution is complete or stopped
@@ -177,16 +192,6 @@ main();`;
                }
                break;  // Exit the loop
             }
-
-            // Handle user input prompts
-            const inputRequest = await fetch('/get_input');
-            const inputResponse = await inputRequest.json();
-            const userInput = inputResponse.input;
-
-            if (!userInput) {
-               // No more input prompts, break the loop
-               break;
-            }
          }
       } catch (error) {
          // Handle errors
@@ -195,6 +200,7 @@ main();`;
          setRunning(false); // Set running state to false after execution
       }
    };
+
 
    // Function to request stopping the program execution
    const stopExecution = async () => {
@@ -251,8 +257,23 @@ main();`;
 
    // Function to toggle the chat visibility
    const toggleChat = () => {
-      setChatActive((prevChatActive) => !prevChatActive); // Toggle chat active state
-      toggleSidePane(); // Toggle side pane visibility
+      if (chatActive) {
+         toggleSidePane(); // If chat is already active, toggle side pane visibility
+      } else {
+         setChatActive(true); // Set chat active state to true
+         setResourcesActive(false); // Set resources active state to false
+         if (!sidePaneActive) toggleSidePane(); // If side pane is not active, toggle side pane visibility
+      }
+   };
+
+   const toggleResources = () => {
+      if (resourcesActive) {
+         toggleSidePane(); // If resources are already active, toggle side pane visibility
+      } else {
+         setResourcesActive(true); // Set resources active state to true
+         setChatActive(false); // Set chat active state to false
+         if (!sidePaneActive) toggleSidePane(); // If side pane is not active, toggle side pane visibility
+      }
    };
 
    useEffect(() => {
@@ -381,7 +402,7 @@ main();`;
                </div>
                <span className="tooltip-side">Chat</span>
             </div>
-            <div className={`doc-btn`}>
+            <div className={`doc-btn ${resourcesActive ? 'active' : ''}`} onClick={() => { toggleResources(); }}>
                <div className="indicator" />
                <div className='icon'>
                   <i className='bi-journals'></i>
@@ -393,16 +414,31 @@ main();`;
          <div className="side-pane">
             <div className="content">
                <div className="header">
-                  <h6>Chat</h6>
-                  <div className='action-buttons'>
-                     <div className='reset-btn' onClick={() => setReset(true)}>
-                        <i className='bi-arrow-clockwise'></i>
-                        <span className="tooltip">Reset</span>
+                  {chatActive ? <h6>Chat</h6> : <h6>Resources</h6>}
+                  {chatActive &&
+                     <div className='action-buttons'>
+                        <div className='reset-btn' onClick={() => setReset(true)}>
+                           <i className='bi-arrow-clockwise'></i>
+                           <span className="tooltip">Reset</span>
+                        </div>
                      </div>
-                  </div>
+                  }
                </div>
                <hr className="divider" />
-               <Assistant reset={reset} setReset={setReset} />
+               {chatActive &&
+                  <Assistant reset={reset} setReset={setReset} />
+               }
+               {resourcesActive &&
+                  <div className='resources'>
+                     <ul className='list'>
+                        <li className='resource-item'>
+                           <a href="/resources/documentation.pdf" target="_blank" rel="noreferrer">
+                              Documentation
+                           </a>
+                        </li>
+                     </ul>
+                  </div>
+               }
             </div>
          </div>
          {/* editor pane */}

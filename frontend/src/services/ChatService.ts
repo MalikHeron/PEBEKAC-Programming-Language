@@ -53,12 +53,12 @@ export class ChatService {
          <program> 
                : <stmt_list>
                ;
-         
+
          <stmt_list> 
                : <stmt> <stmt_list> 
                | <stmt>
                ;
-         
+
          <stmt> 
                : <fun_declaration>
                | <print_stmt>
@@ -72,110 +72,108 @@ export class ChatService {
                | <break_stmt>
                | <comment>
                ;
-         
+
          <fun_declaration> 
                : 'fun' <return_type>? <identifier> '(' <params> ')' '{' <stmt_list> '}'
                ;
-         
+
          <params>
                : <param>
                ;
-         
+
          <param>
                : <general_type> <identifier> ',' <param>
                | <general_type> <identifier>
+               | <list> <identifier> ',' <param>
+               | <list> <identifier>
+               | <array_type> <identifier> ',' <param>
+               | <array_type> <identifier>
                ;
-         
+
          <len_stmt>
                : 'len' '(' <identifier> ')'
                ;
-         
+
          <print_stmt>
                : 'print' '(' <expression> (',' <function_call> ',' <expression>)? ')' ';'
                | 'print' '(' <function_call> ')' ';'
                ;
-         
+
          <function_call>
                : <identifier> '(' <arg_list> ')'
                ;
-         
+
          <arg_list>
                : <expression> ',' <arg_list>
                | <expression>
                ;
-         
+
          <return_stmt>
                : 'return' <expression> ';'
                ;
-         
+
          <variable_declaration>
-               : <general_type> <identifier> '(' ',' <variable_declaration>+')'? ';'
-               | <list_type> <identifier> '[' ']' '(' ',' <variable_declaration>+')'? ';'
-               | <array_type> <identifier> '{' '}' '(' ',' <variable_declaration>+')'? ';'
+               : <general_type> <identifier> ';'
+               | <list> <identifier> '{' '}' ';'
+               | <array_type> <identifier> '[' ']' ';'
                ;
-         
+
          <assignment>
                : <general_type> <identifier> '=' <expression> ';'
                | <general_type> <identifier> '=' <function_call> ';'
                | <general_type> <identifier> '=' <null> ';'
-               | <list_type> <identifier> '=' <null> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <null> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <expression> ';'
-               | <list_type> <identifier> '[' <int> ']' '=' <function_call> ';'
-               | <list_type> <identifier> '=' '[' <expression> ']' ';'
-               | <list_type> <identifier> '=' <function_call> ';'
-               | <array_type> <identifier> '=' <null> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <null> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <expression> ';'
-               | <array_type> <identifier> '[' <int> ']' '=' <function_call>
-               | <array_type> <identifier> '=' '{' <expression> '}' ';'
+               | <list> <identifier> '=' '{' <expression> '}' ';'
+               | <list> <identifier> '=' <function_call> ';'
+               | <list> <identifier> '=' <null> ';'
+               | <array_type> <identifier> '=' '[' <expression> ']' ';'
                | <array_type> <identifier> '=' <function_call> ';'
+               | <array_type> <identifier> '=' <null> ';'
                | <identifier> '=' <expression> ';'
-               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <function_call> ';'
                | <identifier> '=' <null> ';'
+               | <identifier> <assignment_sign> <function_call> ';'
                | <identifier> '=' <len_stmt> ';'
                ;
-         
+
          <control_structure> 
                : <if_stmt> 
                | <for_stmt> 
-               | <while_stmt> 
-               | <switch_stmt>
+               | <while_stmt>
                ;
-         
+
          <break_stmt>
                : 'break' ';'
                ;
-         
+
          <comment>
                : '//' <identifier>
                | '#' <identifier>
                | '/*' <identifier> '*/'
                ;
-         
+
          <return_type>
                : <general_type>
                | <array_type>
-               | <list_type>
+               | <list>
+               | 'void'
                ;
-         
+
          <if_stmt>
                : 'if' '(' <expression> ')' '{' <stmt_list> '}'
                | 'if' '(' <expression> ')' '{' <stmt_list> '}' <else_stmt>
                | <expression> '?' <expression> ':' <expression> ';'
                ;
-         
+
          <else_stmt>
                : 'else' '{' <stmt_list> '}'
                | 'else' <if_stmt>
                ;
-         
+
          <for_stmt>
                : 'for' '(' <variable_declaration> <expression> ';' <expression> ')' '{' <stmt_list> '}'
                | 'for' '(' <assignment> <expression> ';' <expression> ')' '{' <stmt_list> '}'
                ;
-         
+
          <while_stmt>
                : 'while' '(' <expression> ')' '{' <stmt_list> '}'
                ;
@@ -203,17 +201,17 @@ export class ChatService {
                | <float>
                | <string_literal>
                | <boolean>
+               | <element_access>
+               | <function_call>
                | <compound_assignment>
                | <len_stmt>
                | <null>
-               | <identifier> '[' <expression> ']'
-               | <identifier> '{' <expression> '}'
-         
+
          <compound_assignment>
                : <expression> <assignment_sign> <expression>
                | <identifier> <assignment_sign> <expression>
                ;
-         
+
          <assignment_sign>
                : '+='
                | '-='
@@ -221,28 +219,28 @@ export class ChatService {
                | '/='
                | '%='
                ;
-         
+
          <int>
                : '-'?[0-9]+
                ;
-         
+
          <float>
                : '-'?[0-9]+'.'[0-9]+
                ;
-         
+
          <string> 
                : [a-zA-Z]
                ;
-         
+
          <identifier>
                : ('_')?(<string>|<int>)+
                ;
-         
+
          <boolean> 
                : 'true' 
                | 'false'
                ;
-         
+
          <null>
                : 'null'
                ;
@@ -251,7 +249,7 @@ export class ChatService {
                : '"'<identifier>'"'
                | "'" <identifier> "'"
                ;
-         
+
          <general_type> 
                : 'int' 
                | 'float' 
@@ -259,29 +257,29 @@ export class ChatService {
                | 'string' 
                | 'boolean'
                ;
-         
+
          <array_type> 
                : 'intArray' 
                | 'floatArray' 
                | 'stringArray' 
                | 'doubleArray'
                ;
-         
-         <list_type> 
-               : 'intList' 
-               | 'floatList' 
-               | 'stringList' 
-               | 'doubleList'
+
+         <list>
+               : 'list'
                ;
-         
+
+         <element_access>
+               : <identifier> '[' <expression> ']'
+               ;
+
          # Reserved and Keywords
          [
             'if', 'else', 'while', 'for', 
-            'true', 'false', 'void'
+            'true', 'false', 'void', 'True', 'False',
             'null', 'return', 'print', 'fun', 'break', 'len',
-            'int', 'float', 'double', 'string', 
-            'intArray', 'floatArray', 'stringArray', 'doubleArray',
-            'intList', 'floatList', 'stringList', 'doubleList'
+            'int', 'float', 'double', 'string', 'list',
+            'intArray', 'floatArray', 'stringArray', 'doubleArray'
          ]
          
          \nQuery: ${query}` },

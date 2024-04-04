@@ -36,13 +36,17 @@ def generate_code(node):
             return f'{var_name} = None'  # Initializing other variables as None
 
     elif node_type == 'assignment':
-        if node[1][0] == 'general_type' or node[1][0] == 'list_type' or node[1][0] == 'array_type':
+        if node[1][0] == 'general_type':
             var_name = node[2][1]
             if node[3] == 'null':
                 return f'{var_name} = None'
             else:
                 expr = generate_code(node[3])
                 return f'{var_name} = {expr}'  # Correct assignment syntax
+        elif node[1][0] == 'list' or node[1][0] == 'array_type':
+            var_name = node[2][1]
+            expr = generate_code(node[3])
+            return f'{var_name} = [{expr}]'
         else:
             var_name = node[1][1]
             if node[3] == 'null':
@@ -110,15 +114,15 @@ def generate_code(node):
         if len(node) == 2:
             return generate_code(node[1])
         elif len(node) == 3:
-            op = node[1]
+            op = node[1] if node[1][0] != 'assignment_sign' else generate_code(node[1])
             right = generate_code(node[2])
             # print('op:', op, 'right:', right)
             return f'{op} {right}'
         elif len(node) == 4:
             left = generate_code(node[1])
-            op = node[2]
+            op = generate_code(node[2])
             right = generate_code(node[3])
-            # print('left:', left, 'op:', op, 'right:', right)
+            print('left:', left, 'op:', op, 'right:', right)
             return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
@@ -172,16 +176,19 @@ def generate_code(node):
     elif node_type == 'empty' or node_type == 'e':
         return ''
 
-    elif node_type == 'array_access':
+    elif node_type == 'element_access':
         array_name = generate_code(node[1])
         index = generate_code(node[2])
         return f'{array_name}[{index}]'
 
-    elif node_type == '=':
-        return '='
+    elif node_type == '|':
+        return 'or'
+
+    elif node_type == '&':
+        return 'and'
 
     else:
-        return f'Unknown node type: {node_type}'
+        return f'{node}'
 
 
 def indent(code):
