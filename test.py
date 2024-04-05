@@ -153,7 +153,8 @@ class CodeGeneration(unittest.TestCase):
                 }
                 
                 int a = 10;
-                a = 2;
+                a **= 2;
+                print(a);
                 
                 main();
             """,
