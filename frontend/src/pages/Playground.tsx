@@ -345,7 +345,7 @@ main();`;
       const editorContainer = document.querySelector('.editor-container') as HTMLElement;
       const terminalContainer = document.querySelector('.terminal-container') as HTMLElement;
 
-      if (terminalActive && chatActive) {
+      if ((terminalActive && chatActive) || (terminalActive && resourcesActive)) {
          editorContainer.style.borderRadius = '0px 10px 0px 0px';
          terminalContainer.style.borderRadius = '0px 0px 10px 10px';
       } else if (terminalActive && !chatActive) {
@@ -356,7 +356,7 @@ main();`;
       } else if (!terminalActive && !chatActive) {
          editorContainer.style.borderRadius = '0px 10px 10px 0px';
       }
-   }, [terminalActive, chatActive]);
+   }, [terminalActive, chatActive, resourcesActive]);
 
    // Add event listener for keyboard shortcuts
    useEffect(() => {
