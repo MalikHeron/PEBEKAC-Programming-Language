@@ -22,6 +22,9 @@
             ],
             "@styles/*": [
                 "src/styles/*"
+            ],
+            "@images/*": [
+                "src/assets/images/*"
             ]
         }
     }
