@@ -2,7 +2,6 @@ import { ChatMessage } from '@models/ChatMessage';
 import { useEffect, useRef, useState } from 'react';
 import '@styles/Assistant.scss';
 import ReactMarkdown from 'react-markdown';
-import { Timestamp } from 'firebase/firestore';
 import useSpeechToText from '@services/SpeechToText';
 import { ChatService } from '@services/ChatService';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -17,7 +16,6 @@ function Assistant({ reset, setReset }) {
    const chatContainerRef = useRef<HTMLDivElement>(null);
    const { isListening, setIsListening } = useSpeechToText(setUserInput);
    const [tooltipTexts, setTooltipTexts] = useState<string[]>([]);
-   const [suggestions, setSuggestions] = useState<string[]>([]);
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
 
    const copyToClipboard = (message: string, index: number) => {
@@ -46,14 +44,9 @@ function Assistant({ reset, setReset }) {
    const sendMessage = async () => {
       if (!userInput) return;
 
-      setSuggestions([]);
-
       const trimmedInput = userInput.trim();
-      let now = Date.now(); // Get the current time in milliseconds
-      let seconds = Math.floor(now / 1000); // Convert to seconds
-      let milliseconds = now % 1000; // Get the remaining milliseconds
 
-      const newUserMessage = { author: 'user', text: trimmedInput, timestamp: new Timestamp(seconds, milliseconds) };
+      const newUserMessage = { author: 'user', text: trimmedInput };
       const newMessages = [...messages, newUserMessage];
       setMessages(newMessages);
       setUserInput('');
@@ -62,18 +55,15 @@ function Assistant({ reset, setReset }) {
       try {
          // Send message to backend here
          new ChatService().getResponse(trimmedInput).then((botResponse) => {
-            const botMessage = { author: 'bot', text: botResponse, timestamp: new Timestamp(seconds, milliseconds) };
+            const botMessage = { author: 'bot', text: botResponse };
             setMessages([...newMessages, botMessage]);
          }).catch((error) => {
             throw error;
          });
       } catch (error) {
          console.error(error);
-         now = Date.now(); // Get the current time in milliseconds
-         seconds = Math.floor(now / 1000); // Convert to seconds
-         milliseconds = now % 1000; // Get the remaining milliseconds
 
-         const errorMessage = { author: 'bot', text: "Sorry, I'm unable to provide a response at this time. Please try again later.", timestamp: new Timestamp(seconds, milliseconds) };
+         const errorMessage = { author: 'bot', text: "Sorry, I'm unable to provide a response at this time. Please try again later." };
          setMessages([...newMessages, errorMessage]);
       } finally {
          setIsLoading(false);
@@ -118,7 +108,7 @@ function Assistant({ reset, setReset }) {
       if (chatContainerRef.current) {
          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
       }
-   }, [messages, suggestions]);
+   }, [messages]);
 
    useEffect(() => {
       if (reset) {

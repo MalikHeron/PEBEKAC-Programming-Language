@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1eb31087-0fa2-4036-b6e6-17d6dd293f03" name="Changes" comment="updated documentation">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/Scripts/Activate.ps1" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/Scripts/Activate.ps1" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/Scripts/activate" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/Scripts/activate" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/Scripts/activate.bat" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/Scripts/activate.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/Scripts/python.exe" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/Scripts/python.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/Scripts/pythonw.exe" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/Scripts/pythonw.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.venv/pyvenv.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/.venv/pyvenv.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parser.out" beforeDir="false" afterPath="$PROJECT_DIR$/parser.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/parsetab.py" beforeDir="false" afterPath="$PROJECT_DIR$/parsetab.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="user-interface" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MalikHeron&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="2a417644-fcf4-4e5e-b568-5da436209f79" />
+        <option name="url" value="https://github.com/MalikHeron/APL-Project.git" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2eJ3Bs2YfdVE718gGicbfSxOxqy" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for test.CodeGeneration.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generated_code.executor&quot;: &quot;Run&quot;,
+    &quot;Python.lex.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.server.executor&quot;: &quot;Run&quot;,
+    &quot;Python.yacc.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/APL-Project&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.CommitDialog&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\malik\\APL-Project\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\malik\APL-Project\backend" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Python tests for test.CodeGeneration" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="APL-Project" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test.CodeGeneration&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Python tests for test.CodeGeneration" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-18abd8497189-intellij.indexing.shared.core-IU-241.14494.240" />
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-IU-241.14494.240" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1eb31087-0fa2-4036-b6e6-17d6dd293f03" name="Changes" comment="" />
+      <created>1711608727913</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1711608727913</updated>
+      <workItem from="1711608729706" duration="20573000" />
+      <workItem from="1711633078401" duration="14024000" />
+      <workItem from="1711669253298" duration="12422000" />
+      <workItem from="1711684999500" duration="1063000" />
+      <workItem from="1711686729733" duration="168000" />
+      <workItem from="1711687644911" duration="3619000" />
+      <workItem from="1711708000318" duration="3587000" />
+      <workItem from="1711721565088" duration="3563000" />
+      <workItem from="1711729320261" duration="894000" />
+      <workItem from="1711732941893" duration="4676000" />
+      <workItem from="1711741624410" duration="6413000" />
+      <workItem from="1711750073492" duration="199000" />
+      <workItem from="1711750555026" duration="447000" />
+      <workItem from="1711751394178" duration="6770000" />
+      <workItem from="1711758246953" duration="7899000" />
+      <workItem from="1711770790589" duration="3997000" />
+      <workItem from="1711791579319" duration="1343000" />
+      <workItem from="1711793038759" duration="263000" />
+      <workItem from="1711797200203" duration="222000" />
+      <workItem from="1711799971633" duration="2388000" />
+      <workItem from="1711802922181" duration="1463000" />
+      <workItem from="1711810133557" duration="4125000" />
+      <workItem from="1711814392061" duration="4723000" />
+      <workItem from="1711819233695" duration="6599000" />
+      <workItem from="1711826197584" duration="577000" />
+      <workItem from="1711833524679" duration="9676000" />
+      <workItem from="1711845657218" duration="973000" />
+      <workItem from="1711881431925" duration="2666000" />
+      <workItem from="1711891638964" duration="3008000" />
+      <workItem from="1712313988357" duration="215000" />
+      <workItem from="1712314226367" duration="503000" />
+      <workItem from="1712314884650" duration="179000" />
+      <workItem from="1712315898007" duration="380000" />
+    </task>
+    <task id="LOCAL-00001" summary="changes to grammar, semantic analyzer, server, lex and yacc">
+      <option name="closed" value="true" />
+      <created>1711622390434</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1711622390434</updated>
+    </task>
+    <task id="LOCAL-00002" summary="add check for return statement">
+      <option name="closed" value="true" />
+      <created>1711623302686</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1711623302686</updated>
+    </task>
+    <task id="LOCAL-00003" summary="add check for return statement">
+      <option name="closed" value="true" />
+      <created>1711629971003</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1711629971003</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711643307535</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1711643307535</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711646357514</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1711646357514</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711685171062</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1711685171062</updated>
+    </task>
+    <task id="LOCAL-00007" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711686039382</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1711686039382</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711686841362</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1711686841362</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fixes to scopes">
+      <option name="closed" value="true" />
+      <created>1711690261947</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1711690261947</updated>
+    </task>
+    <task id="LOCAL-00010" summary="fixes to user interfaces">
+      <option name="closed" value="true" />
+      <created>1711691283803</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1711691283803</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed boolean">
+      <option name="closed" value="true" />
+      <created>1711710039443</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1711710039443</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fixed boolean">
+      <option name="closed" value="true" />
+      <created>1711710635058</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1711710635058</updated>
+    </task>
+    <task id="LOCAL-00013" summary="changes to syntax highlighting">
+      <option name="closed" value="true" />
+      <created>1711711290186</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1711711290186</updated>
+    </task>
+    <task id="LOCAL-00014" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711724525638</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1711724525638</updated>
+    </task>
+    <task id="LOCAL-00015" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711724886006</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1711724886006</updated>
+    </task>
+    <task id="LOCAL-00016" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711729499783</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1711729499783</updated>
+    </task>
+    <task id="LOCAL-00017" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711736629034</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1711736629034</updated>
+    </task>
+    <task id="LOCAL-00018" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711737223911</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1711737223911</updated>
+    </task>
+    <task id="LOCAL-00019" summary="changes to return type analysis">
+      <option name="closed" value="true" />
+      <created>1711737421985</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1711737421985</updated>
+    </task>
+    <task id="LOCAL-00020" summary="updated lex to maintain newline in string literals">
+      <option name="closed" value="true" />
+      <created>1711744876151</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1711744876151</updated>
+    </task>
+    <task id="LOCAL-00021" summary="support for negative numbers">
+      <option name="closed" value="true" />
+      <created>1711750261104</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1711750261104</updated>
+    </task>
+    <task id="LOCAL-00022" summary="fixes to detecting function calls">
+      <option name="closed" value="true" />
+      <created>1711764595942</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1711764595942</updated>
+    </task>
+    <task id="LOCAL-00023" summary="fixes to detecting function calls">
+      <option name="closed" value="true" />
+      <created>1711766153217</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1711766153217</updated>
+    </task>
+    <task id="LOCAL-00024" summary="added checks for types in binary operations">
+      <option name="closed" value="true" />
+      <created>1711792722468</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1711792722468</updated>
+    </task>
+    <task id="LOCAL-00025" summary="added checks for types in binary operations">
+      <option name="closed" value="true" />
+      <created>1711797410529</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1711797410529</updated>
+    </task>
+    <task id="LOCAL-00026" summary="added ability to stop code execution">
+      <option name="closed" value="true" />
+      <created>1711800648214</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1711800648214</updated>
+    </task>
+    <task id="LOCAL-00027" summary="added ability to stop code execution">
+      <option name="closed" value="true" />
+      <created>1711802376886</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1711802376886</updated>
+    </task>
+    <task id="LOCAL-00028" summary="added ability to stop code execution">
+      <option name="closed" value="true" />
+      <created>1711804016365</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1711804016365</updated>
+    </task>
+    <task id="LOCAL-00029" summary="added support for nest if">
+      <option name="closed" value="true" />
+      <created>1711813846878</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1711813846878</updated>
+    </task>
+    <task id="LOCAL-00030" summary="fixed assignment types">
+      <option name="closed" value="true" />
+      <created>1711818496583</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1711818496584</updated>
+    </task>
+    <task id="LOCAL-00031" summary="fixed assignment types">
+      <option name="closed" value="true" />
+      <created>1711819125612</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1711819125612</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fixed compound assignments">
+      <option name="closed" value="true" />
+      <created>1711825822215</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1711825822215</updated>
+    </task>
+    <task id="LOCAL-00033" summary="implemented type checking for lists and arrays">
+      <option name="closed" value="true" />
+      <created>1711843739743</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1711843739743</updated>
+    </task>
+    <task id="LOCAL-00034" summary="reduced duplicate expressions">
+      <option name="closed" value="true" />
+      <created>1711845386522</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1711845386522</updated>
+    </task>
+    <task id="LOCAL-00035" summary="updated documentation">
+      <option name="closed" value="true" />
+      <created>1711892347428</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1711892347428</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="changes to grammar, semantic analyzer, server, lex and yacc" />
+    <MESSAGE value="add check for return statement" />
+    <MESSAGE value="fixes to scopes" />
+    <MESSAGE value="fixes to user interfaces" />
+    <MESSAGE value="fixed boolean" />
+    <MESSAGE value="changes to syntax highlighting" />
+    <MESSAGE value="changes to return type analysis" />
+    <MESSAGE value="updated lex to maintain newline in string literals" />
+    <MESSAGE value="support for negative numbers" />
+    <MESSAGE value="fixes to detecting function calls" />
+    <MESSAGE value="added checks for types in binary operations" />
+    <MESSAGE value="added ability to stop code execution" />
+    <MESSAGE value="added support for nest if" />
+    <MESSAGE value="fixed assignment types" />
+    <MESSAGE value="fixed compound assignments" />
+    <MESSAGE value="implemented type checking for lists and arrays" />
+    <MESSAGE value="reduced duplicate expressions" />
+    <MESSAGE value="fixes to scoping" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/main'&#10;&#10;# Conflicts:&#10;#&#9;.idea/misc.xml" />
+    <MESSAGE value="updated documentation" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated documentation" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/APL_Project$app.coverage" NAME="app Coverage Results" MODIFIED="1711681483634" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/APL_Project$generated_code.coverage" NAME="generated_code Coverage Results" MODIFIED="1711792877446" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/APL_Project$.coverage" NAME=" Coverage Results" MODIFIED="1712316075823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/APL_Project$lex.coverage" NAME="lex Coverage Results" MODIFIED="1711621232047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend/src" />
+    <SUITE FILE_PATH="coverage/APL_Project$server.coverage" NAME="server Coverage Results" MODIFIED="1711647524965" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/backend" />
+    <SUITE FILE_PATH="coverage/APL_Project$yacc.coverage" NAME="yacc Coverage Results" MODIFIED="1711670585311" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/APL_Project$main.coverage" NAME="main Coverage Results" MODIFIED="1711884041352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
