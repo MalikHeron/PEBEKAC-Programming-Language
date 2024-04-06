@@ -122,7 +122,7 @@ def generate_code(node):
             left = generate_code(node[1])
             op = generate_code(node[2])
             right = generate_code(node[3])
-            print('left:', left, 'op:', op, 'right:', right)
+            # print('left:', left, 'op:', op, 'right:', right)
             return f'{left} {op} {right}'
         elif len(node) == 1:
             return str(node[0])
