@@ -41,7 +41,7 @@ npm install
 To run the application, use the following command:
 
 ```bash
-python main.py
+python test.py
 ```
 
 ## Contributing

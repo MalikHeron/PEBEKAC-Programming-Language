@@ -8,9 +8,6 @@
             "@components/*": [
                 "src/components/*"
             ],
-            "@helpers/*": [
-                "src/helpers/*"
-            ],
             "@models/*": [
                 "src/models/*"
             ],
@@ -22,9 +19,6 @@
             ],
             "@styles/*": [
                 "src/styles/*"
-            ],
-            "@images/*": [
-                "src/assets/images/*"
             ]
         }
     }

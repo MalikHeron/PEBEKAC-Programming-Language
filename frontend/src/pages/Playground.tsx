@@ -348,12 +348,12 @@ main();`;
       if ((terminalActive && chatActive) || (terminalActive && resourcesActive)) {
          editorContainer.style.borderRadius = '0px 10px 0px 0px';
          terminalContainer.style.borderRadius = '0px 0px 10px 10px';
-      } else if (terminalActive && !chatActive) {
+      } else if ((terminalActive && !chatActive) || (terminalActive && !resourcesActive)) {
          editorContainer.style.borderRadius = '0px 10px 0px 0px';
          terminalContainer.style.borderRadius = '0px 0px 10px 0px';
-      } else if (!terminalActive && chatActive) {
+      } else if ((!terminalActive && chatActive) || (!terminalActive && resourcesActive)) {
          editorContainer.style.borderRadius = '0px 10px 10px 10px';
-      } else if (!terminalActive && !chatActive) {
+      } else if ((!terminalActive && !chatActive) || (!terminalActive && !resourcesActive)) {
          editorContainer.style.borderRadius = '0px 10px 10px 0px';
       }
    }, [terminalActive, chatActive, resourcesActive]);
@@ -376,7 +376,6 @@ main();`;
             toggleTerminal();
          } else if (e.ctrlKey && e.key === 'q') {
             // Ctrl + C to toggle chat visibility
-            setChatActive((prev) => !prev); // Toggle chat visibility
             toggleSidePane(); // Toggle side pane visibility
          }
       };
