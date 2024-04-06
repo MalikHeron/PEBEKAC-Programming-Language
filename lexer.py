@@ -64,7 +64,7 @@ tokens = list(reserved.values()) + [
     'LBRACE', 'RBRACE', 'LBRACKET', 'RBRACKET', 'COMMA', 'DOT',
     'ARROW', 'INCREMENT', 'DECREMENT', 'POW', 'BACKSLASH', 'SLASH', 'APOSTROPHE', 'AT',
     'HASH', 'DOUBLEQUOTE', 'PIPE', 'PLUSASSIGN', 'MINUSASSIGN', 'TIMESASSIGN', 'DIVIDEASSIGN',
-    'MODASSIGN', 'COLON', 'QUESTION', 'COMMENT'
+    'MODASSIGN', 'POWASSIGN', 'COLON', 'QUESTION', 'COMMENT'
 ]
 
 # Token matching rules are written as regexs
@@ -108,6 +108,7 @@ t_PLUSASSIGN = r'\+='
 t_MINUSASSIGN = r'-='
 t_TIMESASSIGN = r'\*='
 t_DIVIDEASSIGN = r'/='
+t_POWASSIGN = r'\*\*='
 t_MODASSIGN = r'%='
 t_ARROW = r'->'
 

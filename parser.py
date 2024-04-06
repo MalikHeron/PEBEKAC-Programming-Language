@@ -319,6 +319,7 @@ def p_assignment_sign(p):
                     | MODASSIGN
                     | PLUSASSIGN
                     | TIMESASSIGN
+                    | POWASSIGN
     """
     p[0] = ('assignment_sign', p[1])
 

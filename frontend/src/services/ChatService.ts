@@ -161,7 +161,6 @@ export class ChatService {
          <if_stmt>
                : 'if' '(' <expression> ')' '{' <stmt_list> '}'
                | 'if' '(' <expression> ')' '{' <stmt_list> '}' <else_stmt>
-               | <expression> '?' <expression> ':' <expression> ';'
                ;
 
          <else_stmt>
