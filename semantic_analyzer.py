@@ -481,13 +481,19 @@ class SemanticAnalyzer:
                 param_list = params[1]
                 # print('param_list:', param_list)
 
-                arg_types = self.check_arg_type(arg_list, function_name)  # Check the types of arguments
-                param_types = self.check_param_type(param_list, function_name)  # Check the types of parameters
+                arg_types = []
+                param_types = []
+
+                arg_types = self.check_arg_type(arg_list, arg_types, function_name)  # Check the types of arguments
+                param_types = self.check_param_type(param_list, param_types, function_name)  # Check the types of parameters
 
                 # Check the types of arguments and parameters
                 for arg_type, param_type in zip(arg_types[0:], param_types[0:]):
                     if arg_type != param_type:
-                        raise Exception(f"Error: Type mismatch in function call. Expected {param_type}, got {arg_type}")
+                        if arg_type == 'list' and param_type in ['int', 'float', 'string', 'double']:
+                            pass
+                        else:
+                            raise Exception(f"Error: Type mismatch in function call. Expected {param_type}, got {arg_type}")
 
         elif node_type == 'return_stmt':
             # First, find out the current function's name from the scope stack
@@ -785,27 +791,36 @@ class SemanticAnalyzer:
         else:
             return 1
 
-    def check_arg_type(self, list_arg, function_name):
-        arg_types = []
+    def check_arg_type(self, list_arg, arg_types, function_name):
         # Check if the types of arguments match the types of parameters
         for arg in list_arg[1:]:
             # print('arg:', arg)
             if arg[0] == 'expression':
                 if arg[1][0] == 'function_call':
-                    self.check_arg_type(arg[1], function_name)
+                    self.check_arg_type(arg[1], arg_types, function_name)
                     self.analyze_semantics(arg[1], function_name=function_name)
                 else:
-                    arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
+                    arg_type = self.get_expression_type(arg[1], function_name=function_name)
+                    if arg_type == 'intArray':
+                        arg_type = 'int'
+                    elif arg_type == 'floatArray':
+                        arg_type = 'float'
+                    elif arg_type == 'stringArray':
+                        arg_type = 'string'
+                    elif arg_type == 'doubleArray':
+                        arg_type = 'double'
+                    else:
+                        pass
+                    arg_types.append(arg_type)
             if arg[0] == 'function_call':
                 arg_types.append(self.get_expression_type(arg[1], function_name=function_name))
             if arg[0] == 'arg_list':
-                self.check_arg_type(arg, function_name)
+                self.check_arg_type(arg, arg_types, function_name)
             # print('arg_types:', arg_types)
 
         return arg_types
 
-    def check_param_type(self, list_param, function_name):
-        param_types = []
+    def check_param_type(self, list_param, param_types, function_name):
         # Check if the types of parameters
         for param_ in list_param[1:]:
             # print('param:', param_)
@@ -814,7 +829,7 @@ class SemanticAnalyzer:
             if param_[0] == 'function_call':
                 param_types.append(self.get_expression_type(param_[1], function_name=function_name))
             if param_[0] == 'param':
-                self.check_param_type(param_, function_name)
+                self.check_param_type(param_, param_types, function_name)
             # print('param_types:', param_types)
 
         return param_types
