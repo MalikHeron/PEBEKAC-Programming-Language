@@ -10,8 +10,6 @@
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
   <component name="PackageRequirementsSettings">
-    <option name="versionSpecifier" value="Strong equality (==x.y.z)" />
-    <option name="removeUnused" value="true" />
-    <option name="modifyBaseFiles" value="true" />
+    <option name="versionSpecifier" value="Greater or equal (&gt;=x.y.z)" />
   </component>
 </module>
