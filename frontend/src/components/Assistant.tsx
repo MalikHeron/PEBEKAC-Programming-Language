@@ -17,6 +17,7 @@ function Assistant({ reset, setReset }) {
    const { isListening, setIsListening } = useSpeechToText(setUserInput);
    const [tooltipTexts, setTooltipTexts] = useState<string[]>([]);
    const [speechToTextSupported, setSpeechToTextSupported] = useState(true);
+    const [userId, setUserId] = useState('');
 
    const copyToClipboard = (message: string, index: number) => {
       if (message) {
@@ -54,7 +55,7 @@ function Assistant({ reset, setReset }) {
 
       try {
          // Send message to backend here
-         new ChatService().getResponse(trimmedInput).then((botResponse) => {
+         new ChatService().getResponse(trimmedInput, userId).then((botResponse) => {
             const botMessage = { author: 'bot', text: botResponse };
             setMessages([...newMessages, botMessage]);
          }).catch((error) => {
@@ -117,6 +118,12 @@ function Assistant({ reset, setReset }) {
       }
    }, [reset, setReset]);
 
+   useEffect(() => {
+      new ChatService().start_gemini().then((response) => {
+         setUserId(response);
+      });
+   }, []);
+
    return (
       <div className="Assistant">
          {/* chat pane */}
@@ -164,7 +171,7 @@ function Assistant({ reset, setReset }) {
                   <textarea
                      ref={textAreaRef}
                      className="input"
-                     placeholder={'Ask me anything...'}
+                     placeholder={userId === '' ? 'Initializing chatbot...' : 'Ask me anything...'}
                      value={userInput}
                      onChange={(e) => setUserInput(e.target.value)}
                      onKeyDown={(e) => {
@@ -175,6 +182,7 @@ function Assistant({ reset, setReset }) {
                         }
                      }}
                      autoFocus
+                     disabled={userId === ''}
                      rows={1}
                   />
                   <div className="input-footer">

@@ -1,5 +1,8 @@
 Flask==3.0.0
 Flask-CORS==3.0.10
+Flask-Session==0.8.0
 ply==3.11
-gunicorn
+gunicorn==21.2.0
 Werkzeug==3.0.0
+google-generativeai==0.5.1
+python-dotenv==1.0.0

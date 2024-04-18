@@ -1,16 +1,28 @@
+import os
+import binascii
 import io
 import sys
 import threading
 import time
+import secrets
 
-from flask import Flask, request, jsonify
+from datetime import datetime, timedelta
+from flask import Flask, request, jsonify, session
 from flask_cors import CORS
+from flask_session import Session
 
 from code_generator import generate_code
 from semantic_analyzer import SemanticAnalyzer
+from gemini import Gemini
 
 app = Flask(__name__, static_folder='frontend/dist/', static_url_path='/')
+app.secret_key = secrets.token_hex(32)
 CORS(app)  # Enable CORS for all routes
+
+# Configure Flask Session
+SESSION_TYPE = 'filesystem'
+app.config.from_object(__name__)
+Session(app)
 
 # Global variables to track whether the program should stop and the timeout period
 stop_program = False
@@ -19,6 +31,9 @@ timeout_period = 5  # Timeout period in seconds
 # Locks to synchronize access to stop_program and timeout_period
 stop_lock = threading.Lock()
 timeout_lock = threading.Lock()
+
+# Dictionary to store chatbot instances
+chatbots = {}
 
 
 @app.route('/')
@@ -119,6 +134,42 @@ def stop_execution():
         stop_program = True  # Set the stop flag to True
     return jsonify({'message': 'Execution stopped successfully'})
 
+
+@app.route('/start_gemini', methods=['POST'])
+def start_gemini():
+    # Create a new instance of the Gemini chatbot for this session
+    if 'user_id' not in session:
+        # Generate a unique ID for each user
+        session['user_id'] = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+    user_id = session['user_id']
+    chatbots[user_id] = {'gemini': Gemini(), 'last_active': datetime.now()}
+    return jsonify({'response': user_id})
+
+
+@app.route('/get_response', methods=['POST'])
+def get_response():
+    query = request.json.get('query')
+    user_id = request.json.get('userId')
+    if user_id and user_id in chatbots:
+        gemini = chatbots[user_id]['gemini']
+        # Update the last active time
+        chatbots[user_id]['last_active'] = datetime.now()
+        return jsonify({'response': gemini.get_response(query)})
+    else:
+        return jsonify({'error': 'No chatbot instance found for this session. Start a new chatbot instance.'})
+
+
+# Run a background task to clear inactive chatbot instances
+def clear_inactive_chatbots():
+    while True:
+        for user_id, data in list(chatbots.items()):
+            if datetime.now() - data['last_active'] > timedelta(minutes=30):  # 30 minutes timeout
+                del chatbots[user_id]
+        time.sleep(86400)  # Check every 24 hours
+
+
+clear_thread = threading.Thread(target=clear_inactive_chatbots)
+clear_thread.start()
 
 if __name__ == '__main__':
     app.run()

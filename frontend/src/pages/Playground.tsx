@@ -390,6 +390,30 @@ main();`;
       // eslint-disable-next-line react-hooks/exhaustive-deps
    }, []);
 
+   useEffect(() => {
+      const handleResize = () => {
+         const screenWidth = window.innerWidth;
+         // Define the threshold for collapsing the side pane
+         const threshold = 1200; // Adjust as needed
+
+         // Set sidePaneCollapsed based on the screen width
+         if (screenWidth <= threshold) {
+            toggleSidePane();
+         }
+      };
+
+      // Add event listener for window resize
+      window.addEventListener('resize', handleResize);
+      
+      // Call handleResize once on mount to set initial state
+      handleResize();
+
+      // Remove event listener on component unmount
+      return () => {
+         window.removeEventListener('resize', handleResize);
+      };
+   }, []);
+
    return (
       <div className="Playground">
          {/* side pane mini */}
