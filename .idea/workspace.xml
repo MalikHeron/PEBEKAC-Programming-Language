@@ -5,29 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1eb31087-0fa2-4036-b6e6-17d6dd293f03" name="Changes" comment="updated documentation.pdf">
-      <change afterPath="$PROJECT_DIR$/flask_session/2029240f6d1128be89ddc32729463129" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/2e41a361d2132f584cd59b4990738585" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/3d6ff9f8b4e737baa7f32ac428ea7f0d" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/49d72ef3283001a3dff84606b0ece561" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/55e1703f825f3ecc0516bbeb1708a239" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/74b53026da2904c59ed239b5690b2e61" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/879f985249eec2caf8d28db90d9e0f44" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/a66753497c32475c675eec3b78775d11" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/b5f61f8fe7b86dfdbf1c307233454519" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/flask_session/e51f2119afd71ceda99f9aa87aea4d26" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gemini.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/APL-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/APL-Project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/dist/assets/index-oBQHugZh.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/dist/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/components/Assistant.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Assistant.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/ChatService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/ChatService.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,38 +66,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests for test.CodeGeneration.executor": "Run",
-    "Python.app.executor": "Run",
-    "Python.gemini.executor": "Run",
-    "Python.generated_code.executor": "Run",
-    "Python.lex.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.server.executor": "Run",
-    "Python.test_assignment_inside.executor": "Run",
-    "Python.test_function_call_with_return.executor": "Run",
-    "Python.yacc.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "user-interface",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/Academic-Probation-System",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "E:\\APL-Project\\frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python tests.Python tests for test.CodeGeneration.executor&quot;: &quot;Run&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gemini.executor&quot;: &quot;Run&quot;,
+    &quot;Python.generated_code.executor&quot;: &quot;Run&quot;,
+    &quot;Python.lex.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.server.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_assignment_inside.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test_function_call_with_return.executor&quot;: &quot;Run&quot;,
+    &quot;Python.yacc.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;user-interface&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/Academic-Probation-System&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;E:\\APL-Project\\frontend\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\APL-Project\frontend\public\resources" />
@@ -170,6 +148,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test.CodeGeneration" />
+        <item itemvalue="Python.gemini" />
         <item itemvalue="Python.gemini" />
         <item itemvalue="Python tests.Python tests for test.CodeGeneration" />
         <item itemvalue="Python tests.Python tests for test.CodeGeneration" />
