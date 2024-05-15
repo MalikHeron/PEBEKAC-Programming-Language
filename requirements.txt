@@ -2,4 +2,4 @@ Flask==3.0.0
 Flask-CORS==3.0.10
 ply==3.11
 gunicorn
-Werkzeug==3.0.1
+Werkzeug==3.0.3
